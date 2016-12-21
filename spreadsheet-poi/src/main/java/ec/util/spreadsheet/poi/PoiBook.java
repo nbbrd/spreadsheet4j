@@ -21,6 +21,7 @@ import ec.util.spreadsheet.Sheet;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -71,6 +72,15 @@ final class PoiBook extends Book {
     public Sheet getSheet(int index) {
         try {
             return new PoiSheet(workbook.getSheetAt(index));
+        } catch (IllegalArgumentException ex) {
+            throw index < 0 || index >= getSheetCount() ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
+        }
+    }
+
+    @Override
+    public String getSheetName(@Nonnegative int index) {
+        try {
+            return workbook.getSheetName(index);
         } catch (IllegalArgumentException ex) {
             throw index < 0 || index >= getSheetCount() ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
         }

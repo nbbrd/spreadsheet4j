@@ -53,6 +53,11 @@ public final class ArrayBook extends Book implements Serializable {
     }
 
     @Override
+    public String getSheetName(int index) {
+        return sheets[index].getName();
+    }
+
+    @Override
     public void forEach(ObjIntConsumer<? super Sheet> action) {
         Objects.requireNonNull(action);
         for (int index = 0; index < getSheetCount(); index++) {

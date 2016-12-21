@@ -84,6 +84,7 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
         assertBounds(s, book);
         assertForEach(s, book);
         assertNulls(s, book);
+        assertGetSheetName(s, book);
         for (int index = 0; index < book.getSheetCount(); index++) {
             SheetAssert.assertCompliance(s, book.getSheet(index));
         }
@@ -119,6 +120,14 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
         s.assertThatThrownBy(() -> book.forEach(null))
                 .as(msg(book, "forEach(ObjIntConsumer)", NullPointerException.class))
                 .isInstanceOf(NullPointerException.class);
+    }
+
+    private static void assertGetSheetName(SoftAssertions s, Book book) throws IOException {
+        for (int i = 0; i < book.getSheetCount(); i++) {
+            s.assertThat(book.getSheetName(i)).isEqualTo(book.getSheet(i).getName());
+        }
+        s.assertThatThrownBy(() -> book.getSheetName(-1)).isInstanceOf(IndexOutOfBoundsException.class);
+        s.assertThatThrownBy(() -> book.getSheetName(book.getSheetCount())).isInstanceOf(IndexOutOfBoundsException.class);
     }
 
     static void assertContentEquals(SoftAssertions s, Book l, Book r, boolean strict) throws IOException {

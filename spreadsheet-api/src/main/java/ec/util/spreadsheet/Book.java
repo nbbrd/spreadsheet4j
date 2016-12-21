@@ -70,6 +70,19 @@ public abstract class Book implements Closeable {
     abstract public Sheet getSheet(@Nonnegative int index) throws IOException, IndexOutOfBoundsException;
 
     /**
+     * Returns the name of a sheet based on its index in this book.
+     *
+     * @param index a zero-based index
+     * @return a non-null name
+     * @throws IOException if something goes wrong during loading
+     * @throws IndexOutOfBoundsException if the index is out of bounds
+     */
+    @Nonnull
+    public String getSheetName(@Nonnegative int index) throws IOException, IndexOutOfBoundsException {
+        return getSheet(index).getName();
+    }
+
+    /**
      * Performs the given action for each sheet of the book until all sheets
      * have been processed or an exception has been thrown.
      *
