@@ -35,7 +35,7 @@ public abstract class Cell {
      * @since 2.2.0
      */
     public enum Type {
-        DATE, NUMBER, STRING;
+        DATE, NUMBER, STRING
     }
 
     /**

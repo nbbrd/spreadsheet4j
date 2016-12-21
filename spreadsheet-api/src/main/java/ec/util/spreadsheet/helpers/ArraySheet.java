@@ -239,7 +239,7 @@ public final class ArraySheet extends Sheet implements Serializable {
         @Nonnull
         public Builder value(int row, int column, @Nullable Cell value) throws IndexOutOfBoundsException {
             Object tmp = value == null ? null : value.getValue();
-            return value(row, column, (Object) tmp);
+            return value(row, column, tmp);
         }
 
         @Nonnull

@@ -85,7 +85,7 @@ public final class CellRefHelper {
         while (dividend > 0) {
             modulo = (dividend - 1) % 26;
             result = (char) (65 + modulo) + result;
-            dividend = (int) ((dividend - modulo) / 26);
+            dividend = (dividend - modulo) / 26;
         }
 
         return result;
