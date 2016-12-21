@@ -23,11 +23,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
@@ -38,52 +41,68 @@ import javax.xml.stream.XMLStreamWriter;
  *
  * @author Philippe Charles
  */
-final class XMLStreamBookWriter {
+final class HtmlBookWriter {
 
     private static final String STYLE = getStyleContent();
 
     private final XMLOutputFactory xof;
-    private final DateFormat periodFormatter;
-    private final NumberFormat valueFormatter;
-    private final Charset charset;
+    private DateFormat dateFormat;
+    private NumberFormat numberFormat;
+    private Charset charset;
 
-    public XMLStreamBookWriter(@Nonnull XMLOutputFactory xof, @Nonnull DateFormat periodFormatter, @Nonnull NumberFormat valueFormatter, @Nonnull Charset charset) {
-        this.xof = xof;
-        this.periodFormatter = periodFormatter;
-        this.valueFormatter = valueFormatter;
-        this.charset = charset;
+    HtmlBookWriter(@Nonnull XMLOutputFactory xof) {
+        this.xof = Objects.requireNonNull(xof);
+        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        this.numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
+        numberFormat.setMaximumFractionDigits(9);
+        numberFormat.setMaximumIntegerDigits(12);
+        this.charset = StandardCharsets.UTF_8;
     }
 
-    public void write(@Nonnull OutputStream stream, @Nonnull Book book) throws IOException {
+    public void setDateFormat(@Nonnull DateFormat dateFormat) {
+        this.dateFormat = Objects.requireNonNull(dateFormat);
+    }
+
+    public void setNumberFormat(@Nonnull NumberFormat numberFormat) {
+        this.numberFormat = Objects.requireNonNull(numberFormat);
+    }
+
+    public void setCharset(@Nonnull Charset charset) {
+        this.charset = Objects.requireNonNull(charset);
+    }
+
+    public void write(@Nonnull Book book, @Nonnull OutputStream stream) throws IOException {
         try {
-            XMLStreamWriter writer = xof.createXMLStreamWriter(stream, charset.name());
-            try {
-                XMLStreamBookWriter.this.write(writer, book);
-            } finally {
-                writer.close();
-            }
+            XmlStreamWriterUtil.of(o -> writeHtml(o, book))
+                    .factory(xof)
+                    .writeTo(stream, charset);
+        } catch (XMLStreamException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    public void write(@Nonnull Book book, @Nonnull Writer writer) throws IOException {
+        try {
+            XmlStreamWriterUtil.of(o -> writeHtml(o, book))
+                    .factory(xof)
+                    .writeTo(writer);
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
     }
 
     @Nonnull
-    public String write(@Nonnull Book book) throws IOException {
-        StringWriter result = new StringWriter();
+    public String writeToString(@Nonnull Book book) throws IOException {
         try {
-            XMLStreamWriter writer = xof.createXMLStreamWriter(result);
-            try {
-                XMLStreamBookWriter.this.write(writer, book);
-            } finally {
-                writer.close();
-            }
+            return XmlStreamWriterUtil.of(o -> writeHtml(o, book))
+                    .factory(xof)
+                    .writeToString();
         } catch (XMLStreamException ex) {
             throw new IOException(ex);
         }
-        return result.toString();
     }
 
-    private void write(XMLStreamWriter w, Book book) throws IOException, XMLStreamException {
+    private void writeHtml(XMLStreamWriter w, Book book) throws IOException, XMLStreamException {
         BasicHtmlWriter f = new BasicHtmlWriter(w);
         f.beginHtml();
         f.beginHead();
@@ -92,38 +111,41 @@ final class XMLStreamBookWriter {
         f.beginBody();
         int sheetCount = book.getSheetCount();
         for (int s = 0; s < sheetCount; s++) {
-            Sheet sheet = book.getSheet(s);
-            f.beginTable(sheet.getName(), "sheet");
-            int rowCount = sheet.getRowCount();
-            int columnCount = sheet.getColumnCount();
-            // content
-            for (int i = 0; i < rowCount; i++) {
-                f.beginRow();
-                for (int j = 0; j < columnCount; j++) {
-                    Cell cell = sheet.getCell(i, j);
-                    if (cell != null) {
-                        if (cell.isDate()) {
-                            f.writeCell(periodFormatter.format(cell.getDate()), false, "type-date");
-                        } else if (cell.isNumber()) {
-                            f.writeCell(valueFormatter.format(cell.getDouble()), false, "type-number");
-                        } else if (cell.isString()) {
-                            f.writeCell(cell.getString(), false, "");
-                        }
-                    } else {
-                        f.writeCell("", false, "");
-                    }
-                }
-                f.endRow();
-            }
-            f.endTable();
+            writeTable(f, book.getSheet(s));
         }
         f.endBody();
         f.endHtml();
     }
 
+    private void writeTable(BasicHtmlWriter f, Sheet sheet) throws XMLStreamException {
+        f.beginTable(sheet.getName(), "sheet");
+        int rowCount = sheet.getRowCount();
+        int columnCount = sheet.getColumnCount();
+        // content
+        for (int i = 0; i < rowCount; i++) {
+            f.beginRow();
+            for (int j = 0; j < columnCount; j++) {
+                Cell cell = sheet.getCell(i, j);
+                if (cell != null) {
+                    if (cell.isDate()) {
+                        f.writeCell(dateFormat.format(cell.getDate()), false, "type-date");
+                    } else if (cell.isNumber()) {
+                        f.writeCell(numberFormat.format(cell.getDouble()), false, "type-number");
+                    } else if (cell.isString()) {
+                        f.writeCell(cell.getString(), false, "");
+                    }
+                } else {
+                    f.writeCell("", false, "");
+                }
+            }
+            f.endRow();
+        }
+        f.endTable();
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
     private static String getStyleContent() {
-        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(XMLStreamBookWriter.class.getResourceAsStream("/BasicStyle.css"), StandardCharsets.UTF_8))) {
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(HtmlBookWriter.class.getResourceAsStream("/BasicStyle.css"), StandardCharsets.UTF_8))) {
             return buffer.lines().collect(Collectors.joining("\n"));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
