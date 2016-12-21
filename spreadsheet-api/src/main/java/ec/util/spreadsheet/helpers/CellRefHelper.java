@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 public final class CellRefHelper {
 
     private static final Pattern REF_PATTERN = Pattern.compile("(\\w+?)(\\d+?)");
-    private static final int NO_MATCH_INDEX = -1;
     private Matcher m;
 
     public boolean parse(@Nullable String ref) {
@@ -47,8 +46,9 @@ public final class CellRefHelper {
      * @return
      */
     @Nonnegative
-    public int getColumnIndex() {
-        return m == null ? NO_MATCH_INDEX : getColumnIndex(m.group(1));
+    public int getColumnIndex() throws IllegalStateException {
+        checkMatch();
+        return getColumnIndex(m.group(1));
     }
 
     /**
@@ -57,8 +57,15 @@ public final class CellRefHelper {
      * @return
      */
     @Nonnegative
-    public int getRowIndex() {
-        return m == null ? NO_MATCH_INDEX : (Integer.parseInt(m.group(2)) - 1);
+    public int getRowIndex() throws IllegalStateException {
+        checkMatch();
+        return Integer.parseInt(m.group(2)) - 1;
+    }
+
+    private void checkMatch() throws IllegalStateException {
+        if (m == null) {
+            throw new IllegalStateException();
+        }
     }
 
     //@VisibleForTesting
@@ -72,12 +79,14 @@ public final class CellRefHelper {
     }
 
     @Nonnull
-    public static String getRowLabel(@Nonnegative int rowIndex) {
+    public static String getRowLabel(@Nonnegative int rowIndex) throws IndexOutOfBoundsException {
+        checkNonNegative(rowIndex);
         return Integer.toString(rowIndex + 1);
     }
 
     @Nonnull
-    public static String getColumnLabel(@Nonnegative int columnIndex) {
+    public static String getColumnLabel(@Nonnegative int columnIndex) throws IndexOutOfBoundsException {
+        checkNonNegative(columnIndex);
         int dividend = columnIndex + 1;
         String result = "";
         int modulo;
@@ -92,7 +101,13 @@ public final class CellRefHelper {
     }
 
     @Nonnull
-    public static String getCellRef(@Nonnegative int rowIndex, @Nonnegative int columnIndex) {
+    public static String getCellRef(@Nonnegative int rowIndex, @Nonnegative int columnIndex) throws IndexOutOfBoundsException {
         return getColumnLabel(columnIndex) + getRowLabel(rowIndex);
+    }
+
+    private static void checkNonNegative(int index) throws IndexOutOfBoundsException {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Expected: non-negative index, found:" + index);
+        }
     }
 }
