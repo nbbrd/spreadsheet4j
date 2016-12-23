@@ -16,7 +16,7 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import static ec.util.spreadsheet.helpers.ArraySheetAssert.assertThat;
+import static internal.ArraySheetAssert.assertThat;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;

@@ -19,6 +19,9 @@ package ec.util.spreadsheet.helpers;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 /**
  *
  * @author Philippe Charles
@@ -29,8 +32,8 @@ public class ArrayBookTest {
         return new ArrayBook(sheets);
     }
 
-    final ArraySheet s1 = ArraySheet.builder().value(0, 0, 123).build();
-    final ArraySheet s2 = ArraySheet.builder().value(2, 0, "hello").build();
+    final ArraySheet s1 = ArraySheet.builder().name("S1").value(0, 0, 123).build();
+    final ArraySheet s2 = ArraySheet.builder().name("S2").value(2, 0, "hello").build();
 
     @Test
     public void testCopy() {
@@ -57,5 +60,14 @@ public class ArrayBookTest {
         Assert.assertEquals(book, newBook(s1, s2));
         Assert.assertNotEquals(book, newBook(s1));
         Assert.assertNotEquals(book, newBook(s2, s1));
+    }
+
+    @Test
+    public void testGetSheetName() {
+        ArrayBook book = newBook(s1, s2);
+        assertThat(book.getSheetName(0)).isEqualTo("S1");
+        assertThat(book.getSheetName(1)).isEqualTo("S2");
+        assertThatThrownBy(() -> book.getSheetName(-1)).isInstanceOf(IndexOutOfBoundsException.class);
+        assertThatThrownBy(() -> book.getSheetName(2)).isInstanceOf(IndexOutOfBoundsException.class);
     }
 }

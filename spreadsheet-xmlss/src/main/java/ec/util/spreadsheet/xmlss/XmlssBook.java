@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+
+import ec.util.spreadsheet.helpers.ArraySheet;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -45,9 +47,9 @@ final class XmlssBook extends Book {
         return new XmlssBook(handler.build());
     }
 
-    private final List<Sheet> sheets;
+    private final List<ArraySheet> sheets;
 
-    private XmlssBook(List<Sheet> sheets) {
+    private XmlssBook(List<ArraySheet> sheets) {
         this.sheets = sheets;
     }
 
@@ -79,7 +81,7 @@ final class XmlssBook extends Book {
         private static final String CELL_TAG = "Cell";
         private static final String DATA_TAG = "Data";
 
-        private final List<Sheet> sheets;
+        private final List<ArraySheet> sheets;
         private int rowNum;
         private int colNum;
         private String dataType;
@@ -95,7 +97,7 @@ final class XmlssBook extends Book {
             this.builder = XmlssSheetBuilder.create();
         }
 
-        public List<Sheet> build() {
+        public List<ArraySheet> build() {
             return new ArrayList<>(sheets);
         }
 

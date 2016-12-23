@@ -42,7 +42,7 @@ abstract class XmlssSheetBuilder {
     abstract public XmlssSheetBuilder clear();
 
     @Nonnull
-    abstract public Sheet build();
+    abstract public ArraySheet build();
 
     @Nonnull
     public static XmlssSheetBuilder create() {
@@ -115,7 +115,7 @@ abstract class XmlssSheetBuilder {
         }
 
         @Override
-        public Sheet build() {
+        public ArraySheet build() {
             return sheetDataBuilder.build();
         }
     }

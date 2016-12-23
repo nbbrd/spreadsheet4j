@@ -21,12 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Optional;
 import javax.xml.stream.XMLOutputFactory;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -71,20 +66,16 @@ public class HtmlBookFactory extends Book.Factory {
 
     @Override
     public void store(OutputStream stream, Book book) throws IOException {
-        newWriter().write(stream, book);
+        newWriter().write(book, stream);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
-    private JsoupBookReader newReader() {
-        return new JsoupBookReader(Optional.empty(), "");
+    private HtmlBookReader newReader() {
+        return new HtmlBookReader();
     }
 
-    private XMLStreamBookWriter newWriter() {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
-        numberFormat.setMaximumFractionDigits(9);
-        numberFormat.setMaximumIntegerDigits(12);
-        return new XMLStreamBookWriter(xof, dateFormat, numberFormat, StandardCharsets.UTF_8);
+    private HtmlBookWriter newWriter() {
+        return new HtmlBookWriter(xof);
     }
     //</editor-fold>
 }

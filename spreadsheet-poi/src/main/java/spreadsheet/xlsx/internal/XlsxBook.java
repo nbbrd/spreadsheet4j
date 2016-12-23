@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxNumberingFormat;
@@ -92,6 +93,11 @@ public final class XlsxBook extends Book {
     public Sheet getSheet(int index) throws IOException {
         SheetMeta meta = sheets.get(index);
         return parseSheet(meta.name, sheetBuilder, () -> pkg.getSheet(meta.relationId), parser);
+    }
+
+    @Override
+    public String getSheetName(@Nonnegative int index) {
+        return sheets.get(index).getName();
     }
 
     static void closeAll(IOException initial, Closeable... closeables) throws IOException {
