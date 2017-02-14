@@ -58,7 +58,9 @@ final class XmlssBook extends Book {
             reader.setContentHandler(handler);
             reader.parse(new InputSource(stream));
         } catch (SAXException ex) {
-            throw new RuntimeException("While parsing xml", ex);
+            if (!ex.getMessage().contains("Content is not allowed in trailing section")) {
+                throw new RuntimeException("While parsing xml", ex);
+            }
         }
     }
 
