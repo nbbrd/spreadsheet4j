@@ -40,6 +40,7 @@
         <assertj.version>3.8.0</assertj.version>
         <netbeans.version>RELEASE81</netbeans.version>
         <lombok.version>1.16.10</lombok.version>
+        <java-io-util.version>0.0.1-SNAPSHOT</java-io-util.version>
     </properties>
         
     <dependencyManagement>
@@ -69,6 +70,11 @@
                 <groupId>org.netbeans.api</groupId>
                 <artifactId>org-openide-util-lookup</artifactId>
                 <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-util</artifactId>
+                <version>${java-io-util.version}</version>
             </dependency>
             <!-- modules -->
             <dependency>

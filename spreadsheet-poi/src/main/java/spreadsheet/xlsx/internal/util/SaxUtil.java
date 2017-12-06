@@ -16,13 +16,13 @@
  */
 package spreadsheet.xlsx.internal.util;
 
+import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import spreadsheet.xlsx.internal.util.IOUtil.ByteSource;
 
 /**
  *
@@ -38,8 +38,8 @@ public class SaxUtil {
             parse(reader, stream, this);
         }
 
-        default void runWith(XMLReader reader, ByteSource byteSource) throws IOException, SAXException {
-            try (InputStream stream = byteSource.openStream()) {
+        default void runWith(XMLReader reader, IO.Supplier<? extends InputStream> byteSource) throws IOException, SAXException {
+            try (InputStream stream = byteSource.getWithIO()) {
                 runWith(reader, stream);
             }
         }
@@ -52,8 +52,8 @@ public class SaxUtil {
             return build();
         }
 
-        default T getWith(XMLReader reader, ByteSource byteSource) throws IOException, SAXException {
-            try (InputStream stream = byteSource.openStream()) {
+        default T getWith(XMLReader reader, IO.Supplier<? extends InputStream> byteSource) throws IOException, SAXException {
+            try (InputStream stream = byteSource.getWithIO()) {
                 return getWith(reader, stream);
             }
         }

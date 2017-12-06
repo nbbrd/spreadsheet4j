@@ -65,6 +65,10 @@
             <artifactId>spreadsheet-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-io-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>

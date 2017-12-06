@@ -16,6 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
+import ioutil.IO;
+import ioutil.Zip;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,9 +32,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.internal.util.IOUtil;
 import spreadsheet.xlsx.internal.util.SaxUtil;
-import spreadsheet.xlsx.internal.util.ZipUtil;
 
 /**
  *
@@ -47,54 +47,54 @@ public final class DefaultXlsxPackageFactory implements XlsxPackage.Factory {
 
     @Override
     public XlsxPackage open(InputStream stream) throws IOException {
-        return createPackageOrClose(ZipUtil.asByteResource(stream, o -> isValidEntryName(o.getName())));
+        return createPackageOrClose(Zip.Loader.copyOf(stream, o -> isValidEntryName(o.getName())));
     }
 
     @Override
     public XlsxPackage open(Path file) throws IOException {
-        Optional<File> target = IOUtil.getFile(file);
+        Optional<File> target = IO.getFile(file);
         return target.isPresent() ? open(target.get()) : open(Files.newInputStream(file));
     }
 
     private XlsxPackage open(File file) throws IOException {
-        return createPackageOrClose(ZipUtil.asByteResource(file));
+        return createPackageOrClose(Zip.Loader.of(file));
     }
 
-    private XlsxPackage createPackageOrClose(IOUtil.ByteResource resource) throws IOException {
+    private XlsxPackage createPackageOrClose(Zip.Loader resource) throws IOException {
         try {
             return CustomPackage.create(resource);
         } catch (IOException ex) {
-            throw IOUtil.ensureClosed(ex, resource);
+            throw IO.ensureClosed(ex, resource);
         }
     }
 
     static final class CustomPackage implements XlsxPackage {
 
-        static CustomPackage create(IOUtil.ByteResource resource) throws IOException {
-            return new CustomPackage(resource, parseRelationships(() -> resource.openStream(RELATIONSHIPS_ENTRY_NAME)));
+        static CustomPackage create(Zip.Loader resource) throws IOException {
+            return new CustomPackage(resource, parseRelationships(() -> resource.load(RELATIONSHIPS_ENTRY_NAME)));
         }
 
-        private final IOUtil.ByteResource resource;
+        private final Zip.Loader resource;
         private final Map<String, String> relationships;
 
-        private CustomPackage(IOUtil.ByteResource resource, Map<String, String> relationships) {
+        private CustomPackage(Zip.Loader resource, Map<String, String> relationships) {
             this.resource = resource;
             this.relationships = relationships;
         }
 
         @Override
         public InputStream getWorkbook() throws IOException {
-            return resource.openStream(WORKBOOK_ENTRY_NAME);
+            return resource.load(WORKBOOK_ENTRY_NAME);
         }
 
         @Override
         public InputStream getSharedStrings() throws IOException {
-            return resource.openStream(SHARED_STRINGS_ENTRY_NAME);
+            return resource.load(SHARED_STRINGS_ENTRY_NAME);
         }
 
         @Override
         public InputStream getStyles() throws IOException {
-            return resource.openStream(STYLES_ENTRY_NAME);
+            return resource.load(STYLES_ENTRY_NAME);
         }
 
         @Override
@@ -103,7 +103,7 @@ public final class DefaultXlsxPackageFactory implements XlsxPackage.Factory {
             if (target == null) {
                 throw new IOException("Cannot find target for '" + relationId + "'");
             }
-            return resource.openStream("xl/" + target);
+            return resource.load("xl/" + target);
         }
 
         @Override
@@ -129,9 +129,9 @@ public final class DefaultXlsxPackageFactory implements XlsxPackage.Factory {
     private static final String SHARED_STRINGS_ENTRY_NAME = "xl/sharedStrings.xml";
     private static final String STYLES_ENTRY_NAME = "xl/styles.xml";
 
-    private static Map<String, String> parseRelationships(IOUtil.ByteSource byteSource) throws IOException {
+    private static Map<String, String> parseRelationships(IO.Supplier<? extends InputStream> byteSource) throws IOException {
         Map<String, String> result = new HashMap<>();
-        try (InputStream stream = byteSource.openStream()) {
+        try (InputStream stream = byteSource.getWithIO()) {
             new RelationshipsSaxEventHandler(result::put).runWith(XMLReaderFactory.createXMLReader(), stream);
         } catch (SAXException ex) {
             throw new IOException("While parsing relationships", ex);

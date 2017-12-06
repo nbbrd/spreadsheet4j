@@ -16,6 +16,7 @@
  */
 package spreadsheet.xlsx.internal;
 
+import ioutil.Xml;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
@@ -36,7 +37,9 @@ public final class SaxXlsxParser implements XlsxParser {
     @Nonnull
     public static XlsxParser create() throws IOException {
         try {
-            return new SaxXlsxParser(XMLReaderFactory.createXMLReader());
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            Xml.SAX.preventXXE(reader);
+            return new SaxXlsxParser(reader);
         } catch (SAXException ex) {
             throw new IOException("While creating XmlReader", ex);
         }
@@ -44,7 +47,7 @@ public final class SaxXlsxParser implements XlsxParser {
 
     private final XMLReader xmlReader;
 
-    SaxXlsxParser(XMLReader xmlReader) {
+    private SaxXlsxParser(XMLReader xmlReader) {
         this.xmlReader = xmlReader;
     }
 
