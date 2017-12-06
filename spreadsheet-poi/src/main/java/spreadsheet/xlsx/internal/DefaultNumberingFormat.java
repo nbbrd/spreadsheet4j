@@ -25,9 +25,9 @@ import spreadsheet.xlsx.XlsxNumberingFormat;
  *
  * @author Philippe Charles
  */
-public final class DefaultXlsxNumberingFormat implements XlsxNumberingFormat {
+public enum DefaultNumberingFormat implements XlsxNumberingFormat {
 
-    public static final XlsxNumberingFormat INSTANCE = new DefaultXlsxNumberingFormat();
+    INSTANCE;
 
     @Override
     public boolean isExcelDateFormat(int numFmtId, String formatCode) {

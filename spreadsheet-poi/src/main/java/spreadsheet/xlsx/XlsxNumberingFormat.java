@@ -18,7 +18,7 @@ package spreadsheet.xlsx;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import spreadsheet.xlsx.internal.DefaultXlsxNumberingFormat;
+import spreadsheet.xlsx.internal.DefaultNumberingFormat;
 
 /**
  * Class that deals with the formatting of numbers in Excel.
@@ -46,6 +46,6 @@ public interface XlsxNumberingFormat {
      */
     @Nonnull
     static XlsxNumberingFormat getDefault() {
-        return DefaultXlsxNumberingFormat.INSTANCE;
+        return DefaultNumberingFormat.INSTANCE;
     }
 }

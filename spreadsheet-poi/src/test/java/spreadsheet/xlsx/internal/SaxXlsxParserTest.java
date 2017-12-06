@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
+import spreadsheet.xlsx.internal.util.SaxUtil;
 import test.EmptyInputStream;
 
 /**
@@ -45,7 +46,7 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testWorkbookSax2EventHandler() throws IOException {
-        XlsxParser parser = SaxXlsxParser.create();
+        XlsxParser parser = new SaxXlsxParser(SaxUtil.createReader());
 
         XlsxBook.WorkbookData data = XlsxBook.parseWorkbook(() -> files.applyWithIO("/workbook.xml"), parser);
         assertThat(data.getSheets())
@@ -66,7 +67,7 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testSheetSax2EventHandler() throws IOException {
-        XlsxParser parser = SaxXlsxParser.create();
+        XlsxParser parser = new SaxXlsxParser(SaxUtil.createReader());
 
         XlsxSheetBuilder b = XlsxSheetBuilder.Factory.getDefault()
                 .create(XlsxDateSystems.X1904,
@@ -94,7 +95,7 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testSharedStringsSax2EventHandler() throws IOException {
-        XlsxParser parser = SaxXlsxParser.create();
+        XlsxParser parser = new SaxXlsxParser(SaxUtil.createReader());
 
         assertThat(XlsxBook.parseSharedStrings(() -> files.applyWithIO("/Sst.xml"), parser))
                 .contains("Cell A1", atIndex(0))
@@ -111,7 +112,7 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testStylesSax2EventHandler() throws IOException {
-        XlsxParser parser = SaxXlsxParser.create();
+        XlsxParser parser = new SaxXlsxParser(SaxUtil.createReader());
 
         XlsxNumberingFormat df = XlsxNumberingFormat.getDefault();
 

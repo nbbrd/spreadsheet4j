@@ -92,7 +92,7 @@ public class XlsxBookTest {
 
     @Test
     public void testParseStyles() throws IOException {
-        XlsxNumberingFormat nf = DefaultXlsxNumberingFormat.INSTANCE;
+        XlsxNumberingFormat nf = DefaultNumberingFormat.INSTANCE;
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(nf, boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);

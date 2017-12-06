@@ -43,6 +43,7 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor
 public final class XlsxBook extends Book {
 
     @Nonnull
@@ -71,13 +72,6 @@ public final class XlsxBook extends Book {
     private final XlsxParser parser;
     private final List<SheetMeta> sheets;
     private final XlsxSheetBuilder sheetBuilder;
-
-    private XlsxBook(XlsxPackage pkg, XlsxParser parser, List<SheetMeta> sheets, XlsxSheetBuilder sheetBuilder) {
-        this.pkg = pkg;
-        this.parser = parser;
-        this.sheets = sheets;
-        this.sheetBuilder = sheetBuilder;
-    }
 
     @Override
     public void close() throws IOException {

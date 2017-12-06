@@ -20,6 +20,7 @@ import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
@@ -90,17 +91,17 @@ final class PoiCell extends ec.util.spreadsheet.Cell {
 
     private static Type getType(Cell cell) {
         switch (getFinalType(cell)) {
-            case Cell.CELL_TYPE_STRING:
+            case STRING:
                 return Type.STRING;
-            case Cell.CELL_TYPE_NUMERIC:
+            case NUMERIC:
                 return DateUtil.isCellDateFormatted(cell) ? Type.DATE : Type.NUMBER;
             default:
                 return null;
         }
     }
 
-    private static int getFinalType(Cell cell) {
-        int result = cell.getCellType();
-        return result != Cell.CELL_TYPE_FORMULA ? result : cell.getCachedFormulaResultType();
+    private static CellType getFinalType(Cell cell) {
+        CellType result = cell.getCellTypeEnum();
+        return result != CellType.FORMULA ? result : cell.getCachedFormulaResultTypeEnum();
     }
 }

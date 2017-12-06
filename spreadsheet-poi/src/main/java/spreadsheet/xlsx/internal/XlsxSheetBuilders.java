@@ -39,11 +39,8 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  * @author Philippe Charles
  * @since 2.2.0
  */
+@lombok.experimental.UtilityClass
 public final class XlsxSheetBuilders {
-
-    private XlsxSheetBuilders() {
-        // static class
-    }
 
     @Nonnull
     public static XlsxSheetBuilder create(

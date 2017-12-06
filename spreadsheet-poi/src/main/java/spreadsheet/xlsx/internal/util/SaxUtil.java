@@ -17,12 +17,15 @@
 package spreadsheet.xlsx.internal.util;
 
 import ioutil.IO;
+import ioutil.Xml;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnull;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  *
@@ -31,6 +34,17 @@ import org.xml.sax.XMLReader;
  */
 @lombok.experimental.UtilityClass
 public class SaxUtil {
+
+    @Nonnull
+    public static XMLReader createReader() throws IOException {
+        try {
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            Xml.SAX.preventXXE(reader);
+            return reader;
+        } catch (SAXException ex) {
+            throw new IOException("While creating XmlReader", ex);
+        }
+    }
 
     public interface ContentRunner extends ContentHandler {
 

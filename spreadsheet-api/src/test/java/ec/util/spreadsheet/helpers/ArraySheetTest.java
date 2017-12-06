@@ -16,7 +16,7 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import internal.ArraySheetAssert;
+import test.ArraySheetAssert;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
 import java.io.ByteArrayInputStream;
