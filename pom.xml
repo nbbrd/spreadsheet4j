@@ -115,6 +115,14 @@
             <id>netbeans</id>
             <url>http://bits.netbeans.org/nexus/content/groups/netbeans/</url>
         </repository>
+        <repository>
+            <id>oss-jfrog-artifactory-releases</id>
+            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+        </repository>
+        <repository>
+            <id>oss-jfrog-artifactory-snapshots</id>
+            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </repository>
     </repositories>
 
     <build>
