@@ -18,12 +18,10 @@ package spreadsheet.xlsx.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.internal.util.SaxUtil;
 
@@ -31,22 +29,11 @@ import spreadsheet.xlsx.internal.util.SaxUtil;
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor
 public final class SaxXlsxParser implements XlsxParser {
 
-    @Nonnull
-    public static XlsxParser create() throws IOException {
-        try {
-            return new SaxXlsxParser(XMLReaderFactory.createXMLReader());
-        } catch (SAXException ex) {
-            throw new IOException("While creating XmlReader", ex);
-        }
-    }
-
+    @lombok.NonNull
     private final XMLReader xmlReader;
-
-    SaxXlsxParser(XMLReader xmlReader) {
-        this.xmlReader = xmlReader;
-    }
 
     @Override
     public void visitWorkbook(InputStream stream, WorkbookVisitor visitor) throws IOException {
@@ -91,34 +78,15 @@ public final class SaxXlsxParser implements XlsxParser {
     /**
      * FIXME: missing support of inline string <is><t>hello</t></is>
      */
+    @lombok.RequiredArgsConstructor
     private static final class SheetSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
 
-        private static final String CELL_TAG = "c";
-        private static final String REFERENCE_ATTRIBUTE = "r";
-        private static final String STYLE_INDEX_ATTRIBUTE = "s";
-        private static final String CELL_DATA_TYPE_ATTRIBUTE = "t";
-        private static final String CELL_VALUE_TAG = "v";
-        private static final String SHEET_DIMENSIONS_TAG = "dimension";
-        private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
-        private static final String SHEET_DATA_TAG = "sheetData";
-        //private static final String INLINE_STRING_TAG = "is";
-
         private final SheetVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder;
-        private String sheetBounds;
-        private String ref;
-        private String rawDataType;
-        private Integer rawStyleIndex;
-
-        SheetSaxEventHandler(SheetVisitor visitor) {
-            this.visitor = visitor;
-            this.stringBuilder = new SaxUtil.SaxStringBuilder();
-
-            this.sheetBounds = null;
-            this.ref = null;
-            this.rawDataType = null;
-            this.rawStyleIndex = null;
-        }
+        private final SaxUtil.SaxStringBuilder stringBuilder = new SaxUtil.SaxStringBuilder();
+        private String sheetBounds = null;
+        private String ref = null;
+        private String rawDataType = null;
+        private Integer rawStyleIndex = null;
 
         @Override
         public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
@@ -156,24 +124,25 @@ public final class SaxXlsxParser implements XlsxParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             stringBuilder.appendIfNeeded(ch, start, length);
         }
+
+        private static final String CELL_TAG = "c";
+        private static final String REFERENCE_ATTRIBUTE = "r";
+        private static final String STYLE_INDEX_ATTRIBUTE = "s";
+        private static final String CELL_DATA_TYPE_ATTRIBUTE = "t";
+        private static final String CELL_VALUE_TAG = "v";
+        private static final String SHEET_DIMENSIONS_TAG = "dimension";
+        private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
+        private static final String SHEET_DATA_TAG = "sheetData";
+        //private static final String INLINE_STRING_TAG = "is";
     }
 
     /**
      * http://msdn.microsoft.com/en-us/library/office/documentformat.openxml.spreadsheet.aspx
      */
+    @lombok.RequiredArgsConstructor
     private static final class WorkbookSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
 
-        private static final String SHEET_TAG = "sheet";
-        private static final String WORKBOOK_PROPERTIES_TAG = "workbookPr";
-        private static final String DATE1904_ATTRIBUTE = "date1904";
-        private static final String SHEET_TAB_ID_ATTRIBUTE = "r:id";
-        private static final String SHEET_NAME_ATTRIBUTE = "name";
-
         private final WorkbookVisitor visitor;
-
-        WorkbookSaxEventHandler(WorkbookVisitor visitor) {
-            this.visitor = visitor;
-        }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -186,23 +155,22 @@ public final class SaxXlsxParser implements XlsxParser {
                     break;
             }
         }
+
+        private static final String SHEET_TAG = "sheet";
+        private static final String WORKBOOK_PROPERTIES_TAG = "workbookPr";
+        private static final String DATE1904_ATTRIBUTE = "date1904";
+        private static final String SHEET_TAB_ID_ATTRIBUTE = "r:id";
+        private static final String SHEET_NAME_ATTRIBUTE = "name";
     }
 
     /**
      * http://msdn.microsoft.com/en-us/library/office/gg278314.aspx
      */
+    @lombok.RequiredArgsConstructor
     private static final class SharedStringsSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
 
-        private static final String SHARED_STRING_ITEM_TAG = "si";
-        private static final String TEXT_TAG = "t";
-
         private final SharedStringsVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder;
-
-        SharedStringsSaxEventHandler(SharedStringsVisitor visitor) {
-            this.visitor = visitor;
-            this.stringBuilder = new SaxUtil.SaxStringBuilder();
-        }
+        private final SaxUtil.SaxStringBuilder stringBuilder = new SaxUtil.SaxStringBuilder();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -232,23 +200,16 @@ public final class SaxXlsxParser implements XlsxParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             stringBuilder.appendIfNeeded(ch, start, length);
         }
+
+        private static final String SHARED_STRING_ITEM_TAG = "si";
+        private static final String TEXT_TAG = "t";
     }
 
+    @lombok.RequiredArgsConstructor
     private static final class StylesSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
 
-        private static final String CELL_FORMAT_TAG = "xf";
-        private static final String CELL_FORMATS_TAG = "cellXfs";
-        private static final String NUMBER_FORMAT_TAG = "numFmt";
-        private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
-        private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
-
         private final StylesVisitor visitor;
-        private boolean insideGroupTag;
-
-        StylesSaxEventHandler(StylesVisitor visitor) {
-            this.visitor = visitor;
-            this.insideGroupTag = false;
-        }
+        private boolean insideGroupTag = false;
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -283,5 +244,11 @@ public final class SaxXlsxParser implements XlsxParser {
                 insideGroupTag = false;
             }
         }
+
+        private static final String CELL_FORMAT_TAG = "xf";
+        private static final String CELL_FORMATS_TAG = "cellXfs";
+        private static final String NUMBER_FORMAT_TAG = "numFmt";
+        private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
+        private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
     }
 }

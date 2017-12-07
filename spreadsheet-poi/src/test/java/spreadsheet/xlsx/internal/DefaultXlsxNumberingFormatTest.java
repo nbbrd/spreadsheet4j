@@ -18,7 +18,7 @@ package spreadsheet.xlsx.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static spreadsheet.xlsx.internal.DefaultXlsxNumberingFormat.isCustomExcelDateFormat;
+import static spreadsheet.xlsx.internal.DefaultNumberingFormat.isCustomExcelDateFormat;
 
 /**
  *

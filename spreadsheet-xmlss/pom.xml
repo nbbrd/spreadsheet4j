@@ -27,6 +27,10 @@
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-io-util</artifactId>
+        </dependency>
         <!-- test only -->
         <dependency>
             <groupId>junit</groupId>

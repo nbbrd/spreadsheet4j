@@ -22,6 +22,7 @@ import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import spreadsheet.xlsx.internal.SaxXlsxParser;
+import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  * Parser for Office Open XML files.
@@ -76,7 +77,7 @@ public interface XlsxParser extends Closeable {
 
         @Nonnull
         static Factory getDefault() {
-            return SaxXlsxParser::create;
+            return () -> new SaxXlsxParser(SaxUtil.createReader());
         }
     }
 }

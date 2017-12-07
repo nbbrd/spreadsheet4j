@@ -17,12 +17,12 @@
 package spreadsheet.xlsx;
 
 import ec.util.spreadsheet.Book;
+import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.internal.XlsxBook;
-import spreadsheet.xlsx.internal.util.IOUtil;
 
 /**
  *
@@ -53,7 +53,7 @@ public final class XlsxReader {
         try {
             return XlsxBook.create(pkg, this);
         } catch (IOException ex) {
-            throw IOUtil.ensureClosed(ex, pkg);
+            throw IO.ensureClosed(ex, pkg);
         }
     }
 }

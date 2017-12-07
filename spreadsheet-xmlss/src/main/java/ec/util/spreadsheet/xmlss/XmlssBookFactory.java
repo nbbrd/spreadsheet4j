@@ -17,6 +17,7 @@
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
+import ioutil.Xml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +71,9 @@ public class XmlssBookFactory extends Book.Factory {
     @Nonnull
     private static XMLReader createXMLReader() throws IOException {
         try {
-            return XMLReaderFactory.createXMLReader();
+            XMLReader result = XMLReaderFactory.createXMLReader();
+            Xml.SAX.preventXXE(result);
+            return result;
         } catch (SAXException ex) {
             throw new IOException("While creating XmlReader", ex);
         }

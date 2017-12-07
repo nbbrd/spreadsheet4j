@@ -18,6 +18,7 @@ package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
+import ioutil.IO;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,12 +38,12 @@ import spreadsheet.xlsx.XlsxPackage;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxReader;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import spreadsheet.xlsx.internal.util.IOUtil;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor
 public final class XlsxBook extends Book {
 
     @Nonnull
@@ -71,13 +72,6 @@ public final class XlsxBook extends Book {
     private final XlsxParser parser;
     private final List<SheetMeta> sheets;
     private final XlsxSheetBuilder sheetBuilder;
-
-    private XlsxBook(XlsxPackage pkg, XlsxParser parser, List<SheetMeta> sheets, XlsxSheetBuilder sheetBuilder) {
-        this.pkg = pkg;
-        this.parser = parser;
-        this.sheets = sheets;
-        this.sheetBuilder = sheetBuilder;
-    }
 
     @Override
     public void close() throws IOException {
@@ -135,9 +129,9 @@ public final class XlsxBook extends Book {
         String name;
     }
 
-    static WorkbookData parseWorkbook(IOUtil.ByteSource byteSource, XlsxParser parser) throws IOException {
+    static WorkbookData parseWorkbook(IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
         WorkbookVisitorImpl result = new WorkbookVisitorImpl();
-        try (InputStream stream = byteSource.openStream()) {
+        try (InputStream stream = byteSource.getWithIO()) {
             parser.visitWorkbook(stream, result);
         }
         return result.build();
@@ -163,17 +157,17 @@ public final class XlsxBook extends Book {
         }
     }
 
-    static List<String> parseSharedStrings(IOUtil.ByteSource byteSource, XlsxParser parser) throws IOException {
+    static List<String> parseSharedStrings(IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
         List<String> result = new ArrayList<>();
-        try (InputStream stream = byteSource.openStream()) {
+        try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSharedStrings(stream, o -> result.add(Objects.requireNonNull(o)));
         }
         return result;
     }
 
-    static List<Boolean> parseStyles(XlsxNumberingFormat dateFormat, IOUtil.ByteSource byteSource, XlsxParser parser) throws IOException {
+    static List<Boolean> parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
         StylesVisitorImpl result = new StylesVisitorImpl(dateFormat);
-        try (InputStream stream = byteSource.openStream()) {
+        try (InputStream stream = byteSource.getWithIO()) {
             parser.visitStyles(stream, result);
         }
         return result.build();
@@ -213,9 +207,9 @@ public final class XlsxBook extends Book {
         }
     }
 
-    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IOUtil.ByteSource byteSource, XlsxParser parser) throws IOException {
+    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
         SheetVisitorImpl result = new SheetVisitorImpl(name, sheetBuilder);
-        try (InputStream stream = byteSource.openStream()) {
+        try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSheet(stream, result);
         }
         return result.build();

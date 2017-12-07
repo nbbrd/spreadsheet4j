@@ -16,13 +16,16 @@
  */
 package spreadsheet.xlsx.internal.util;
 
+import ioutil.IO;
+import ioutil.Xml;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnull;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
-import spreadsheet.xlsx.internal.util.IOUtil.ByteSource;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  *
@@ -32,14 +35,25 @@ import spreadsheet.xlsx.internal.util.IOUtil.ByteSource;
 @lombok.experimental.UtilityClass
 public class SaxUtil {
 
+    @Nonnull
+    public static XMLReader createReader() throws IOException {
+        try {
+            XMLReader reader = XMLReaderFactory.createXMLReader();
+            Xml.SAX.preventXXE(reader);
+            return reader;
+        } catch (SAXException ex) {
+            throw new IOException("While creating XmlReader", ex);
+        }
+    }
+
     public interface ContentRunner extends ContentHandler {
 
         default void runWith(XMLReader reader, InputStream stream) throws IOException, SAXException {
             parse(reader, stream, this);
         }
 
-        default void runWith(XMLReader reader, ByteSource byteSource) throws IOException, SAXException {
-            try (InputStream stream = byteSource.openStream()) {
+        default void runWith(XMLReader reader, IO.Supplier<? extends InputStream> byteSource) throws IOException, SAXException {
+            try (InputStream stream = byteSource.getWithIO()) {
                 runWith(reader, stream);
             }
         }
@@ -52,8 +66,8 @@ public class SaxUtil {
             return build();
         }
 
-        default T getWith(XMLReader reader, ByteSource byteSource) throws IOException, SAXException {
-            try (InputStream stream = byteSource.openStream()) {
+        default T getWith(XMLReader reader, IO.Supplier<? extends InputStream> byteSource) throws IOException, SAXException {
+            try (InputStream stream = byteSource.getWithIO()) {
                 return getWith(reader, stream);
             }
         }
