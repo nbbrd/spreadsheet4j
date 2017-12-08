@@ -22,15 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import ec.util.spreadsheet.helpers.ArraySheet;
+import ioutil.Sax;
+import ioutil.Xml;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -40,28 +38,30 @@ import org.xml.sax.helpers.DefaultHandler;
 final class XmlssBook extends Book {
 
     @Nonnull
-    public static XmlssBook create(@Nonnull XMLReader reader, @Nonnull InputStream stream) throws IOException {
-        Objects.requireNonNull(stream);
+    public static XmlssBook create(@Nonnull InputStream stream) throws IOException {
+        return new XmlssBook(loadContent(stream));
+    }
+
+    private static List<ArraySheet> loadContent(InputStream stream) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
-        parse(reader, handler, stream);
-        return new XmlssBook(handler.build());
+        try {
+            return Sax.Parser.of(handler, handler::build).parseStream(stream);
+        } catch (Xml.WrappedException ex) {
+            if (isTrailingSectionContentNotAllowed(ex.getCause())) {
+                return handler.build();
+            }
+            throw ex;
+        }
+    }
+
+    private static boolean isTrailingSectionContentNotAllowed(Throwable cause) {
+        return cause instanceof SAXException && cause.getMessage().contains("Content is not allowed in trailing section");
     }
 
     private final List<ArraySheet> sheets;
 
     private XmlssBook(List<ArraySheet> sheets) {
         this.sheets = sheets;
-    }
-
-    private static void parse(XMLReader reader, ContentHandler handler, InputStream stream) throws IOException {
-        try {
-            reader.setContentHandler(handler);
-            reader.parse(new InputSource(stream));
-        } catch (SAXException ex) {
-            if (!ex.getMessage().contains("Content is not allowed in trailing section")) {
-                throw new RuntimeException("While parsing xml", ex);
-            }
-        }
     }
 
     @Override

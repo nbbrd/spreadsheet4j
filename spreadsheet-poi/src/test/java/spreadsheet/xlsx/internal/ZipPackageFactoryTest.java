@@ -17,6 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.SheetAssert;
+import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -24,14 +25,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxPackage;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
-import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  *
@@ -59,7 +58,7 @@ public class ZipPackageFactoryTest {
     }
 
     private void assertPackageContent(XlsxPackage pkg) throws IOException {
-        XlsxParser parser = new SaxXlsxParser(SaxUtil.createReader());
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
         assertThat(XlsxBook.parseWorkbook(pkg::getWorkbook, parser))
                 .satisfies(o -> {

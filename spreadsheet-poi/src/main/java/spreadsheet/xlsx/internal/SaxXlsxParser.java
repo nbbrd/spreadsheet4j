@@ -16,14 +16,16 @@
  */
 package spreadsheet.xlsx.internal;
 
+import ioutil.IO;
+import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import spreadsheet.xlsx.XlsxParser;
-import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  *
@@ -33,56 +35,46 @@ import spreadsheet.xlsx.internal.util.SaxUtil;
 public final class SaxXlsxParser implements XlsxParser {
 
     @lombok.NonNull
-    private final XMLReader xmlReader;
+    private final XMLReader reader;
 
     @Override
     public void visitWorkbook(InputStream stream, WorkbookVisitor visitor) throws IOException {
-        try {
-            new WorkbookSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing workbook", ex);
-        }
+        visit(new WorkbookSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitSharedStrings(InputStream stream, SharedStringsVisitor visitor) throws IOException {
-        try {
-            new SharedStringsSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing shared strings", ex);
-        }
+        visit(new SharedStringsSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitStyles(InputStream stream, StylesVisitor visitor) throws IOException {
-        try {
-            new StylesSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing styles", ex);
-        }
+        visit(new StylesSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitSheet(InputStream stream, SheetVisitor visitor) throws IOException {
-        try {
-            new SheetSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing sheet", ex);
-        }
+        visit(new SheetSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void close() throws IOException {
     }
 
+    private void visit(ContentHandler handler, InputStream stream) throws IOException {
+        Sax.Parser.builder().factory(() -> reader).handler(handler).after(VOID).build().parseStream(stream);
+    }
+
+    private static final IO.Supplier VOID = IO.Supplier.of(null);
+
     /**
      * FIXME: missing support of inline string <is><t>hello</t></is>
      */
     @lombok.RequiredArgsConstructor
-    private static final class SheetSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
+    private static final class SheetSaxEventHandler extends DefaultHandler {
 
         private final SheetVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder = new SaxUtil.SaxStringBuilder();
+        private final SaxStringBuilder stringBuilder = new SaxStringBuilder();
         private String sheetBounds = null;
         private String ref = null;
         private String rawDataType = null;
@@ -140,7 +132,7 @@ public final class SaxXlsxParser implements XlsxParser {
      * http://msdn.microsoft.com/en-us/library/office/documentformat.openxml.spreadsheet.aspx
      */
     @lombok.RequiredArgsConstructor
-    private static final class WorkbookSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
+    private static final class WorkbookSaxEventHandler extends DefaultHandler {
 
         private final WorkbookVisitor visitor;
 
@@ -167,10 +159,10 @@ public final class SaxXlsxParser implements XlsxParser {
      * http://msdn.microsoft.com/en-us/library/office/gg278314.aspx
      */
     @lombok.RequiredArgsConstructor
-    private static final class SharedStringsSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
+    private static final class SharedStringsSaxEventHandler extends DefaultHandler {
 
         private final SharedStringsVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder = new SaxUtil.SaxStringBuilder();
+        private final SaxStringBuilder stringBuilder = new SaxStringBuilder();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -206,7 +198,7 @@ public final class SaxXlsxParser implements XlsxParser {
     }
 
     @lombok.RequiredArgsConstructor
-    private static final class StylesSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
+    private static final class StylesSaxEventHandler extends DefaultHandler {
 
         private final StylesVisitor visitor;
         private boolean insideGroupTag = false;
@@ -250,5 +242,42 @@ public final class SaxXlsxParser implements XlsxParser {
         private static final String NUMBER_FORMAT_TAG = "numFmt";
         private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
         private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
+    }
+
+    private static final class SaxStringBuilder {
+
+        private boolean enabled = false;
+        private StringBuilder content = new StringBuilder();
+
+        public SaxStringBuilder clear() {
+            content = new StringBuilder();
+            return this;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public SaxStringBuilder enable() {
+            this.enabled = true;
+            return this;
+        }
+
+        public SaxStringBuilder disable() {
+            this.enabled = false;
+            return this;
+        }
+
+        public CharSequence build() {
+            // we defer CharSequence@toString()
+            return content;
+        }
+
+        public SaxStringBuilder appendIfNeeded(char[] ch, int start, int length) {
+            if (isEnabled()) {
+                content.append(ch, start, length);
+            }
+            return this;
+        }
     }
 }
