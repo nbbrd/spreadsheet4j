@@ -17,6 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import ioutil.IO;
+import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  *
@@ -82,20 +82,18 @@ public final class DefaultPackage implements XlsxPackage {
 
     private static Map<String, String> parseRelationships(IO.Supplier<? extends InputStream> byteSource) throws IOException {
         Map<String, String> result = new HashMap<>();
-        try (final InputStream stream = byteSource.getWithIO()) {
-            new RelationshipsSaxEventHandler(result::put).runWith(SaxUtil.createReader(), stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing relationships", ex);
-        }
-        return result;
+        return Sax.Parser
+                .of(new RelationshipsSaxEventHandler(result::put), IO.Supplier.of(result))
+                .parseStream(byteSource);
     }
 
     @lombok.AllArgsConstructor
-    private static final class RelationshipsSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
+    private static final class RelationshipsSaxEventHandler extends DefaultHandler {
 
         private static final String RELATIONSHIP_TAG = "Relationship";
         private static final String ID_ATTRIBUTE = "Id";
         private static final String TARGET_ATTRIBUTE = "Target";
+
         private final BiConsumer<String, String> visitor;
 
         @Override

@@ -52,8 +52,9 @@ public final class XlsxReader {
     private Book createBookOrClose(XlsxPackage pkg) throws IOException {
         try {
             return XlsxBook.create(pkg, this);
-        } catch (IOException ex) {
-            throw IO.ensureClosed(ex, pkg);
+        } catch (Error | RuntimeException | IOException ex) {
+            IO.ensureClosed(ex, pkg);
+            throw ex;
         }
     }
 }

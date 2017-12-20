@@ -16,13 +16,13 @@
  */
 package spreadsheet.xlsx;
 
+import ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import spreadsheet.xlsx.internal.SaxXlsxParser;
-import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  * Parser for Office Open XML files.
@@ -77,7 +77,7 @@ public interface XlsxParser extends Closeable {
 
         @Nonnull
         static Factory getDefault() {
-            return () -> new SaxXlsxParser(SaxUtil.createReader());
+            return () -> new SaxXlsxParser(Sax.createReader());
         }
     }
 }

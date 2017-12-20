@@ -38,9 +38,10 @@ public class XlsxBookTest {
 
     private final IO.Supplier<? extends InputStream> empty = EmptyInputStream::new;
     private final IO.Supplier<? extends InputStream> boom = IO.Supplier.throwing(CustomIOException::new);
-    private final XlsxParser emptyParser = new CustomParser();
+    private final XlsxParser emptyParser = new NoOpParser();
 
     @Test
+    @SuppressWarnings("null")
     public void testParseSharedStrings() throws IOException {
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);
@@ -115,6 +116,7 @@ public class XlsxBookTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testParseWorkbook() throws IOException {
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);
@@ -141,7 +143,7 @@ public class XlsxBookTest {
     }
 
     private static XlsxParser parserOnSharedStrings(IO.Consumer<? super XlsxParser.SharedStringsVisitor> consumer) {
-        return new CustomParser() {
+        return new NoOpParser() {
             @Override
             public void visitSharedStrings(InputStream s, XlsxParser.SharedStringsVisitor v) throws IOException {
                 consumer.acceptWithIO(v);
@@ -150,7 +152,7 @@ public class XlsxBookTest {
     }
 
     private static XlsxParser parserOnSheet(IO.Consumer<? super XlsxParser.SheetVisitor> consumer) {
-        return new CustomParser() {
+        return new NoOpParser() {
             @Override
             public void visitSheet(InputStream s, XlsxParser.SheetVisitor v) throws IOException {
                 consumer.acceptWithIO(v);
@@ -159,7 +161,7 @@ public class XlsxBookTest {
     }
 
     private static XlsxParser parserOnStyles(IO.Consumer<? super XlsxParser.StylesVisitor> consumer) {
-        return new CustomParser() {
+        return new NoOpParser() {
             @Override
             public void visitStyles(InputStream s, XlsxParser.StylesVisitor v) throws IOException {
                 consumer.acceptWithIO(v);
@@ -168,7 +170,7 @@ public class XlsxBookTest {
     }
 
     private static XlsxParser parserOnWorkbook(IO.Consumer<? super XlsxParser.WorkbookVisitor> consumer) {
-        return new CustomParser() {
+        return new NoOpParser() {
             @Override
             public void visitWorkbook(InputStream s, XlsxParser.WorkbookVisitor v) throws IOException {
                 consumer.acceptWithIO(v);
@@ -176,7 +178,7 @@ public class XlsxBookTest {
         };
     }
 
-    private static class CustomParser implements XlsxParser {
+    private static class NoOpParser implements XlsxParser {
 
         @Override
         public void visitWorkbook(InputStream s, WorkbookVisitor v) throws IOException {
