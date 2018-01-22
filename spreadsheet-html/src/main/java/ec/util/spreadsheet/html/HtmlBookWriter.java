@@ -46,7 +46,9 @@ final class HtmlBookWriter {
     private static final String STYLE = getStyleContent();
 
     private final XMLOutputFactory xof;
+    @Deprecated
     private DateFormat dateFormat;
+    @Deprecated
     private NumberFormat numberFormat;
     private Charset charset;
 
@@ -59,10 +61,12 @@ final class HtmlBookWriter {
         this.charset = StandardCharsets.UTF_8;
     }
 
+    @Deprecated
     public void setDateFormat(@Nonnull DateFormat dateFormat) {
         this.dateFormat = Objects.requireNonNull(dateFormat);
     }
 
+    @Deprecated
     public void setNumberFormat(@Nonnull NumberFormat numberFormat) {
         this.numberFormat = Objects.requireNonNull(numberFormat);
     }

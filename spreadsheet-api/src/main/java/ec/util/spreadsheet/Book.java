@@ -28,6 +28,7 @@ import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Date;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 import javax.annotation.Nonnegative;
@@ -257,6 +258,12 @@ public abstract class Book implements Closeable {
                 // if this Path is not associated with the default provider 
                 return false;
             }
+        }
+
+        public boolean isSupportedDataType(@Nonnull Class<?> type) {
+            return Date.class.isAssignableFrom(type)
+                    || Number.class.isAssignableFrom(type)
+                    || String.class.isAssignableFrom(type);
         }
     }
 }

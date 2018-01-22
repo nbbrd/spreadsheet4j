@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Date;
+import org.assertj.core.api.Assertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -39,6 +41,14 @@ public class HtmlBookFactoryTest {
         File valid = createContent(temp.newFile("valid.htm"));
         File invalid = temp.newFile("invalid.htm");
         assertThat(new HtmlBookFactory()).isCompliant(valid, invalid);
+    }
+
+    @Test
+    public void testIsSupportedDataType() {
+        HtmlBookFactory f = new HtmlBookFactory();
+        Assertions.assertThat(f.isSupportedDataType(Date.class)).isFalse();
+        Assertions.assertThat(f.isSupportedDataType(Number.class)).isFalse();
+        Assertions.assertThat(f.isSupportedDataType(String.class)).isTrue();
     }
 
     private static File createContent(File file) throws IOException {

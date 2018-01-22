@@ -16,7 +16,11 @@
  */
 package ec.util.spreadsheet;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
@@ -68,5 +72,35 @@ public class BookTest {
         assertThat(mock.getSheetName(0)).isEqualTo("hello");
         assertThatThrownBy(() -> mock.getSheetName(-1)).isInstanceOf(IndexOutOfBoundsException.class);
         assertThatThrownBy(() -> mock.getSheetName(1)).isInstanceOf(IndexOutOfBoundsException.class);
+    }
+
+    @Test
+    public void testIsSupportedDataType() {
+        Book.Factory mock = new Book.Factory() {
+            @Override
+            public String getName() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public Book load(InputStream stream) throws IOException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public void store(OutputStream stream, Book book) throws IOException {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public boolean accept(File pathname) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+        assertThat(mock.isSupportedDataType(String.class)).isTrue();
+        assertThat(mock.isSupportedDataType(Number.class)).isTrue();
+        assertThat(mock.isSupportedDataType(Date.class)).isTrue();
+        assertThat(mock.isSupportedDataType(Double.class)).isTrue();
+        assertThat(mock.isSupportedDataType(Book.class)).isFalse();
     }
 }
