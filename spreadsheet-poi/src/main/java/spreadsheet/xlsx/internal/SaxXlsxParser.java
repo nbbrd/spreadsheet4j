@@ -218,13 +218,18 @@ public final class SaxXlsxParser implements XlsxParser {
                         }
                     }
                     break;
+                case NUMBER_FORMATS_TAG:
+                    insideGroupTag = true;
+                    break;
                 case NUMBER_FORMAT_TAG:
-                    try {
-                        visitor.onNumberFormat(
-                                Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)),
-                                attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
-                    } catch (NumberFormatException ex) {
-                        throw new SAXException(ex);
+                    if (insideGroupTag) {
+                        try {
+                            visitor.onNumberFormat(
+                                    Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)),
+                                    attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
+                        } catch (NumberFormatException ex) {
+                            throw new SAXException(ex);
+                        }
                     }
                     break;
             }
@@ -232,7 +237,7 @@ public final class SaxXlsxParser implements XlsxParser {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals(CELL_FORMATS_TAG)) {
+            if (qName.equals(CELL_FORMATS_TAG) || qName.equals(NUMBER_FORMATS_TAG)) {
                 insideGroupTag = false;
             }
         }
@@ -240,6 +245,7 @@ public final class SaxXlsxParser implements XlsxParser {
         private static final String CELL_FORMAT_TAG = "xf";
         private static final String CELL_FORMATS_TAG = "cellXfs";
         private static final String NUMBER_FORMAT_TAG = "numFmt";
+        private static final String NUMBER_FORMATS_TAG = "numFmts";
         private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
         private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
     }

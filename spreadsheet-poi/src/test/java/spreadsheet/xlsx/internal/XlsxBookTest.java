@@ -104,11 +104,6 @@ public class XlsxBookTest {
             throw new CustomIOException();
         }))).isInstanceOf(CustomIOException.class);
 
-        assertThatThrownBy(() -> XlsxBook.parseStyles(nf, empty, parserOnStyles(o -> {
-            o.onCellFormat(14);
-            o.onNumberFormat(14, null);
-        }))).isInstanceOf(IllegalStateException.class);
-
         assertThat(XlsxBook.parseStyles(nf, empty, parserOnStyles(o -> {
             o.onNumberFormat(1000, "");
             o.onCellFormat(14);

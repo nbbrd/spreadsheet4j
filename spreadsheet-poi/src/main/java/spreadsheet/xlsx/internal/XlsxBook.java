@@ -178,31 +178,25 @@ public final class XlsxBook extends Book {
         private final XlsxNumberingFormat dateFormat;
         private final List<Integer> orderedListOfIds = new ArrayList<>();
         private final Map<Integer, String> numberFormats = new HashMap<>();
-        private boolean hasCellFormat;
 
         StylesVisitorImpl(XlsxNumberingFormat dateFormat) {
             this.dateFormat = dateFormat;
-            this.hasCellFormat = false;
         }
 
         @Override
         public void onNumberFormat(int formatId, String formatCode) {
-            if (hasCellFormat) {
-                throw new IllegalStateException();
-            }
             numberFormats.put(formatId, formatCode);
         }
 
         @Override
         public void onCellFormat(int formatId) {
-            hasCellFormat = true;
             orderedListOfIds.add(formatId);
         }
 
         public List<Boolean> build() {
             // Style order matters! -> accessed by index in sheets
             return orderedListOfIds.stream()
-                    .map(o -> dateFormat.isExcelDateFormat(o, numberFormats.get(o)))
+                    .map(o -> dateFormat.isExcelDateFormat(o, numberFormats.getOrDefault(o, null)))
                     .collect(Collectors.toList());
         }
     }
