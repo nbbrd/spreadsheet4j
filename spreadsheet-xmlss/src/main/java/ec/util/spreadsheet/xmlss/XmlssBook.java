@@ -47,15 +47,15 @@ final class XmlssBook extends Book {
         try {
             return Sax.Parser.of(handler, handler::build).parseStream(stream);
         } catch (Xml.WrappedException ex) {
-            if (isTrailingSectionContentNotAllowed(ex.getCause())) {
+            if (isTrailingSectionContentNotAllowed(ex.getCause(), handler.isEndWorkbookNotified())) {
                 return handler.build();
             }
             throw ex;
         }
     }
 
-    private static boolean isTrailingSectionContentNotAllowed(Throwable cause) {
-        return cause instanceof SAXException && cause.getMessage().contains("Content is not allowed in trailing section");
+    private static boolean isTrailingSectionContentNotAllowed(Throwable cause, boolean endWorkbookNotified) {
+        return cause instanceof SAXException && endWorkbookNotified;
     }
 
     private final List<ArraySheet> sheets;
@@ -78,6 +78,7 @@ final class XmlssBook extends Book {
     static final class BookSax2EventHandler extends DefaultHandler /*implements IBuilder<ImmutableList<Sheet>>*/ {
 
         private static final String SS_URI = "urn:schemas-microsoft-com:office:spreadsheet";
+        private static final String WORKBOOK_TAG = "Workbook";
         private static final String WORKSHEET_TAG = "Worksheet";
         private static final String ROW_TAG = "Row";
         private static final String CELL_TAG = "Cell";
@@ -89,6 +90,7 @@ final class XmlssBook extends Book {
         private String dataType;
         private String text;
         private final XmlssSheetBuilder builder;
+        private boolean endWorkbookNotified;
 
         public BookSax2EventHandler() {
             this.sheets = new ArrayList<>();
@@ -97,6 +99,11 @@ final class XmlssBook extends Book {
             this.dataType = null;
             this.text = null;
             this.builder = XmlssSheetBuilder.create();
+            this.endWorkbookNotified = false;
+        }
+
+        public boolean isEndWorkbookNotified() {
+            return endWorkbookNotified;
         }
 
         public List<ArraySheet> build() {
@@ -127,6 +134,9 @@ final class XmlssBook extends Book {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             switch (qName) {
+                case WORKBOOK_TAG:
+                    endWorkbookNotified = true;
+                    break;
                 case WORKSHEET_TAG:
                     sheets.add(builder.build());
                     rowNum = -1;
