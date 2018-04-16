@@ -5,13 +5,13 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
     </parent>
 
     <artifactId>spreadsheet-poi</artifactId>
 
     <properties>
-        <poi.version>3.13</poi.version>
+        <poi.version>3.17</poi.version>
     </properties>
 
     <dependencyManagement>
@@ -57,13 +57,16 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.10</version>
             <scope>provided</scope>
         </dependency>
         <!-- compile and runtime -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-io-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>

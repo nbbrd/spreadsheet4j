@@ -17,6 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.SheetAssert;
+import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -24,25 +25,25 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxPackage;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
  * @author Philippe Charles
  */
-public class DefaultXlsxPackageFactoryTest {
+public class ZipPackageFactoryTest {
 
-    private static final URL TOP5 = DefaultXlsxPackageFactoryTest.class.getResource("/Top5Browsers.xlsx");
+    private static final URL TOP5 = ZipPackageFactoryTest.class.getResource("/Top5Browsers.xlsx");
 
     @Test
     public void testOpenInputStream() throws IOException {
         try (InputStream stream = TOP5.openStream()) {
-            try (XlsxPackage pkg = DefaultXlsxPackageFactory.INSTANCE.open(stream)) {
+            try (XlsxPackage pkg = ZipPackageFactory.INSTANCE.open(stream)) {
                 assertPackageContent(pkg);
             }
         }
@@ -51,13 +52,13 @@ public class DefaultXlsxPackageFactoryTest {
     @Test
     public void testOpenPath() throws IOException, URISyntaxException {
         Path path = Paths.get(TOP5.toURI());
-        try (XlsxPackage pkg = DefaultXlsxPackageFactory.INSTANCE.open(path)) {
+        try (XlsxPackage pkg = ZipPackageFactory.INSTANCE.open(path)) {
             assertPackageContent(pkg);
         }
     }
 
     private void assertPackageContent(XlsxPackage pkg) throws IOException {
-        XlsxParser parser = SaxXlsxParser.create();
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
         assertThat(XlsxBook.parseWorkbook(pkg::getWorkbook, parser))
                 .satisfies(o -> {
@@ -68,7 +69,7 @@ public class DefaultXlsxPackageFactoryTest {
         List<String> sharedStrings = XlsxBook.parseSharedStrings(pkg::getSharedStrings, parser);
         assertThat(sharedStrings).contains("IE", atIndex(0)).contains("helloworld", atIndex(8));
 
-        List<Boolean> styles = XlsxBook.parseStyles(DefaultXlsxNumberingFormat.INSTANCE, pkg::getStyles, parser);
+        List<Boolean> styles = XlsxBook.parseStyles(DefaultNumberingFormat.INSTANCE, pkg::getStyles, parser);
         assertThat(styles).containsExactly(false, true);
 
         XlsxSheetBuilder b = XlsxSheetBuilders.create(XlsxDateSystems.X1900, sharedStrings::get, styles::get);

@@ -16,6 +16,7 @@
  */
 package spreadsheet.xlsx;
 
+import ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public interface XlsxParser extends Closeable {
 
         @Nonnull
         static Factory getDefault() {
-            return SaxXlsxParser::create;
+            return () -> new SaxXlsxParser(Sax.createReader());
         }
     }
 }

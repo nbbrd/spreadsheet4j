@@ -57,6 +57,10 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
         s.assertThat(factory.accept(valid)).isTrue();
         s.assertThat(factory.accept(invalid)).isTrue();
 
+        s.assertThatThrownBy(() -> factory.isSupportedDataType(NULL_CLASS))
+                .as(msg(factory, "isSupportedDataType(nullClass)", NullPointerException.class))
+                .isInstanceOf(NullPointerException.class);
+
         if (factory.canLoad()) {
             assertLoadNull(s, factory);
             assertLoadValid(s, factory, valid);
@@ -133,6 +137,7 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
         }
     }
 
+    private static final Class<?> NULL_CLASS = null;
     private static final File NULL_FILE = null;
     private static final InputStream NULL_INPUT_STREAM = null;
     private static final Path NULL_PATH = null;

@@ -69,6 +69,11 @@ public class HtmlBookFactory extends Book.Factory {
         newWriter().write(book, stream);
     }
 
+    @Override
+    public boolean isSupportedDataType(Class<?> type) {
+        return String.class.isAssignableFrom(type);
+    }
+
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
     private HtmlBookReader newReader() {
         return new HtmlBookReader();

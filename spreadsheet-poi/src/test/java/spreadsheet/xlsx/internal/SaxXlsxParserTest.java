@@ -17,21 +17,22 @@
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.SheetAssert;
+import ioutil.IO;
+import ioutil.Sax;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.atIndex;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.Assert.assertFalse;
-import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 import spreadsheet.xlsx.XlsxNumberingFormat;
+import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import spreadsheet.xlsx.internal.util.IOUtil;
+import test.EmptyInputStream;
 
 /**
  *
@@ -39,24 +40,15 @@ import spreadsheet.xlsx.internal.util.IOUtil;
  */
 public class SaxXlsxParserTest {
 
-    private XMLReader reader;
-    private IOUtil.ByteResource files;
-    private IOUtil.ByteSource empty;
-    private IOUtil.ByteSource throwing;
-
-    @Before
-    public void before() throws SAXException {
-        reader = XMLReaderFactory.createXMLReader();
-        files = IOUtil.ByteResource.of(SaxXlsxParserTest.class);
-        empty = IOUtil.ByteSource.empty();
-        throwing = IOUtil.ByteSource.throwing(CustomIOException::new);
-    }
+    private final IO.Function<String, InputStream> files = o -> IO.getResourceAsStream(SaxXlsxParserTest.class, o).orElseThrow(IOException::new);
+    private final IO.Supplier<InputStream> empty = EmptyInputStream::new;
+    private final IO.Supplier<InputStream> throwing = IO.Supplier.throwing(CustomIOException::new);
 
     @Test
     public void testWorkbookSax2EventHandler() throws IOException {
-        SaxXlsxParser parser = new SaxXlsxParser(reader);
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
-        XlsxBook.WorkbookData data = XlsxBook.parseWorkbook(files.asSource("/workbook.xml"), parser);
+        XlsxBook.WorkbookData data = XlsxBook.parseWorkbook(() -> files.applyWithIO("/workbook.xml"), parser);
         assertThat(data.getSheets())
                 .extracting("name", "relationId")
                 .containsExactly(
@@ -66,8 +58,7 @@ public class SaxXlsxParserTest {
 
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(empty, parser))
                 .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class)
-                .hasMessageContaining("workbook");
+                .hasCauseInstanceOf(SAXException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -75,27 +66,26 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testSheetSax2EventHandler() throws IOException {
-        SaxXlsxParser parser = new SaxXlsxParser(reader);
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
         XlsxSheetBuilder b = XlsxSheetBuilder.Factory.getDefault()
                 .create(XlsxDateSystems.X1904,
                         Arrays.asList("1", "2", "3", "4", "5", "6", "7")::get,
                         Arrays.asList(false, true)::get);
 
-        SheetAssert.assertThat(XlsxBook.parseSheet("regular", b, files.asSource("/RegularXlsxSheet.xml"), parser))
+        SheetAssert.assertThat(XlsxBook.parseSheet("regular", b, () -> files.applyWithIO("/RegularXlsxSheet.xml"), parser))
                 .hasName("regular")
                 .hasColumnCount(7)
                 .hasRowCount(42);
 
-        SheetAssert.assertThat(XlsxBook.parseSheet("formulas", b, files.asSource("/FormulasXlsxSheet.xml"), parser))
+        SheetAssert.assertThat(XlsxBook.parseSheet("formulas", b, () -> files.applyWithIO("/FormulasXlsxSheet.xml"), parser))
                 .hasName("formulas")
                 .hasColumnCount(7)
                 .hasRowCount(42);
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("missing", b, empty, parser))
                 .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class)
-                .hasMessageContaining("sheet");
+                .hasCauseInstanceOf(SAXException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("missing", b, throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -103,16 +93,15 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testSharedStringsSax2EventHandler() throws IOException {
-        SaxXlsxParser parser = new SaxXlsxParser(reader);
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
-        assertThat(XlsxBook.parseSharedStrings(files.asSource("/Sst.xml"), parser))
+        assertThat(XlsxBook.parseSharedStrings(() -> files.applyWithIO("/Sst.xml"), parser))
                 .contains("Cell A1", atIndex(0))
                 .contains("Cell B2", atIndex(4));
 
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(empty, parser))
                 .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class)
-                .hasMessageContaining("shared strings");
+                .hasCauseInstanceOf(SAXException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -120,19 +109,22 @@ public class SaxXlsxParserTest {
 
     @Test
     public void testStylesSax2EventHandler() throws IOException {
-        SaxXlsxParser parser = new SaxXlsxParser(reader);
+        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
 
         XlsxNumberingFormat df = XlsxNumberingFormat.getDefault();
 
-        assertThat(XlsxBook.parseStyles(df, files.asSource("/styles.xml"), parser))
+        assertThat(XlsxBook.parseStyles(df, () -> files.applyWithIO("/styles.xml"), parser))
                 .containsExactly(false, true);
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(df, empty, parser))
                 .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class)
-                .hasMessageContaining("styles");
+                .hasCauseInstanceOf(SAXException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(df, throwing, parser))
                 .isInstanceOf(CustomIOException.class);
+    }
+
+    private static final class CustomIOException extends IOException {
+
     }
 }

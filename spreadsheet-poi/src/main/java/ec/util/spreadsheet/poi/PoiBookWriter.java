@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 
 /**
  *
@@ -62,6 +63,9 @@ final class PoiBookWriter {
                     copy(cell, row.createCell(j));
                 }
             }
+        }
+        if (target instanceof SXSSFSheet) {
+            ((SXSSFSheet) target).trackAllColumnsForAutoSizing();
         }
         for (int j = 0; j < source.getColumnCount(); j++) {
             target.autoSizeColumn(j);

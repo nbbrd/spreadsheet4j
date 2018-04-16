@@ -23,12 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import org.openide.util.lookup.ServiceProvider;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  *
@@ -55,7 +51,7 @@ public class XmlssBookFactory extends Book.Factory {
 
     @Override
     public Book load(InputStream stream) throws IOException {
-        return XmlssBook.create(createXMLReader(), stream);
+        return XmlssBook.create(stream);
     }
 
     @Override
@@ -65,14 +61,5 @@ public class XmlssBookFactory extends Book.Factory {
 
     private XmlssBookWriter newWriter() {
         return new XmlssBookWriter(xof, StandardCharsets.UTF_8);
-    }
-
-    @Nonnull
-    private static XMLReader createXMLReader() throws IOException {
-        try {
-            return XMLReaderFactory.createXMLReader();
-        } catch (SAXException ex) {
-            throw new IOException("While creating XmlReader", ex);
-        }
     }
 }

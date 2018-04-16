@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import lombok.AccessLevel;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -35,9 +36,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class PoiBook extends Book {
-
-    private final Workbook workbook;
 
     @Nonnull
     public static PoiBook create(@Nonnull File file) throws IOException, InvalidFormatException {
@@ -59,9 +59,7 @@ final class PoiBook extends Book {
         return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(stream)));
     }
 
-    private PoiBook(Workbook workbook) {
-        this.workbook = workbook;
-    }
+    private final Workbook workbook;
 
     @Override
     public int getSheetCount() {
@@ -73,7 +71,7 @@ final class PoiBook extends Book {
         try {
             return new PoiSheet(workbook.getSheetAt(index));
         } catch (IllegalArgumentException ex) {
-            throw index < 0 || index >= getSheetCount() ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
+            throw isSheetIndexOutOfBounds(index) ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
         }
     }
 
@@ -82,12 +80,16 @@ final class PoiBook extends Book {
         try {
             return workbook.getSheetName(index);
         } catch (IllegalArgumentException ex) {
-            throw index < 0 || index >= getSheetCount() ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
+            throw isSheetIndexOutOfBounds(index) ? new IndexOutOfBoundsException(ex.getMessage()) : ex;
         }
     }
 
     @Override
     public void close() throws IOException {
         workbook.close();
+    }
+
+    private boolean isSheetIndexOutOfBounds(int index) {
+        return index < 0 || index >= getSheetCount();
     }
 }

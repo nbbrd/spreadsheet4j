@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package internal;
+package test;
 
 import ec.util.spreadsheet.helpers.ArraySheet;
 import java.util.Objects;

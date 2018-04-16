@@ -17,6 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.SheetAssert;
+import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import spreadsheet.xlsx.internal.util.IOUtil;
+import test.EmptyInputStream;
 
 /**
  *
@@ -35,11 +36,12 @@ import spreadsheet.xlsx.internal.util.IOUtil;
  */
 public class XlsxBookTest {
 
-    private final IOUtil.ByteSource empty = IOUtil.ByteSource.empty();
-    private final IOUtil.ByteSource boom = CustomIOException.asByteSource();
-    private final XlsxParser emptyParser = new CustomParser();
+    private final IO.Supplier<? extends InputStream> empty = EmptyInputStream::new;
+    private final IO.Supplier<? extends InputStream> boom = IO.Supplier.throwing(CustomIOException::new);
+    private final XlsxParser emptyParser = new NoOpParser();
 
     @Test
+    @SuppressWarnings("null")
     public void testParseSharedStrings() throws IOException {
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);
@@ -91,7 +93,7 @@ public class XlsxBookTest {
 
     @Test
     public void testParseStyles() throws IOException {
-        XlsxNumberingFormat nf = DefaultXlsxNumberingFormat.INSTANCE;
+        XlsxNumberingFormat nf = DefaultNumberingFormat.INSTANCE;
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(nf, boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);
@@ -102,11 +104,6 @@ public class XlsxBookTest {
             throw new CustomIOException();
         }))).isInstanceOf(CustomIOException.class);
 
-        assertThatThrownBy(() -> XlsxBook.parseStyles(nf, empty, parserOnStyles(o -> {
-            o.onCellFormat(14);
-            o.onNumberFormat(14, null);
-        }))).isInstanceOf(IllegalStateException.class);
-
         assertThat(XlsxBook.parseStyles(nf, empty, parserOnStyles(o -> {
             o.onNumberFormat(1000, "");
             o.onCellFormat(14);
@@ -114,6 +111,7 @@ public class XlsxBookTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     public void testParseWorkbook() throws IOException {
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(boom, emptyParser))
                 .isInstanceOf(CustomIOException.class);
@@ -139,43 +137,43 @@ public class XlsxBookTest {
         }))).isEqualTo(new XlsxBook.WorkbookData(new ArrayList<>(Arrays.asList(new XlsxBook.SheetMeta("rId1", "hello"))), true));
     }
 
-    private static XlsxParser parserOnSharedStrings(ConsumerWithIO<? super XlsxParser.SharedStringsVisitor> consumer) {
-        return new CustomParser() {
+    private static XlsxParser parserOnSharedStrings(IO.Consumer<? super XlsxParser.SharedStringsVisitor> consumer) {
+        return new NoOpParser() {
             @Override
             public void visitSharedStrings(InputStream s, XlsxParser.SharedStringsVisitor v) throws IOException {
-                consumer.accept(v);
+                consumer.acceptWithIO(v);
             }
         };
     }
 
-    private static XlsxParser parserOnSheet(ConsumerWithIO<? super XlsxParser.SheetVisitor> consumer) {
-        return new CustomParser() {
+    private static XlsxParser parserOnSheet(IO.Consumer<? super XlsxParser.SheetVisitor> consumer) {
+        return new NoOpParser() {
             @Override
             public void visitSheet(InputStream s, XlsxParser.SheetVisitor v) throws IOException {
-                consumer.accept(v);
+                consumer.acceptWithIO(v);
             }
         };
     }
 
-    private static XlsxParser parserOnStyles(ConsumerWithIO<? super XlsxParser.StylesVisitor> consumer) {
-        return new CustomParser() {
+    private static XlsxParser parserOnStyles(IO.Consumer<? super XlsxParser.StylesVisitor> consumer) {
+        return new NoOpParser() {
             @Override
             public void visitStyles(InputStream s, XlsxParser.StylesVisitor v) throws IOException {
-                consumer.accept(v);
+                consumer.acceptWithIO(v);
             }
         };
     }
 
-    private static XlsxParser parserOnWorkbook(ConsumerWithIO<? super XlsxParser.WorkbookVisitor> consumer) {
-        return new CustomParser() {
+    private static XlsxParser parserOnWorkbook(IO.Consumer<? super XlsxParser.WorkbookVisitor> consumer) {
+        return new NoOpParser() {
             @Override
             public void visitWorkbook(InputStream s, XlsxParser.WorkbookVisitor v) throws IOException {
-                consumer.accept(v);
+                consumer.acceptWithIO(v);
             }
         };
     }
 
-    private static class CustomParser implements XlsxParser {
+    private static class NoOpParser implements XlsxParser {
 
         @Override
         public void visitWorkbook(InputStream s, WorkbookVisitor v) throws IOException {
@@ -198,8 +196,7 @@ public class XlsxBookTest {
         }
     }
 
-    interface ConsumerWithIO<T> {
+    private static final class CustomIOException extends IOException {
 
-        void accept(T t) throws IOException;
     }
 }

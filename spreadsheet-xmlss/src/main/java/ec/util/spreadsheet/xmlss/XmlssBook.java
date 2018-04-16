@@ -22,15 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import ec.util.spreadsheet.helpers.ArraySheet;
+import ioutil.Sax;
+import ioutil.Xml;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -40,28 +38,30 @@ import org.xml.sax.helpers.DefaultHandler;
 final class XmlssBook extends Book {
 
     @Nonnull
-    public static XmlssBook create(@Nonnull XMLReader reader, @Nonnull InputStream stream) throws IOException {
-        Objects.requireNonNull(stream);
+    public static XmlssBook create(@Nonnull InputStream stream) throws IOException {
+        return new XmlssBook(loadContent(stream));
+    }
+
+    private static List<ArraySheet> loadContent(InputStream stream) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
-        parse(reader, handler, stream);
-        return new XmlssBook(handler.build());
+        try {
+            return Sax.Parser.of(handler, handler::build).parseStream(stream);
+        } catch (Xml.WrappedException ex) {
+            if (isTrailingSectionContentNotAllowed(ex.getCause(), handler.isEndWorkbookNotified())) {
+                return handler.build();
+            }
+            throw ex;
+        }
+    }
+
+    private static boolean isTrailingSectionContentNotAllowed(Throwable cause, boolean endWorkbookNotified) {
+        return cause instanceof SAXException && endWorkbookNotified;
     }
 
     private final List<ArraySheet> sheets;
 
     private XmlssBook(List<ArraySheet> sheets) {
         this.sheets = sheets;
-    }
-
-    private static void parse(XMLReader reader, ContentHandler handler, InputStream stream) throws IOException {
-        try {
-            reader.setContentHandler(handler);
-            reader.parse(new InputSource(stream));
-        } catch (SAXException ex) {
-            if (!ex.getMessage().contains("Content is not allowed in trailing section")) {
-                throw new RuntimeException("While parsing xml", ex);
-            }
-        }
     }
 
     @Override
@@ -78,6 +78,7 @@ final class XmlssBook extends Book {
     static final class BookSax2EventHandler extends DefaultHandler /*implements IBuilder<ImmutableList<Sheet>>*/ {
 
         private static final String SS_URI = "urn:schemas-microsoft-com:office:spreadsheet";
+        private static final String WORKBOOK_TAG = "Workbook";
         private static final String WORKSHEET_TAG = "Worksheet";
         private static final String ROW_TAG = "Row";
         private static final String CELL_TAG = "Cell";
@@ -89,6 +90,7 @@ final class XmlssBook extends Book {
         private String dataType;
         private String text;
         private final XmlssSheetBuilder builder;
+        private boolean endWorkbookNotified;
 
         public BookSax2EventHandler() {
             this.sheets = new ArrayList<>();
@@ -97,6 +99,11 @@ final class XmlssBook extends Book {
             this.dataType = null;
             this.text = null;
             this.builder = XmlssSheetBuilder.create();
+            this.endWorkbookNotified = false;
+        }
+
+        public boolean isEndWorkbookNotified() {
+            return endWorkbookNotified;
         }
 
         public List<ArraySheet> build() {
@@ -127,6 +134,9 @@ final class XmlssBook extends Book {
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
             switch (qName) {
+                case WORKBOOK_TAG:
+                    endWorkbookNotified = true;
+                    break;
                 case WORKSHEET_TAG:
                     sheets.add(builder.build());
                     rowNum = -1;

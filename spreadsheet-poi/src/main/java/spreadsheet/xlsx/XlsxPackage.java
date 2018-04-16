@@ -17,12 +17,14 @@
 package spreadsheet.xlsx;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
-import spreadsheet.xlsx.internal.DefaultXlsxPackageFactory;
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrent.ThreadSafe;
+import spreadsheet.xlsx.internal.ZipPackageFactory;
 
 /**
  * Container for Office Open XML files.
@@ -30,6 +32,7 @@ import spreadsheet.xlsx.internal.DefaultXlsxPackageFactory;
  * @author Philippe Charles
  * @since 2.2.0
  */
+@NotThreadSafe
 public interface XlsxPackage extends Closeable {
 
     /**
@@ -72,19 +75,21 @@ public interface XlsxPackage extends Closeable {
     /**
      * Factory for an XlsxPackage.
      */
+    @ThreadSafe
     interface Factory {
 
         @Nonnull
         XlsxPackage open(@Nonnull InputStream stream) throws IOException;
 
         @Nonnull
-        default XlsxPackage open(@Nonnull Path file) throws IOException {
-            return open(Files.newInputStream(file));
-        }
+        XlsxPackage open(@Nonnull Path path) throws IOException;
+
+        @Nonnull
+        XlsxPackage open(@Nonnull File file) throws IOException;
 
         @Nonnull
         static Factory getDefault() {
-            return DefaultXlsxPackageFactory.INSTANCE;
+            return ZipPackageFactory.INSTANCE;
         }
     }
 }

@@ -4,17 +4,17 @@
 
     <groupId>eu.europa.ec.joinup.sat</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.2.0</version>
+    <version>2.2.1</version>
     <packaging>pom</packaging>
     
-    <name>spreadsheet</name>
-    <description></description>
+    <name>spreadsheet4j</name>
+    <description>Spreadsheet facade for Java</description>
     
-    <url></url>
+    <url>https://github.com/nbbrd/spreadsheet4j</url>
     <licenses>
         <license>
             <name>European Union Public Licence (EUPL)</name>
-            <url>https://joinup.ec.europa.eu/software/page/eupl/licence-eupl</url>
+            <url>https://joinup.ec.europa.eu/page/eupl-text-11-12</url>
         </license>
     </licenses>
 
@@ -30,14 +30,17 @@
     <properties>
         <!-- build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.version>1.8</jdk.version>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <!-- dependencies -->
         <junit.version>4.12</junit.version>
         <jsr305.version>3.0.1</jsr305.version>
-        <assertj.version>3.5.2</assertj.version>
+        <assertj.version>3.8.0</assertj.version>
         <netbeans.version>RELEASE81</netbeans.version>
+        <lombok.version>1.16.10</lombok.version>
+        <java-io-util.version>0.0.1</java-io-util.version>
     </properties>
         
     <dependencyManagement>
@@ -67,6 +70,11 @@
                 <groupId>org.netbeans.api</groupId>
                 <artifactId>org-openide-util-lookup</artifactId>
                 <version>${netbeans.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>be.nbb.rd</groupId>
+                <artifactId>java-io-util</artifactId>
+                <version>${java-io-util.version}</version>
             </dependency>
             <!-- modules -->
             <dependency>
@@ -107,43 +115,73 @@
             <id>netbeans</id>
             <url>http://bits.netbeans.org/nexus/content/groups/netbeans/</url>
         </repository>
-    </repositories>
-        
-    <distributionManagement>
         <repository>
-            <id>joinup-releases</id>
-            <url>https://joinup.ec.europa.eu/nexus/content/repositories/releases/</url>
+            <id>oss-jfrog-artifactory-releases</id>
+            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
         </repository>
-        <snapshotRepository>
-            <id>joinup-snapshots</id>
-            <url>https://joinup.ec.europa.eu/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+        <repository>
+            <id>oss-jfrog-artifactory-snapshots</id>
+            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </repository>
+    </repositories>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven-source-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>            
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>  
+    
+    <profiles>
+        <!-- Deploy SNAPSHOTS to jfrog with sources -->
+        <profile>
+            <id>deploy-snapshots</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss-jfrog-artifactory</id>
+                    <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Deploy RELEASES to jfrog with sources -->
+        <profile>
+            <id>deploy-releases</id>
+            <distributionManagement>
+                <repository>
+                    <id>oss-jfrog-artifactory</id>
+                    <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+                </repository>
+            </distributionManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -16,109 +16,69 @@
  */
 package spreadsheet.xlsx.internal;
 
+import ioutil.IO;
+import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
 import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
 import spreadsheet.xlsx.XlsxParser;
-import spreadsheet.xlsx.internal.util.SaxUtil;
 
 /**
  *
  * @author Philippe Charles
  */
+@lombok.AllArgsConstructor
 public final class SaxXlsxParser implements XlsxParser {
 
-    @Nonnull
-    public static XlsxParser create() throws IOException {
-        try {
-            return new SaxXlsxParser(XMLReaderFactory.createXMLReader());
-        } catch (SAXException ex) {
-            throw new IOException("While creating XmlReader", ex);
-        }
-    }
-
-    private final XMLReader xmlReader;
-
-    SaxXlsxParser(XMLReader xmlReader) {
-        this.xmlReader = xmlReader;
-    }
+    @lombok.NonNull
+    private final XMLReader reader;
 
     @Override
     public void visitWorkbook(InputStream stream, WorkbookVisitor visitor) throws IOException {
-        try {
-            new WorkbookSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing workbook", ex);
-        }
+        visit(new WorkbookSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitSharedStrings(InputStream stream, SharedStringsVisitor visitor) throws IOException {
-        try {
-            new SharedStringsSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing shared strings", ex);
-        }
+        visit(new SharedStringsSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitStyles(InputStream stream, StylesVisitor visitor) throws IOException {
-        try {
-            new StylesSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing styles", ex);
-        }
+        visit(new StylesSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void visitSheet(InputStream stream, SheetVisitor visitor) throws IOException {
-        try {
-            new SheetSaxEventHandler(visitor).runWith(xmlReader, stream);
-        } catch (SAXException ex) {
-            throw new IOException("While parsing sheet", ex);
-        }
+        visit(new SheetSaxEventHandler(visitor), stream);
     }
 
     @Override
     public void close() throws IOException {
     }
 
+    private void visit(ContentHandler handler, InputStream stream) throws IOException {
+        Sax.Parser.builder().factory(() -> reader).handler(handler).after(VOID).build().parseStream(stream);
+    }
+
+    private static final IO.Supplier VOID = IO.Supplier.of(null);
+
     /**
      * FIXME: missing support of inline string <is><t>hello</t></is>
      */
-    private static final class SheetSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
-
-        private static final String CELL_TAG = "c";
-        private static final String REFERENCE_ATTRIBUTE = "r";
-        private static final String STYLE_INDEX_ATTRIBUTE = "s";
-        private static final String CELL_DATA_TYPE_ATTRIBUTE = "t";
-        private static final String CELL_VALUE_TAG = "v";
-        private static final String SHEET_DIMENSIONS_TAG = "dimension";
-        private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
-        private static final String SHEET_DATA_TAG = "sheetData";
-        //private static final String INLINE_STRING_TAG = "is";
+    @lombok.RequiredArgsConstructor
+    private static final class SheetSaxEventHandler extends DefaultHandler {
 
         private final SheetVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder;
-        private String sheetBounds;
-        private String ref;
-        private String rawDataType;
-        private Integer rawStyleIndex;
-
-        SheetSaxEventHandler(SheetVisitor visitor) {
-            this.visitor = visitor;
-            this.stringBuilder = new SaxUtil.SaxStringBuilder();
-
-            this.sheetBounds = null;
-            this.ref = null;
-            this.rawDataType = null;
-            this.rawStyleIndex = null;
-        }
+        private final SaxStringBuilder stringBuilder = new SaxStringBuilder();
+        private String sheetBounds = null;
+        private String ref = null;
+        private String rawDataType = null;
+        private Integer rawStyleIndex = null;
 
         @Override
         public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
@@ -156,24 +116,25 @@ public final class SaxXlsxParser implements XlsxParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             stringBuilder.appendIfNeeded(ch, start, length);
         }
+
+        private static final String CELL_TAG = "c";
+        private static final String REFERENCE_ATTRIBUTE = "r";
+        private static final String STYLE_INDEX_ATTRIBUTE = "s";
+        private static final String CELL_DATA_TYPE_ATTRIBUTE = "t";
+        private static final String CELL_VALUE_TAG = "v";
+        private static final String SHEET_DIMENSIONS_TAG = "dimension";
+        private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
+        private static final String SHEET_DATA_TAG = "sheetData";
+        //private static final String INLINE_STRING_TAG = "is";
     }
 
     /**
      * http://msdn.microsoft.com/en-us/library/office/documentformat.openxml.spreadsheet.aspx
      */
-    private static final class WorkbookSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
-
-        private static final String SHEET_TAG = "sheet";
-        private static final String WORKBOOK_PROPERTIES_TAG = "workbookPr";
-        private static final String DATE1904_ATTRIBUTE = "date1904";
-        private static final String SHEET_TAB_ID_ATTRIBUTE = "r:id";
-        private static final String SHEET_NAME_ATTRIBUTE = "name";
+    @lombok.RequiredArgsConstructor
+    private static final class WorkbookSaxEventHandler extends DefaultHandler {
 
         private final WorkbookVisitor visitor;
-
-        WorkbookSaxEventHandler(WorkbookVisitor visitor) {
-            this.visitor = visitor;
-        }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -186,23 +147,22 @@ public final class SaxXlsxParser implements XlsxParser {
                     break;
             }
         }
+
+        private static final String SHEET_TAG = "sheet";
+        private static final String WORKBOOK_PROPERTIES_TAG = "workbookPr";
+        private static final String DATE1904_ATTRIBUTE = "date1904";
+        private static final String SHEET_TAB_ID_ATTRIBUTE = "r:id";
+        private static final String SHEET_NAME_ATTRIBUTE = "name";
     }
 
     /**
      * http://msdn.microsoft.com/en-us/library/office/gg278314.aspx
      */
-    private static final class SharedStringsSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
-
-        private static final String SHARED_STRING_ITEM_TAG = "si";
-        private static final String TEXT_TAG = "t";
+    @lombok.RequiredArgsConstructor
+    private static final class SharedStringsSaxEventHandler extends DefaultHandler {
 
         private final SharedStringsVisitor visitor;
-        private final SaxUtil.SaxStringBuilder stringBuilder;
-
-        SharedStringsSaxEventHandler(SharedStringsVisitor visitor) {
-            this.visitor = visitor;
-            this.stringBuilder = new SaxUtil.SaxStringBuilder();
-        }
+        private final SaxStringBuilder stringBuilder = new SaxStringBuilder();
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -232,23 +192,16 @@ public final class SaxXlsxParser implements XlsxParser {
         public void characters(char[] ch, int start, int length) throws SAXException {
             stringBuilder.appendIfNeeded(ch, start, length);
         }
+
+        private static final String SHARED_STRING_ITEM_TAG = "si";
+        private static final String TEXT_TAG = "t";
     }
 
-    private static final class StylesSaxEventHandler extends DefaultHandler implements SaxUtil.ContentRunner {
-
-        private static final String CELL_FORMAT_TAG = "xf";
-        private static final String CELL_FORMATS_TAG = "cellXfs";
-        private static final String NUMBER_FORMAT_TAG = "numFmt";
-        private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
-        private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
+    @lombok.RequiredArgsConstructor
+    private static final class StylesSaxEventHandler extends DefaultHandler {
 
         private final StylesVisitor visitor;
-        private boolean insideGroupTag;
-
-        StylesSaxEventHandler(StylesVisitor visitor) {
-            this.visitor = visitor;
-            this.insideGroupTag = false;
-        }
+        private boolean insideGroupTag = false;
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -265,13 +218,18 @@ public final class SaxXlsxParser implements XlsxParser {
                         }
                     }
                     break;
+                case NUMBER_FORMATS_TAG:
+                    insideGroupTag = true;
+                    break;
                 case NUMBER_FORMAT_TAG:
-                    try {
-                        visitor.onNumberFormat(
-                                Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)),
-                                attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
-                    } catch (NumberFormatException ex) {
-                        throw new SAXException(ex);
+                    if (insideGroupTag) {
+                        try {
+                            visitor.onNumberFormat(
+                                    Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)),
+                                    attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
+                        } catch (NumberFormatException ex) {
+                            throw new SAXException(ex);
+                        }
                     }
                     break;
             }
@@ -279,9 +237,53 @@ public final class SaxXlsxParser implements XlsxParser {
 
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException {
-            if (qName.equals(CELL_FORMATS_TAG)) {
+            if (qName.equals(CELL_FORMATS_TAG) || qName.equals(NUMBER_FORMATS_TAG)) {
                 insideGroupTag = false;
             }
+        }
+
+        private static final String CELL_FORMAT_TAG = "xf";
+        private static final String CELL_FORMATS_TAG = "cellXfs";
+        private static final String NUMBER_FORMAT_TAG = "numFmt";
+        private static final String NUMBER_FORMATS_TAG = "numFmts";
+        private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
+        private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
+    }
+
+    private static final class SaxStringBuilder {
+
+        private boolean enabled = false;
+        private StringBuilder content = new StringBuilder();
+
+        public SaxStringBuilder clear() {
+            content = new StringBuilder();
+            return this;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public SaxStringBuilder enable() {
+            this.enabled = true;
+            return this;
+        }
+
+        public SaxStringBuilder disable() {
+            this.enabled = false;
+            return this;
+        }
+
+        public CharSequence build() {
+            // we defer CharSequence@toString()
+            return content;
+        }
+
+        public SaxStringBuilder appendIfNeeded(char[] ch, int start, int length) {
+            if (isEnabled()) {
+                content.append(ch, start, length);
+            }
+            return this;
         }
     }
 }

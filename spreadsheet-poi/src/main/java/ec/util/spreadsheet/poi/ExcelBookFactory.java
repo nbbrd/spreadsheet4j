@@ -27,6 +27,7 @@ import java.nio.file.NoSuchFileException;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -75,7 +76,7 @@ public class ExcelBookFactory extends Book.Factory {
         }
         try {
             return PoiBook.create(file);
-        } catch (OpenXML4JException | InvalidOperationException ex) {
+        } catch (OpenXML4JException | InvalidOperationException | EmptyFileException ex) {
             throw new IOException(ex);
         }
     }
