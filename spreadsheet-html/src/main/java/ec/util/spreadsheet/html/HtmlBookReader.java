@@ -64,6 +64,7 @@ final class HtmlBookReader {
 
     @Nonnull
     public ArrayBook read(@Nonnull InputStream stream) throws IOException {
+        Objects.requireNonNull(stream);
         return readHtml(Jsoup.parse(stream, getCharsetNameOrNull(), baseUri));
     }
 
