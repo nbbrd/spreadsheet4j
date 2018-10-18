@@ -32,14 +32,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
-        <maven-source-plugin.version>2.4</maven-source-plugin.version>
-        <!-- dependencies -->
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
+
+        <!-- dev support -->
         <junit.version>4.12</junit.version>
         <jsr305.version>3.0.2</jsr305.version>
         <assertj.version>3.11.1</assertj.version>
         <netbeans.version>RELEASE82</netbeans.version>
-        <lombok.version>1.16.10</lombok.version>
+        <lombok.version>edge-SNAPSHOT</lombok.version>
+
+        <!-- dependencies -->
         <java-io-util.version>0.0.1</java-io-util.version>
     </properties>
         
@@ -109,25 +112,15 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
-    <repositories>
-        <repository>
-            <id>netbeans</id>
-            <url>http://bits.netbeans.org/nexus/content/groups/netbeans/</url>
-        </repository>
-        <repository>
-            <id>oss-jfrog-artifactory-releases</id>
-            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
-        </repository>
-        <repository>
-            <id>oss-jfrog-artifactory-snapshots</id>
-            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
-        </repository>
-    </repositories>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
@@ -184,4 +177,26 @@
             </build>
         </profile>
     </profiles>
+    
+    <repositories>
+        <repository>
+            <id>netbeans</id>
+            <url>http://bits.netbeans.org/nexus/content/groups/netbeans/</url>
+        </repository>
+        <repository>
+            <id>oss-jfrog-artifactory-releases</id>
+            <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+        </repository>
+        <repository>
+            <id>oss-jfrog-artifactory-snapshots</id>
+            <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+        </repository>
+        <repository>
+            <id>projectlombok.org</id>
+            <url>https://projectlombok.org/edge-releases</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
