@@ -19,6 +19,7 @@ package spreadsheet.xlsx.internal;
 import ec.util.spreadsheet.SheetAssert;
 import ioutil.IO;
 import ioutil.Sax;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -57,8 +58,8 @@ public class SaxXlsxParserTest {
         assertFalse(data.isDate1904());
 
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(empty, parser))
-                .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class);
+                .isInstanceOf(EOFException.class)
+                .hasNoCause();
 
         assertThatThrownBy(() -> XlsxBook.parseWorkbook(throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -83,9 +84,9 @@ public class SaxXlsxParserTest {
                 .hasColumnCount(7)
                 .hasRowCount(42);
 
-        assertThatThrownBy(() -> XlsxBook.parseSheet("missing", b, empty, parser))
-                .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class);
+        assertThatThrownBy(() -> XlsxBook.parseSheet("empty", b, empty, parser))
+                .isInstanceOf(EOFException.class)
+                .hasNoCause();
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("missing", b, throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -100,8 +101,8 @@ public class SaxXlsxParserTest {
                 .contains("Cell B2", atIndex(4));
 
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(empty, parser))
-                .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class);
+                .isInstanceOf(EOFException.class)
+                .hasNoCause();
 
         assertThatThrownBy(() -> XlsxBook.parseSharedStrings(throwing, parser))
                 .isInstanceOf(CustomIOException.class);
@@ -117,8 +118,8 @@ public class SaxXlsxParserTest {
                 .containsExactly(false, true);
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(df, empty, parser))
-                .isInstanceOf(IOException.class)
-                .hasCauseInstanceOf(SAXException.class);
+                .isInstanceOf(EOFException.class)
+                .hasNoCause();
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(df, throwing, parser))
                 .isInstanceOf(CustomIOException.class);
