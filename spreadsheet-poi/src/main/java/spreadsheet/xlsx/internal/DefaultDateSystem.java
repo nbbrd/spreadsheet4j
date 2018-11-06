@@ -24,7 +24,7 @@ import spreadsheet.xlsx.XlsxDateSystem;
  *
  * @author Philippe Charles
  */
-public enum XlsxDateSystems implements XlsxDateSystem {
+public enum DefaultDateSystem implements XlsxDateSystem {
 
     X1900 {
         @Override
@@ -70,4 +70,6 @@ public enum XlsxDateSystems implements XlsxDateSystem {
     };
 
     private static final int NUMBER_OF_SECONDS_IN_DAY = 60 * 60 * 24;
+
+    public static final XlsxDateSystem.Factory FACTORY = (date1904) -> date1904 ? DefaultDateSystem.X1904 : DefaultDateSystem.X1900;
 }

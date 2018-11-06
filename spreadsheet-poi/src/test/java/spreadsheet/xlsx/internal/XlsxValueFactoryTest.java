@@ -41,7 +41,7 @@ public class XlsxValueFactoryTest {
 
     private static XlsxValueFactory newFactory() {
         return new XlsxValueFactory(
-                XlsxDateSystems.X1904,
+                DefaultDateSystem.X1904,
                 Arrays.asList("hello", "world")::get,
                 Arrays.asList(false, true)::get);
     }
@@ -95,11 +95,11 @@ public class XlsxValueFactoryTest {
 
         assertThat(f.getValue("1", NO_TYPE, NO_STYLE)).isNotInstanceOf(Date.class);
         assertThat(f.getValue("1", NO_TYPE, 0)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NO_TYPE, 1)).isEqualTo(XlsxDateSystems.X1904.getJavaDate(cal, 1));
+        assertThat(f.getValue("1", NO_TYPE, 1)).isEqualTo(DefaultDateSystem.X1904.getJavaDate(cal, 1));
 
         assertThat(f.getValue("1", NUMBER_TYPE, NO_STYLE)).isNotInstanceOf(Date.class);
         assertThat(f.getValue("1", NUMBER_TYPE, 0)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NUMBER_TYPE, 1)).isEqualTo(XlsxDateSystems.X1904.getJavaDate(cal, 1));
+        assertThat(f.getValue("1", NUMBER_TYPE, 1)).isEqualTo(DefaultDateSystem.X1904.getJavaDate(cal, 1));
 
         assertThat(f.getValue("2010-02-01", DATE_TYPE, NO_STYLE)).isEqualTo(toDate(2010, 2, 1));
 

@@ -18,7 +18,6 @@ package spreadsheet.xlsx;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import spreadsheet.xlsx.internal.DefaultNumberingFormat;
 
 /**
  * Class that deals with the formatting of numbers in Excel.
@@ -40,12 +39,16 @@ public interface XlsxNumberingFormat {
     boolean isExcelDateFormat(int numFmtId, @Nullable String formatCode);
 
     /**
-     * Gets the default implementation.
-     *
-     * @return a non-null implementation
+     * Factory for XlsxNumberingFormat.
      */
-    @Nonnull
-    static XlsxNumberingFormat getDefault() {
-        return DefaultNumberingFormat.INSTANCE;
+    interface Factory {
+
+        /**
+         * Gets an implementation.
+         *
+         * @return a non-null implementation
+         */
+        @Nonnull
+        XlsxNumberingFormat of();
     }
 }

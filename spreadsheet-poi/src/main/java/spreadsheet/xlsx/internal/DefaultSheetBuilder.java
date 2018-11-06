@@ -40,20 +40,21 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  * @since 2.2.0
  */
 @lombok.experimental.UtilityClass
-public final class XlsxSheetBuilders {
+public final class DefaultSheetBuilder {
 
-    @Nonnull
-    public static XlsxSheetBuilder create(
-            @Nonnull XlsxDateSystem dateSystem,
-            @Nonnull IntFunction<String> sharedStrings,
-            @Nonnull IntPredicate dateFormats) {
-        Builder result = new Builder(new XlsxValueFactory(dateSystem, sharedStrings, dateFormats));
-        return CORES > 1 ? new MultiSheetBuilder(result) : result;
+    public static final XlsxSheetBuilder.Factory FACTORY = Runtime.getRuntime().availableProcessors() > 1
+            ? DefaultSheetBuilder::multi
+            : DefaultSheetBuilder::single;
+
+    public static XlsxSheetBuilder single(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
+        return new Builder(new XlsxValueFactory(dateSystem, sharedStrings, dateFormats));
     }
 
-    private static final int CORES = Runtime.getRuntime().availableProcessors();
+    public static XlsxSheetBuilder multi(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
+        return new MultiSheetBuilder(new Builder(new XlsxValueFactory(dateSystem, sharedStrings, dateFormats)));
+    }
 
-    static final class Builder implements XlsxSheetBuilder {
+    private static final class Builder implements XlsxSheetBuilder {
 
         private final XlsxValueFactory valueFactory;
         private final CellRefHelper refHelper;
@@ -91,7 +92,7 @@ public final class XlsxSheetBuilders {
         }
     }
 
-    static final class MultiSheetBuilder implements XlsxSheetBuilder {
+    private static final class MultiSheetBuilder implements XlsxSheetBuilder {
 
         private static final int FIRST_BATCH_SIZE = 10;
         private static final int NEXT_BATCH_SIZE = 1000;

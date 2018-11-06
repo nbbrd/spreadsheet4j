@@ -18,11 +18,17 @@ package spreadsheet.xlsx.internal;
 
 import ioutil.IO;
 import ioutil.Sax;
+import ioutil.Zip;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.zip.ZipEntry;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -33,7 +39,7 @@ import spreadsheet.xlsx.XlsxPackage;
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
-public final class DefaultPackage implements XlsxPackage {
+public final class ZipPackage implements XlsxPackage {
 
     @lombok.NonNull
     private final IO.ResourceLoader<String> resource;
@@ -115,6 +121,39 @@ public final class DefaultPackage implements XlsxPackage {
                 return true;
             default:
                 return name.startsWith("xl/worksheets/") && !name.endsWith(".rels");
+        }
+    }
+
+    public static final XlsxPackage.Factory FACTORY = ZipPackageFactory.INSTANCE;
+
+    private enum ZipPackageFactory implements XlsxPackage.Factory {
+
+        INSTANCE;
+
+        @Override
+        public XlsxPackage open(InputStream stream) throws IOException {
+            return open(() -> Zip.loaderCopyOf(stream, ZipPackageFactory::isUsefulEntry));
+        }
+
+        @Override
+        public XlsxPackage open(Path path) throws IOException {
+            Optional<File> file = IO.getFile(path);
+            return file.isPresent()
+                    ? open(file.get())
+                    : open(Files.newInputStream(path));
+        }
+
+        @Override
+        public XlsxPackage open(File file) throws IOException {
+            return open(() -> Zip.loaderOf(file));
+        }
+
+        private XlsxPackage open(IO.Supplier<IO.ResourceLoader<String>> source) throws IOException {
+            return new ZipPackage(source.getWithIO());
+        }
+
+        private static boolean isUsefulEntry(ZipEntry entry) {
+            return ZipPackage.isUsefulEntryName(entry.getName());
         }
     }
 }

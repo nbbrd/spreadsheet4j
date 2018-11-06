@@ -16,13 +16,12 @@
  */
 package spreadsheet.xlsx;
 
-import ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import spreadsheet.xlsx.internal.SaxXlsxParser;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * Parser for Office Open XML files.
@@ -30,7 +29,7 @@ import spreadsheet.xlsx.internal.SaxXlsxParser;
  * @author Philippe Charles
  * @since 2.2.0
  */
-public interface XlsxParser extends Closeable {
+public interface XlsxEntryParser extends Closeable {
 
     void visitWorkbook(InputStream stream, WorkbookVisitor visitor) throws IOException;
 
@@ -70,14 +69,10 @@ public interface XlsxParser extends Closeable {
                 @Nullable Integer styleIndex) throws IllegalStateException;
     }
 
+    @ThreadSafe
     interface Factory {
 
         @Nonnull
-        XlsxParser create() throws IOException;
-
-        @Nonnull
-        static Factory getDefault() {
-            return () -> new SaxXlsxParser(Sax.createReader());
-        }
+        XlsxEntryParser create() throws IOException;
     }
 }

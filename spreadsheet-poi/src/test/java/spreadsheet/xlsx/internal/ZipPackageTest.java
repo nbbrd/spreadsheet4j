@@ -28,22 +28,22 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
  *
  * @author Philippe Charles
  */
-public class ZipPackageFactoryTest {
+public class ZipPackageTest {
 
-    private static final URL TOP5 = ZipPackageFactoryTest.class.getResource("/Top5Browsers.xlsx");
+    private static final URL TOP5 = ZipPackageTest.class.getResource("/Top5Browsers.xlsx");
 
     @Test
     public void testOpenInputStream() throws IOException {
         try (InputStream stream = TOP5.openStream()) {
-            try (XlsxPackage pkg = ZipPackageFactory.INSTANCE.open(stream)) {
+            try (XlsxPackage pkg = ZipPackage.FACTORY.open(stream)) {
                 assertPackageContent(pkg);
             }
         }
@@ -52,13 +52,13 @@ public class ZipPackageFactoryTest {
     @Test
     public void testOpenPath() throws IOException, URISyntaxException {
         Path path = Paths.get(TOP5.toURI());
-        try (XlsxPackage pkg = ZipPackageFactory.INSTANCE.open(path)) {
+        try (XlsxPackage pkg = ZipPackage.FACTORY.open(path)) {
             assertPackageContent(pkg);
         }
     }
 
     private void assertPackageContent(XlsxPackage pkg) throws IOException {
-        XlsxParser parser = new SaxXlsxParser(Sax.createReader());
+        XlsxEntryParser parser = new SaxEntryParser(Sax.createReader());
 
         assertThat(XlsxBook.parseWorkbook(pkg::getWorkbook, parser))
                 .satisfies(o -> {
@@ -72,7 +72,7 @@ public class ZipPackageFactoryTest {
         List<Boolean> styles = XlsxBook.parseStyles(DefaultNumberingFormat.INSTANCE, pkg::getStyles, parser);
         assertThat(styles).containsExactly(false, true);
 
-        XlsxSheetBuilder b = XlsxSheetBuilders.create(XlsxDateSystems.X1900, sharedStrings::get, styles::get);
+        XlsxSheetBuilder b = DefaultSheetBuilder.multi(DefaultDateSystem.X1900, sharedStrings::get, styles::get);
         SheetAssert.assertThat(XlsxBook.parseSheet("hello", b, () -> pkg.getSheet("rId1"), parser))
                 .hasRowCount(42)
                 .hasColumnCount(7);

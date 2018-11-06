@@ -22,31 +22,35 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import spreadsheet.xlsx.internal.DefaultNumberingFormat;
+import spreadsheet.xlsx.internal.SaxEntryParser;
 import spreadsheet.xlsx.internal.XlsxBook;
+import spreadsheet.xlsx.internal.DefaultDateSystem;
+import spreadsheet.xlsx.internal.DefaultSheetBuilder;
+import spreadsheet.xlsx.internal.ZipPackage;
 
 /**
  *
  * @author Philippe Charles
  * @since 2.2.0
  */
-@lombok.Data
+@lombok.Getter
 public final class XlsxReader {
 
-    XlsxPackage.Factory packager = XlsxPackage.Factory.getDefault();
-    XlsxParser.Factory parser = XlsxParser.Factory.getDefault();
-    XlsxNumberingFormat numberingFormat = XlsxNumberingFormat.getDefault();
-    XlsxDateSystem dateSystem1900 = XlsxDateSystem.getDefault(false);
-    XlsxDateSystem dateSystem1904 = XlsxDateSystem.getDefault(true);
-    XlsxSheetBuilder.Factory builder = XlsxSheetBuilder.Factory.getDefault();
+    private final XlsxPackage.Factory packager = ZipPackage.FACTORY;
+    private final XlsxEntryParser.Factory entryParser = SaxEntryParser.FACTORY;
+    private final XlsxNumberingFormat.Factory numberingFormat = DefaultNumberingFormat.FACTORY;
+    private final XlsxDateSystem.Factory dateSystem = DefaultDateSystem.FACTORY;
+    private final XlsxSheetBuilder.Factory builder = DefaultSheetBuilder.FACTORY;
 
     @Nonnull
     public Book read(@Nonnull Path file) throws IOException {
-        return createBookOrClose(getPackager().open(file));
+        return createBookOrClose(packager.open(file));
     }
 
     @Nonnull
     public Book read(@Nonnull InputStream stream) throws IOException {
-        return createBookOrClose(getPackager().open(stream));
+        return createBookOrClose(packager.open(stream));
     }
 
     private Book createBookOrClose(XlsxPackage pkg) throws IOException {

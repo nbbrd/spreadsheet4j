@@ -24,7 +24,7 @@ import static spreadsheet.xlsx.internal.DefaultNumberingFormat.isCustomExcelDate
  *
  * @author Philippe Charles
  */
-public class DefaultXlsxNumberingFormatTest {
+public class DefaultNumberingFormatTest {
 
     @Test
     public void testIsCustomExcelDateFormat() {

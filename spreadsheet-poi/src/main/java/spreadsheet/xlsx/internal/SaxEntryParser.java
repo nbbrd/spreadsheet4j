@@ -25,14 +25,14 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import spreadsheet.xlsx.XlsxParser;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class SaxXlsxParser implements XlsxParser {
+public final class SaxEntryParser implements XlsxEntryParser {
 
     @lombok.NonNull
     private final XMLReader reader;
@@ -286,4 +286,6 @@ public final class SaxXlsxParser implements XlsxParser {
             return this;
         }
     }
+    
+    public static final XlsxEntryParser.Factory FACTORY = () -> new SaxEntryParser(Sax.createReader());
 }
