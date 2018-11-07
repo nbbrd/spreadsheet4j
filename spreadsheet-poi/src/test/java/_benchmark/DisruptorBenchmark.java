@@ -18,7 +18,6 @@ package _benchmark;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.ArrayBook;
-import ec.util.spreadsheet.poi.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -28,17 +27,20 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import spreadsheet.xlsx.XlsxReader;
+import spreadsheet.xlsx.internal.DisruptorSheetBuilder;
+import spreadsheet.xlsx.internal.MultiSheetBuilder;
 
 /**
  *
  * @author Philippe Charles
  */
 @State(Scope.Benchmark)
-public class ExcelBookFactoryBenchmark {
+public class DisruptorBenchmark {
 
     public static void main(String[] args) throws Exception {
         Options options = new OptionsBuilder()
-                .include(ExcelBookFactoryBenchmark.class.getSimpleName())
+                .include(DisruptorBenchmark.class.getSimpleName())
                 .warmupIterations(3)
                 .measurementIterations(3)
                 .forks(1)
@@ -48,53 +50,27 @@ public class ExcelBookFactoryBenchmark {
     }
 
     private byte[] top5;
-    private ExcelBookFactory fast;
-    private ExcelBookFactory normal;
+    private XlsxReader multi;
+    private XlsxReader disruptor;
 
     @Setup
     public void setup() throws IOException {
         top5 = Sample.TOP5;
-
-        fast = new ExcelBookFactory();
-        fast.setFast(true);
-
-        normal = new ExcelBookFactory();
-        normal.setFast(false);
+        multi = new XlsxReader().withSheetBuilder(MultiSheetBuilder::of);
+        disruptor = new XlsxReader().withSheetBuilder(DisruptorSheetBuilder::of);
     }
 
     @Benchmark
-    public ArrayBook fullFast() throws IOException {
-        try (Book book = fast.load(new ByteArrayInputStream(top5))) {
+    public ArrayBook multi() throws IOException {
+        try (Book book = multi.read(new ByteArrayInputStream(top5))) {
             return ArrayBook.copyOf(book);
         }
     }
 
     @Benchmark
-    public ArrayBook fullNormal() throws IOException {
-        try (Book book = normal.load(new ByteArrayInputStream(top5))) {
+    public ArrayBook disruptor() throws IOException {
+        try (Book book = disruptor.read(new ByteArrayInputStream(top5))) {
             return ArrayBook.copyOf(book);
         }
-    }
-
-    @Benchmark
-    public String[] partialFast() throws IOException {
-        try (Book book = fast.load(new ByteArrayInputStream(top5))) {
-            return getSheetNames(book);
-        }
-    }
-
-    @Benchmark
-    public String[] partialNormal() throws IOException {
-        try (Book book = normal.load(new ByteArrayInputStream(top5))) {
-            return getSheetNames(book);
-        }
-    }
-
-    private String[] getSheetNames(Book book) throws IOException {
-        String[] result = new String[book.getSheetCount()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = book.getSheetName(i);
-        }
-        return result;
     }
 }

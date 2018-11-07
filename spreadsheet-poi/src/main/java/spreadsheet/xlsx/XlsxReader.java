@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import lombok.AccessLevel;
 import spreadsheet.xlsx.internal.DefaultNumberingFormat;
 import spreadsheet.xlsx.internal.SaxEntryParser;
 import spreadsheet.xlsx.internal.XlsxBook;
@@ -36,13 +37,25 @@ import spreadsheet.xlsx.internal.ZipPackage;
  * @since 2.2.0
  */
 @lombok.Getter
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class XlsxReader {
 
-    private final XlsxPackage.Factory packager = ZipPackage.FACTORY;
-    private final XlsxEntryParser.Factory entryParser = SaxEntryParser.FACTORY;
-    private final XlsxNumberingFormat.Factory numberingFormat = DefaultNumberingFormat.FACTORY;
-    private final XlsxDateSystem.Factory dateSystem = DefaultDateSystem.FACTORY;
-    private final XlsxSheetBuilder.Factory sheetBuilder = MULTI_CORE ? MultiSheetBuilder::of : DefaultSheetBuilder::of;
+    private final XlsxPackage.Factory packager;
+    private final XlsxEntryParser.Factory entryParser;
+    private final XlsxNumberingFormat.Factory numberingFormat;
+    private final XlsxDateSystem.Factory dateSystem;
+    @lombok.experimental.Wither
+    private final XlsxSheetBuilder.Factory sheetBuilder;
+
+    public XlsxReader() {
+        this(
+                ZipPackage.FACTORY,
+                SaxEntryParser.FACTORY,
+                DefaultNumberingFormat.FACTORY,
+                DefaultDateSystem.FACTORY,
+                MULTI_CORE ? MultiSheetBuilder::of : DefaultSheetBuilder::of
+        );
+    }
 
     @Nonnull
     public Book read(@Nonnull Path file) throws IOException {
