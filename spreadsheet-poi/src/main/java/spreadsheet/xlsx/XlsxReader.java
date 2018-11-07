@@ -27,6 +27,7 @@ import spreadsheet.xlsx.internal.SaxEntryParser;
 import spreadsheet.xlsx.internal.XlsxBook;
 import spreadsheet.xlsx.internal.DefaultDateSystem;
 import spreadsheet.xlsx.internal.DefaultSheetBuilder;
+import spreadsheet.xlsx.internal.MultiSheetBuilder;
 import spreadsheet.xlsx.internal.ZipPackage;
 
 /**
@@ -41,7 +42,7 @@ public final class XlsxReader {
     private final XlsxEntryParser.Factory entryParser = SaxEntryParser.FACTORY;
     private final XlsxNumberingFormat.Factory numberingFormat = DefaultNumberingFormat.FACTORY;
     private final XlsxDateSystem.Factory dateSystem = DefaultDateSystem.FACTORY;
-    private final XlsxSheetBuilder.Factory sheetBuilder = DefaultSheetBuilder.FACTORY;
+    private final XlsxSheetBuilder.Factory sheetBuilder = MULTI_CORE ? MultiSheetBuilder::of : DefaultSheetBuilder::of;
 
     @Nonnull
     public Book read(@Nonnull Path file) throws IOException {
@@ -61,4 +62,6 @@ public final class XlsxReader {
             throw ex;
         }
     }
+
+    private static final boolean MULTI_CORE = Runtime.getRuntime().availableProcessors() > 1;
 }

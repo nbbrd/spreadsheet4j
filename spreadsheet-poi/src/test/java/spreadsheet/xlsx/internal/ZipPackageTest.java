@@ -72,7 +72,7 @@ public class ZipPackageTest {
         List<Boolean> styles = XlsxBook.parseStyles(DefaultNumberingFormat.INSTANCE, pkg::getStyles, parser);
         assertThat(styles).containsExactly(false, true);
 
-        XlsxSheetBuilder b = DefaultSheetBuilder.multi(DefaultDateSystem.X1900, sharedStrings::get, styles::get);
+        XlsxSheetBuilder b = MultiSheetBuilder.of(DefaultDateSystem.X1900, sharedStrings::get, styles::get);
         SheetAssert.assertThat(XlsxBook.parseSheet("hello", b, () -> pkg.getSheet("rId1"), parser))
                 .hasRowCount(42)
                 .hasColumnCount(7);

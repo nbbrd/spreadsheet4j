@@ -63,7 +63,7 @@ public class XlsxBookTest {
 
     @Test
     public void testParseSheet() throws IOException {
-        XlsxSheetBuilder builder = DefaultSheetBuilder.single(
+        XlsxSheetBuilder builder = DefaultSheetBuilder.of(
                 DefaultDateSystem.X1900,
                 Arrays.asList("hello", "world")::get,
                 Arrays.asList(false, true)::get

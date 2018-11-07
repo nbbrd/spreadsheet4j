@@ -68,10 +68,10 @@ public class SaxEntryParserTest {
     public void testSheetSax2EventHandler() throws IOException {
         XlsxEntryParser parser = new SaxEntryParser(Sax.createReader());
 
-        XlsxSheetBuilder b = DefaultSheetBuilder
-                .multi(DefaultDateSystem.X1904,
-                        Arrays.asList("1", "2", "3", "4", "5", "6", "7")::get,
-                        Arrays.asList(false, true)::get);
+        XlsxSheetBuilder b = MultiSheetBuilder.of(
+                DefaultDateSystem.X1904,
+                Arrays.asList("1", "2", "3", "4", "5", "6", "7")::get,
+                Arrays.asList(false, true)::get);
 
         SheetAssert.assertThat(XlsxBook.parseSheet("regular", b, () -> files.applyWithIO("/RegularXlsxSheet.xml"), parser))
                 .hasName("regular")
