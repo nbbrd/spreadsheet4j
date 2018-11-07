@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Warmup;
 
 /**
  *
@@ -58,19 +60,51 @@ public class ExcelBookFactoryBenchmark {
     }
 
     @Benchmark
+    @Warmup(iterations = 3)
+    @Measurement(iterations = 3)
     @Fork(value = 1, warmups = 1)
-    public ArrayBook testFast() throws IOException {
+    public ArrayBook fullFast() throws IOException {
         try (Book book = fast.load(new ByteArrayInputStream(top5))) {
             return ArrayBook.copyOf(book);
         }
     }
 
     @Benchmark
+    @Warmup(iterations = 3)
+    @Measurement(iterations = 3)
     @Fork(value = 1, warmups = 1)
-    public ArrayBook testNormal() throws IOException {
+    public ArrayBook fullNormal() throws IOException {
         try (Book book = normal.load(new ByteArrayInputStream(top5))) {
             return ArrayBook.copyOf(book);
         }
+    }
+
+    @Benchmark
+    @Warmup(iterations = 3)
+    @Measurement(iterations = 3)
+    @Fork(value = 1, warmups = 1)
+    public String[] partialFast() throws IOException {
+        try (Book book = fast.load(new ByteArrayInputStream(top5))) {
+            return getSheetNames(book);
+        }
+    }
+
+    @Benchmark
+    @Warmup(iterations = 3)
+    @Measurement(iterations = 3)
+    @Fork(value = 1, warmups = 1)
+    public String[] partialNormal() throws IOException {
+        try (Book book = normal.load(new ByteArrayInputStream(top5))) {
+            return getSheetNames(book);
+        }
+    }
+
+    private String[] getSheetNames(Book book) throws IOException {
+        String[] result = new String[book.getSheetCount()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = book.getSheetName(i);
+        }
+        return result;
     }
 
     private static byte[] toByteArray(InputStream stream) throws IOException {

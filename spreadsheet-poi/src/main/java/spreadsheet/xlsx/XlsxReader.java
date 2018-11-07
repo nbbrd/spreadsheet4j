@@ -41,7 +41,7 @@ public final class XlsxReader {
     private final XlsxEntryParser.Factory entryParser = SaxEntryParser.FACTORY;
     private final XlsxNumberingFormat.Factory numberingFormat = DefaultNumberingFormat.FACTORY;
     private final XlsxDateSystem.Factory dateSystem = DefaultDateSystem.FACTORY;
-    private final XlsxSheetBuilder.Factory builder = DefaultSheetBuilder.FACTORY;
+    private final XlsxSheetBuilder.Factory sheetBuilder = DefaultSheetBuilder.FACTORY;
 
     @Nonnull
     public Book read(@Nonnull Path file) throws IOException {

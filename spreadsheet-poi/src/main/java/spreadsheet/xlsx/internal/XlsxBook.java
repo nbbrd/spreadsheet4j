@@ -43,27 +43,22 @@ import spreadsheet.xlsx.XlsxEntryParser;
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
+@lombok.RequiredArgsConstructor
 public final class XlsxBook extends Book {
 
     @Nonnull
     public static XlsxBook create(@Nonnull XlsxPackage pkg, @Nonnull XlsxReader reader) throws IOException {
         XlsxEntryParser entryParser = null;
-        XlsxSheetBuilder sheetBuilder = null;
 
         try {
             entryParser = reader.getEntryParser().create();
 
             WorkbookData data = parseWorkbook(pkg::getWorkbook, entryParser);
-            XlsxDateSystem dateSystem = reader.getDateSystem().of(data.date1904);
-            IntFunction<String> sharedStrings = parseSharedStrings(pkg::getSharedStrings, entryParser)::get;
-            IntPredicate dateFormats = parseStyles(reader.getNumberingFormat().of(), pkg::getStyles, entryParser)::get;
 
-            sheetBuilder = reader.getBuilder().create(dateSystem, sharedStrings, dateFormats);
-
-            return new XlsxBook(pkg, entryParser, data.sheets, sheetBuilder);
+            return new XlsxBook(pkg, entryParser, data.sheets, data.date1904,
+                    reader.getDateSystem(), reader.getNumberingFormat(), reader.getSheetBuilder());
         } catch (IOException ex) {
-            closeAll(ex, entryParser, sheetBuilder);
+            closeAll(ex, entryParser);
             throw ex;
         }
     }
@@ -71,11 +66,15 @@ public final class XlsxBook extends Book {
     private final XlsxPackage pkg;
     private final XlsxEntryParser entryParser;
     private final List<SheetMeta> sheets;
-    private final XlsxSheetBuilder sheetBuilder;
+    private final boolean date1904;
+    private final XlsxDateSystem.Factory dateSystemFactory;
+    private final XlsxNumberingFormat.Factory numberingFormatFactory;
+    private final XlsxSheetBuilder.Factory sheetBuilderFactory;
+    private XlsxSheetBuilder lazySheetBuilder = null;
 
     @Override
     public void close() throws IOException {
-        closeAll(null, pkg, entryParser, sheetBuilder);
+        closeAll(null, pkg, entryParser, lazySheetBuilder);
     }
 
     @Override
@@ -86,12 +85,22 @@ public final class XlsxBook extends Book {
     @Override
     public Sheet getSheet(int index) throws IOException {
         SheetMeta meta = sheets.get(index);
-        return parseSheet(meta.name, sheetBuilder, () -> pkg.getSheet(meta.relationId), entryParser);
+        return parseSheet(meta.name, getOrCreateSheetBuilder(), () -> pkg.getSheet(meta.relationId), entryParser);
     }
 
     @Override
     public String getSheetName(@Nonnegative int index) {
         return sheets.get(index).getName();
+    }
+
+    private XlsxSheetBuilder getOrCreateSheetBuilder() throws IOException {
+        if (lazySheetBuilder == null) {
+            XlsxDateSystem dateSystem = dateSystemFactory.of(date1904);
+            IntFunction<String> sharedStrings = parseSharedStrings(pkg::getSharedStrings, entryParser)::get;
+            IntPredicate dateFormats = parseStyles(numberingFormatFactory.of(), pkg::getStyles, entryParser)::get;
+            lazySheetBuilder = sheetBuilderFactory.create(dateSystem, sharedStrings, dateFormats);
+        }
+        return lazySheetBuilder;
     }
 
     static void closeAll(IOException initial, Closeable... closeables) throws IOException {
