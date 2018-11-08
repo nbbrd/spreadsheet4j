@@ -66,7 +66,7 @@ public interface XlsxEntryParser extends Closeable {
                 @Nullable String ref,
                 @Nonnull CharSequence value,
                 @Nullable String dataType,
-                @Nullable Integer styleIndex) throws IllegalStateException;
+                @Nullable String styleIndex) throws IllegalStateException;
     }
 
     @ThreadSafe

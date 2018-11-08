@@ -63,7 +63,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, Integer styleIndex) {
+    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
         long sequence = ringBuffer.next();
         try {
             CustomEvent event = ringBuffer.get(sequence);
@@ -99,6 +99,6 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
         private String ref;
         private CharSequence value;
         private String dataType;
-        private Integer styleIndex;
+        private String styleIndex;
     }
 }

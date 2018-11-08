@@ -78,7 +78,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
         private String sheetBounds = null;
         private String ref = null;
         private String rawDataType = null;
-        private Integer rawStyleIndex = null;
+        private String rawStyleIndex = null;
 
         @Override
         public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
@@ -86,12 +86,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
                 case CELL_TAG:
                     ref = attributes.getValue(REFERENCE_ATTRIBUTE);
                     rawDataType = attributes.getValue(CELL_DATA_TYPE_ATTRIBUTE);
-                    String tmp = attributes.getValue(STYLE_INDEX_ATTRIBUTE);
-                    try {
-                        rawStyleIndex = tmp != null ? Integer.valueOf(tmp) : null;
-                    } catch (NumberFormatException ex) {
-                        throw new SAXException(ex);
-                    }
+                    rawStyleIndex = attributes.getValue(STYLE_INDEX_ATTRIBUTE);
                     break;
                 case CELL_VALUE_TAG:
                     stringBuilder.enable().clear();

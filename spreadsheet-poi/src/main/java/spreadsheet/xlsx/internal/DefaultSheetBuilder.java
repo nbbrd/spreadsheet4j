@@ -52,7 +52,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, Integer styleIndex) {
+    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
         Object cellValue = valueFactory.getValue(value.toString(), dataType, styleIndex);
         if (cellValue != null && refHelper.parse(ref)) {
             arraySheetBuilder.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), cellValue);

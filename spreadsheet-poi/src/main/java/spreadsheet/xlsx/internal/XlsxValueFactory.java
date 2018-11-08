@@ -60,11 +60,11 @@ final class XlsxValueFactory {
     }
 
     @Nullable
-    private Object getNumberOrDate(@Nonnull String rawValue, @Nullable Integer rawStyleIndex) {
+    private Object getNumberOrDate(@Nonnull String rawValue, @Nullable String rawStyleIndex) {
         try {
             double number = Double.parseDouble(rawValue);
             if (rawStyleIndex != null
-                    && dateFormats.test(rawStyleIndex)
+                    && dateFormats.test(Integer.parseInt(rawStyleIndex))
                     && dateSystem.isValidExcelDate(number)) {
                 return dateSystem.getJavaDate(calendar, number);
             }
@@ -75,7 +75,7 @@ final class XlsxValueFactory {
     }
 
     @Nullable
-    public Object getValue(@Nonnull String rawValue, @Nullable String rawDataType, @Nullable Integer rawStyleIndex) {
+    public Object getValue(@Nonnull String rawValue, @Nullable String rawDataType, @Nullable String rawStyleIndex) {
         if (rawDataType == null) {
             return getNumberOrDate(rawValue, rawStyleIndex);
         }

@@ -240,7 +240,7 @@ public final class XlsxBook extends Book {
         }
 
         @Override
-        public void onCell(String ref, CharSequence value, String dataType, Integer styleIndex) {
+        public void onCell(String ref, CharSequence value, String dataType, String styleIndex) {
             if (!inData) {
                 throw new IllegalStateException();
             }

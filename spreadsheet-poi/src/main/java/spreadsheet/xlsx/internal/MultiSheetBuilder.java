@@ -66,7 +66,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, Integer styleIndex) {
+    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
         if (nextBatch.isFull()) {
             if (queue.isFull()) {
                 queue.waitForCompletion();
@@ -139,7 +139,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
             this.size = 0;
         }
 
-        void put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable Integer styleIndex) {
+        void put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable String styleIndex) {
             Object[] row = values[size++];
             row[0] = ref;
             row[1] = value;
@@ -157,7 +157,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
         void process(DefaultSheetBuilder delegate) {
             for (int i = 0; i < size; i++) {
-                delegate.put((String) values[i][0], (CharSequence) values[i][1], (String) values[i][2], (Integer) values[i][3]);
+                delegate.put((String) values[i][0], (CharSequence) values[i][1], (String) values[i][2], (String) values[i][3]);
             }
         }
 

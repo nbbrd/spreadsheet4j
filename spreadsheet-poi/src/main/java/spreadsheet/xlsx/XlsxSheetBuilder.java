@@ -35,7 +35,7 @@ public interface XlsxSheetBuilder extends Closeable {
     XlsxSheetBuilder reset(@Nonnull String sheetName, @Nullable String sheetBounds);
 
     @Nonnull
-    XlsxSheetBuilder put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable Integer styleIndex);
+    XlsxSheetBuilder put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable String styleIndex);
 
     @Nonnull
     Sheet build();
