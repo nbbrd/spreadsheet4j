@@ -28,10 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxPackage;
@@ -97,8 +96,8 @@ public final class XlsxBook extends Book {
         if (lazySheetBuilder == null) {
             XlsxDateSystem dateSystem = dateSystemFactory.of(date1904);
             IntFunction<String> sharedStrings = parseSharedStrings(pkg::getSharedStrings, entryParser)::get;
-            IntPredicate dateFormats = parseStyles(numberingFormatFactory.of(), pkg::getStyles, entryParser)::get;
-            lazySheetBuilder = sheetBuilderFactory.create(dateSystem, sharedStrings, dateFormats);
+            boolean[] dateFormats = parseStyles(numberingFormatFactory.of(), pkg::getStyles, entryParser);
+            lazySheetBuilder = sheetBuilderFactory.create(dateSystem, sharedStrings, o -> dateFormats[o]);
         }
         return lazySheetBuilder;
     }
@@ -174,7 +173,7 @@ public final class XlsxBook extends Book {
         return result;
     }
 
-    static List<Boolean> parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
+    static boolean[] parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         StylesVisitorImpl result = new StylesVisitorImpl(dateFormat);
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitStyles(stream, result);
@@ -202,11 +201,14 @@ public final class XlsxBook extends Book {
             orderedListOfIds.add(formatId);
         }
 
-        public List<Boolean> build() {
+        public boolean[] build() {
             // Style order matters! -> accessed by index in sheets
-            return orderedListOfIds.stream()
-                    .map(o -> dateFormat.isExcelDateFormat(o, numberFormats.getOrDefault(o, null)))
-                    .collect(Collectors.toList());
+            boolean[] result = new boolean[orderedListOfIds.size()];
+            for (int i = 0; i < result.length; i++) {
+                int numFmtId = orderedListOfIds.get(i);
+                result[i] = dateFormat.isExcelDateFormat(numFmtId, numberFormats.getOrDefault(numFmtId, null));
+            }
+            return result;
         }
     }
 
@@ -240,7 +242,7 @@ public final class XlsxBook extends Book {
         }
 
         @Override
-        public void onCell(String ref, CharSequence value, String dataType, String styleIndex) {
+        public void onCell(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
             if (!inData) {
                 throw new IllegalStateException();
             }

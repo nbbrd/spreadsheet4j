@@ -16,8 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
-import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
@@ -25,6 +25,7 @@ import ec.util.spreadsheet.Sheet;
 import java.io.IOException;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
+import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 
@@ -44,7 +45,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
 
     private DisruptorSheetBuilder(DefaultSheetBuilder delegate) {
         this.delegate = delegate;
-        this.disruptor = new Disruptor<>(CustomEvent::new, 1024, DaemonThreadFactory.INSTANCE, ProducerType.SINGLE, new BlockingWaitStrategy());
+        this.disruptor = new Disruptor<>(CustomEvent::new, 1024, DaemonThreadFactory.INSTANCE, ProducerType.SINGLE, new YieldingWaitStrategy());
         disruptor.handleEventsWith(this::handleEvent);
         disruptor.start();
         this.ringBuffer = disruptor.getRingBuffer();
@@ -63,7 +64,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
+    public XlsxSheetBuilder put(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
         long sequence = ringBuffer.next();
         try {
             CustomEvent event = ringBuffer.get(sequence);
@@ -98,7 +99,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
 
         private String ref;
         private CharSequence value;
-        private String dataType;
-        private String styleIndex;
+        private XlsxDataType dataType;
+        private int styleIndex;
     }
 }

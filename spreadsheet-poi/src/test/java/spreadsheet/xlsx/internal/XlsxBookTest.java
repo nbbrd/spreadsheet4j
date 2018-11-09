@@ -16,6 +16,7 @@
  */
 package spreadsheet.xlsx.internal;
 
+import spreadsheet.xlsx.XlsxDataType;
 import ec.util.spreadsheet.SheetAssert;
 import ioutil.IO;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class XlsxBookTest {
         }))).isInstanceOf(CustomIOException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("", builder, empty, parserOnSheet(o -> {
-            o.onCell("A1", "hello", XlsxValueFactory.STRING_TYPE, null);
+            o.onCell("A1", "hello", XlsxDataType.STRING, XlsxValueFactory.NULL_STYLE_INDEX);
         }))).as("Must follow call order").isInstanceOf(IllegalStateException.class);
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("", builder, empty, parserOnSheet(o -> {
@@ -87,7 +88,7 @@ public class XlsxBookTest {
 
         SheetAssert.assertThat(XlsxBook.parseSheet("", builder, empty, parserOnSheet(o -> {
             o.onSheetData(null);
-            o.onCell("A1", "hello", XlsxValueFactory.STRING_TYPE, null);
+            o.onCell("A1", "hello", XlsxDataType.STRING, XlsxValueFactory.NULL_STYLE_INDEX);
         }))).hasName("").hasRowCount(1).hasColumnCount(1).hasCellValue(0, 0, "hello");
     }
 

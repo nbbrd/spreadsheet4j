@@ -69,10 +69,10 @@ public class ZipPackageTest {
         List<String> sharedStrings = XlsxBook.parseSharedStrings(pkg::getSharedStrings, parser);
         assertThat(sharedStrings).contains("IE", atIndex(0)).contains("helloworld", atIndex(8));
 
-        List<Boolean> styles = XlsxBook.parseStyles(DefaultNumberingFormat.INSTANCE, pkg::getStyles, parser);
+        boolean[] styles = XlsxBook.parseStyles(DefaultNumberingFormat.INSTANCE, pkg::getStyles, parser);
         assertThat(styles).containsExactly(false, true);
 
-        XlsxSheetBuilder b = MultiSheetBuilder.of(DefaultDateSystem.X1900, sharedStrings::get, styles::get);
+        XlsxSheetBuilder b = MultiSheetBuilder.of(DefaultDateSystem.X1900, sharedStrings::get, o -> styles[o]);
         SheetAssert.assertThat(XlsxBook.parseSheet("hello", b, () -> pkg.getSheet("rId1"), parser))
                 .hasRowCount(42)
                 .hasColumnCount(7);

@@ -27,7 +27,9 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.openjdk.jmh.runner.options.TimeValue;
 import spreadsheet.xlsx.XlsxReader;
+import spreadsheet.xlsx.internal.DefaultSheetBuilder;
 import spreadsheet.xlsx.internal.DisruptorSheetBuilder;
 import spreadsheet.xlsx.internal.MultiSheetBuilder;
 
@@ -36,13 +38,15 @@ import spreadsheet.xlsx.internal.MultiSheetBuilder;
  * @author Philippe Charles
  */
 @State(Scope.Benchmark)
-public class DisruptorBenchmark {
+public class SheetBuilderBenchmark {
 
     public static void main(String[] args) throws Exception {
         Options options = new OptionsBuilder()
-                .include(DisruptorBenchmark.class.getSimpleName())
+                .include(SheetBuilderBenchmark.class.getSimpleName())
                 .warmupIterations(3)
+                .warmupTime(TimeValue.seconds(3))
                 .measurementIterations(3)
+                .measurementTime(TimeValue.seconds(3))
                 .forks(1)
                 .warmupForks(1)
                 .build();
@@ -50,14 +54,23 @@ public class DisruptorBenchmark {
     }
 
     private byte[] top5;
+    private XlsxReader single;
     private XlsxReader multi;
     private XlsxReader disruptor;
 
     @Setup
     public void setup() throws IOException {
         top5 = Sample.TOP5;
+        single = new XlsxReader().withSheetBuilder(DefaultSheetBuilder::of);
         multi = new XlsxReader().withSheetBuilder(MultiSheetBuilder::of);
         disruptor = new XlsxReader().withSheetBuilder(DisruptorSheetBuilder::of);
+    }
+
+    @Benchmark
+    public ArrayBook single() throws IOException {
+        try (Book book = single.read(new ByteArrayInputStream(top5))) {
+            return ArrayBook.copyOf(book);
+        }
     }
 
     @Benchmark

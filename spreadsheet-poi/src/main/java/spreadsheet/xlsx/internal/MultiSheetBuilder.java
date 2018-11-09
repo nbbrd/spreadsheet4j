@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 
@@ -66,7 +66,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
+    public XlsxSheetBuilder put(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
         if (nextBatch.isFull()) {
             if (queue.isFull()) {
                 queue.waitForCompletion();
@@ -131,20 +131,27 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
     private static final class Batch {
 
+        private static final XlsxDataType[] DTYPES = XlsxDataType.values();
+
         private final Object[][] values;
+        private final int[] dataTypes;
+        private final int[] styleIndexes;
         private int size;
 
         Batch(int maxSize) {
-            this.values = new Object[maxSize][4];
+            this.values = new Object[maxSize][2];
+            this.dataTypes = new int[maxSize];
+            this.styleIndexes = new int[maxSize];
             this.size = 0;
         }
 
-        void put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable String styleIndex) {
-            Object[] row = values[size++];
+        void put(@Nonnull String ref, @Nonnull CharSequence value, @Nonnull XlsxDataType dataType, int styleIndex) {
+            Object[] row = values[size];
             row[0] = ref;
             row[1] = value;
-            row[2] = dataType;
-            row[3] = styleIndex;
+            dataTypes[size] = dataType.ordinal();
+            styleIndexes[size] = styleIndex;
+            size++;
         }
 
         int getSize() {
@@ -157,7 +164,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
         void process(DefaultSheetBuilder delegate) {
             for (int i = 0; i < size; i++) {
-                delegate.put((String) values[i][0], (CharSequence) values[i][1], (String) values[i][2], (String) values[i][3]);
+                delegate.put((String) values[i][0], (CharSequence) values[i][1], DTYPES[dataTypes[i]], styleIndexes[i]);
             }
         }
 

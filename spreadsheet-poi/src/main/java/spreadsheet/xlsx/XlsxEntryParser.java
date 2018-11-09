@@ -63,10 +63,10 @@ public interface XlsxEntryParser extends Closeable {
         void onSheetData(@Nullable String sheetBounds) throws IllegalStateException;
 
         void onCell(
-                @Nullable String ref,
+                @Nonnull String ref,
                 @Nonnull CharSequence value,
-                @Nullable String dataType,
-                @Nullable String styleIndex) throws IllegalStateException;
+                @Nonnull XlsxDataType dataType,
+                int styleIndex) throws IllegalStateException;
     }
 
     @ThreadSafe

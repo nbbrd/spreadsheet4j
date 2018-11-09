@@ -16,6 +16,7 @@
  */
 package spreadsheet.xlsx.internal;
 
+import spreadsheet.xlsx.XlsxDataType;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ec.util.spreadsheet.helpers.CellRefHelper;
@@ -52,8 +53,8 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, String dataType, String styleIndex) {
-        Object cellValue = valueFactory.getValue(value.toString(), dataType, styleIndex);
+    public XlsxSheetBuilder put(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
+        Object cellValue = valueFactory.getValue(dataType, value.toString(), styleIndex);
         if (cellValue != null && refHelper.parse(ref)) {
             arraySheetBuilder.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), cellValue);
         }
