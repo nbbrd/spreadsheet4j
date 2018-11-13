@@ -33,14 +33,19 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public Date getJavaDate(Calendar calendar, double date) {
+        public long getJavaDateInMillis(Calendar calendar, double date) {
             int datePart = (int) Math.floor(date);
             int timePart = (int) Math.round((date - datePart) * NUMBER_OF_SECONDS_IN_DAY);
             calendar.clear();
             calendar.set(1900, 0, 1, 0, 0, 0);
             calendar.add(Calendar.DAY_OF_MONTH, adjustLastDayOfFebruary1900(datePart) - INDEX_ORIGIN);
             calendar.add(Calendar.SECOND, timePart);
-            return calendar.getTime();
+            return calendar.getTimeInMillis();
+        }
+
+        @Override
+        public Date getJavaDate(Calendar calendar, double date) {
+            return new Date(getJavaDateInMillis(calendar, date));
         }
 
         private int adjustLastDayOfFebruary1900(int datePart) {
@@ -56,14 +61,19 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public Date getJavaDate(Calendar calendar, double date) {
+        public long getJavaDateInMillis(Calendar calendar, double date) {
             int datePart = (int) Math.floor(date);
             int timePart = (int) Math.round((date - datePart) * NUMBER_OF_SECONDS_IN_DAY);
             calendar.clear();
             calendar.set(1904, 0, 1, 0, 0, 0);
             calendar.add(Calendar.DAY_OF_MONTH, datePart);
             calendar.add(Calendar.SECOND, timePart);
-            return calendar.getTime();
+            return calendar.getTimeInMillis();
+        }
+
+        @Override
+        public Date getJavaDate(Calendar calendar, double date) {
+            return new Date(getJavaDateInMillis(calendar, date));
         }
 
         private static final int INDEX_ORIGIN = 0;

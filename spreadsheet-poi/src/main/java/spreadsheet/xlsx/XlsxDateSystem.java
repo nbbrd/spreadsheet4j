@@ -49,6 +49,15 @@ public interface XlsxDateSystem {
     Date getJavaDate(@Nonnull Calendar calendar, double date);
 
     /**
+     * Convert an Excel date to java date.
+     *
+     * @param calendar the resource used to compute the java date
+     * @param date an Excel date
+     * @return a java date in millis
+     */
+    long getJavaDateInMillis(@Nonnull Calendar calendar, double date);
+
+    /**
      * Factory for an XlsxDateSystem.
      */
     interface Factory {
