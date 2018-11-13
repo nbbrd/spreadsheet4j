@@ -17,13 +17,13 @@
 package _benchmark;
 
 import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -67,23 +67,41 @@ public class SheetBuilderBenchmark {
     }
 
     @Benchmark
-    public ArrayBook single() throws IOException {
+    public void single(Blackhole o) throws IOException {
         try (Book book = single.read(new ByteArrayInputStream(top5))) {
-            return ArrayBook.copyOf(book);
+            book.forEach((s, index) -> {
+                for (int i = 0; i < s.getRowCount(); i++) {
+                    for (int j = 0; j < s.getColumnCount(); j++) {
+                        o.consume(s.getCellValue(i, j));
+                    }
+                }
+            });
         }
     }
 
     @Benchmark
-    public ArrayBook multi() throws IOException {
+    public void multi(Blackhole o) throws IOException {
         try (Book book = multi.read(new ByteArrayInputStream(top5))) {
-            return ArrayBook.copyOf(book);
+            book.forEach((s, index) -> {
+                for (int i = 0; i < s.getRowCount(); i++) {
+                    for (int j = 0; j < s.getColumnCount(); j++) {
+                        o.consume(s.getCellValue(i, j));
+                    }
+                }
+            });
         }
     }
 
     @Benchmark
-    public ArrayBook disruptor() throws IOException {
+    public void disruptor(Blackhole o) throws IOException {
         try (Book book = disruptor.read(new ByteArrayInputStream(top5))) {
-            return ArrayBook.copyOf(book);
+            book.forEach((s, index) -> {
+                for (int i = 0; i < s.getRowCount(); i++) {
+                    for (int j = 0; j < s.getColumnCount(); j++) {
+                        o.consume(s.getCellValue(i, j));
+                    }
+                }
+            });
         }
     }
 }

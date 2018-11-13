@@ -52,8 +52,26 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
     @Override
     public XlsxSheetBuilder reset(String sheetName, String sheetBounds) {
-        callback = new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(sheetBounds).name(sheetName));
+        if (sheetBounds != null) {
+            String[] references = sheetBounds.split(":");
+            if (references.length == 2) {
+                CellRefHelper helper = new CellRefHelper();
+                if (helper.parse(references[1])) {
+                    callback = bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
+                }
+            }
+        }
+        callback = unbounded(sheetName);
         return this;
+    }
+
+    private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
+        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
+//        return new CompactCallback(sharedStrings, refHelper, new CompactSheet.Builder(rowCount, columnCount, sheetName, sharedStrings));
+    }
+
+    private ExtCallback unbounded(String sheetName) {
+        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder().name(sheetName));
     }
 
     @Override
@@ -121,7 +139,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
         private final IntFunction<String> sharedStrings;
         private final CellRefHelper refHelper;
-        private final ArraySheet.Builder arraySheet;
+        private final ArraySheet.Builder sheet;
         private String ref;
 
         @Override
@@ -132,34 +150,86 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
         @Override
         public Sheet build() {
-            return arraySheet.build();
+            return sheet.build();
         }
 
         @Override
         public void onNumber(double number) {
             if (refHelper.parse(ref)) {
-                arraySheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), number);
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), number);
             }
         }
 
         @Override
         public void onDate(long date) {
             if (refHelper.parse(ref)) {
-                arraySheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), new Date(date));
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), new Date(date));
             }
         }
 
         @Override
         public void onSharedString(int index) {
             if (refHelper.parse(ref)) {
-                arraySheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.apply(index));
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.apply(index));
             }
         }
 
         @Override
         public void onString(String string) {
             if (refHelper.parse(ref)) {
-                arraySheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+            }
+        }
+
+        @Override
+        public void onNull() {
+        }
+    }
+
+    @lombok.RequiredArgsConstructor
+    private static final class CompactCallback implements ExtCallback {
+
+        private final IntFunction<String> sharedStrings;
+        private final CellRefHelper refHelper;
+        private final CompactSheet.Builder sheet;
+        private String ref;
+
+        @Override
+        public ExtCallback moveTo(String ref) {
+            this.ref = ref;
+            return this;
+        }
+
+        @Override
+        public Sheet build() {
+            return sheet.build();
+        }
+
+        @Override
+        public void onNumber(double number) {
+            if (refHelper.parse(ref)) {
+                sheet.putNumber(refHelper.getRowIndex(), refHelper.getColumnIndex(), number);
+            }
+        }
+
+        @Override
+        public void onDate(long date) {
+            if (refHelper.parse(ref)) {
+                sheet.putDate(refHelper.getRowIndex(), refHelper.getColumnIndex(), date);
+            }
+        }
+
+        @Override
+        public void onSharedString(int index) {
+            if (refHelper.parse(ref)) {
+                sheet.putSharedString(refHelper.getRowIndex(), refHelper.getColumnIndex(), index);
+            }
+        }
+
+        @Override
+        public void onString(String string) {
+            if (refHelper.parse(ref)) {
+                sheet.putString(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
             }
         }
 
