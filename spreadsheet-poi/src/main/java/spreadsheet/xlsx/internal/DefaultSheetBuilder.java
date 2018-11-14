@@ -67,7 +67,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
     private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
         return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
-//        return new CompactCallback(sharedStrings, refHelper, new CompactSheet.Builder(rowCount, columnCount, sheetName, sharedStrings));
+//        return new CompactCallback(refHelper, new CompactSheet.Builder(rowCount, columnCount, sheetName, sharedStrings));
     }
 
     private ExtCallback unbounded(String sheetName) {
@@ -189,7 +189,6 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     @lombok.RequiredArgsConstructor
     private static final class CompactCallback implements ExtCallback {
 
-        private final IntFunction<String> sharedStrings;
         private final CellRefHelper refHelper;
         private final CompactSheet.Builder sheet;
         private String ref;

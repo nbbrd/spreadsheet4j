@@ -188,4 +188,10 @@ final class XlsxValueFactory {
                 return false;
         }
     }
+
+    private static final XlsxDataType[] DTYPES = XlsxDataType.values();
+
+    public static XlsxDataType getDataTypeByOrdinal(int ordinal) {
+        return DTYPES[ordinal];
+    }
 }

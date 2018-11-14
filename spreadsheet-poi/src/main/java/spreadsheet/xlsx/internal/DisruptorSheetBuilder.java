@@ -47,13 +47,12 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
         this.delegate = delegate;
         this.disruptor = new Disruptor<>(CustomEvent::new, 1024, DaemonThreadFactory.INSTANCE, ProducerType.SINGLE, new YieldingWaitStrategy());
         disruptor.handleEventsWith(this::handleEvent);
-        disruptor.start();
-        this.ringBuffer = disruptor.getRingBuffer();
+        this.ringBuffer = disruptor.start();
 
     }
 
     private void handleEvent(CustomEvent event, long sequence, boolean endOfBatch) {
-        delegate.put(event.ref, event.value, event.dataType, event.styleIndex);
+        delegate.put(event.ref, event.value, XlsxValueFactory.getDataTypeByOrdinal(event.dataType), event.styleIndex);
     }
 
     @Override
@@ -70,7 +69,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
             CustomEvent event = ringBuffer.get(sequence);
             event.ref = ref;
             event.value = value;
-            event.dataType = dataType;
+            event.dataType = dataType.ordinal();
             event.styleIndex = styleIndex;
         } finally {
             ringBuffer.publish(sequence);
@@ -99,7 +98,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
 
         private String ref;
         private CharSequence value;
-        private XlsxDataType dataType;
+        private int dataType;
         private int styleIndex;
     }
 }

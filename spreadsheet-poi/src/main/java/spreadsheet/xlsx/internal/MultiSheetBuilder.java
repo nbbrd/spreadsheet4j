@@ -131,8 +131,6 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
     private static final class Batch {
 
-        private static final XlsxDataType[] DTYPES = XlsxDataType.values();
-
         private final Object[][] values;
         private final int[] dataTypes;
         private final int[] styleIndexes;
@@ -164,7 +162,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
         void process(DefaultSheetBuilder delegate) {
             for (int i = 0; i < size; i++) {
-                delegate.put((String) values[i][0], (CharSequence) values[i][1], DTYPES[dataTypes[i]], styleIndexes[i]);
+                delegate.put((String) values[i][0], (CharSequence) values[i][1], XlsxValueFactory.getDataTypeByOrdinal(dataTypes[i]), styleIndexes[i]);
             }
         }
 
