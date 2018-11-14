@@ -16,17 +16,15 @@
  */
 package spreadsheet.xlsx.internal;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
-import static spreadsheet.xlsx.internal.XlsxValueFactory.DATE_TYPE;
-import static spreadsheet.xlsx.internal.XlsxValueFactory.INLINE_STRING_TYPE;
-import static spreadsheet.xlsx.internal.XlsxValueFactory.NUMBER_TYPE;
-import static spreadsheet.xlsx.internal.XlsxValueFactory.SHARED_STRING_TYPE;
-import static spreadsheet.xlsx.internal.XlsxValueFactory.STRING_TYPE;
 
 /**
  *
@@ -34,92 +32,128 @@ import static spreadsheet.xlsx.internal.XlsxValueFactory.STRING_TYPE;
  */
 public class XlsxValueFactoryTest {
 
-    private static final String NO_TYPE = null;
-    private static final String INVALID_TYPE = "azerty";
-    private static final Integer NO_STYLE = null;
-    private static final Integer OUT_OF_BOUNDS_STYLE = -1;
+    private static final int NO_STYLE = XlsxValueFactory.NULL_STYLE_INDEX;
+    private static final int OUT_OF_BOUNDS_STYLE = -1;
 
-    private static XlsxValueFactory newFactory() {
-        return new XlsxValueFactory(
-                XlsxDateSystems.X1904,
-                Arrays.asList("hello", "world")::get,
-                Arrays.asList(false, true)::get);
-    }
+    private static final IntFunction<String> SHARED_STRINGS = Arrays.asList("hello", "world")::get;
+    private static final IntPredicate DATE_FORMATS = Arrays.asList(false, true)::get;
 
     private Date toDate(int year, int month, int day) {
         return new Date(year - 1900, month - 1, day);
     }
 
     @Test
-    public void testGetNull() {
-        XlsxValueFactory f = newFactory();
+    public void testGetNumberOrDate() {
+        XlsxValueFactory.ParserWithStyle f = new XlsxValueFactory.NumberOrDateParser(DefaultDateSystem.X1904, DATE_FORMATS, new GregorianCalendar());
+        CustomCallback c = new CustomCallback();
+        Calendar cal = new GregorianCalendar();
 
-        assertThat(f.getValue("other", NO_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("2010-02-01", NO_TYPE, NO_STYLE)).isNull();
+        f.parse(c, "1", NO_STYLE);
+        assertThat(c.result).isEqualTo(1d);
 
-        assertThat(f.getValue("1", NO_TYPE, OUT_OF_BOUNDS_STYLE)).isNull();
-        assertThat(f.getValue("3.14", NO_TYPE, OUT_OF_BOUNDS_STYLE)).isNull();
+        f.parse(c, "3.14", NO_STYLE);
+        assertThat(c.result).isEqualTo(3.14);
 
-        assertThat(f.getValue("1", INVALID_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("3.14", INVALID_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("other", INVALID_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("2010-02-01", INVALID_TYPE, NO_STYLE)).isNull();
+        f.parse(c, "3.14", 0);
+        assertThat(c.result).isEqualTo(3.14);
 
-        assertThat(f.getValue("1", NUMBER_TYPE, OUT_OF_BOUNDS_STYLE)).isNull();
+        f.parse(c, "3.14", 1);
+        assertThat(c.result).isNotInstanceOf(Number.class);
 
-        assertThat(f.getValue("1", DATE_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("3.14", DATE_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("other", DATE_TYPE, NO_STYLE)).isNull();
-    }
+        f.parse(c, "other", NO_STYLE);
+        assertThat(c.result).isNull();
 
-    @Test
-    public void testGetNumber() {
-        XlsxValueFactory f = newFactory();
+        f.parse(c, "2010-02-01", NO_STYLE);
+        assertThat(c.result).isNull();
 
-        assertThat(f.getValue("1", NO_TYPE, NO_STYLE)).isEqualTo(1d);
+        f.parse(c, "1", OUT_OF_BOUNDS_STYLE);
+        assertThat(c.result).isNull();
 
-        assertThat(f.getValue("3.14", NO_TYPE, NO_STYLE)).isEqualTo(3.14);
-        assertThat(f.getValue("3.14", NO_TYPE, 0)).isEqualTo(3.14);
-        assertThat(f.getValue("3.14", NO_TYPE, 1)).isNotInstanceOf(Number.class);
+        f.parse(c, "3.14", OUT_OF_BOUNDS_STYLE);
+        assertThat(c.result).isNull();
 
-        assertThat(f.getValue("3.14", NUMBER_TYPE, NO_STYLE)).isEqualTo(3.14);
-        assertThat(f.getValue("3.14", NUMBER_TYPE, 0)).isEqualTo(3.14);
-        assertThat(f.getValue("3.14", NUMBER_TYPE, 1)).isNotInstanceOf(Number.class);
+        f.parse(c, "1", OUT_OF_BOUNDS_STYLE);
+        assertThat(c.result).isNull();
+
+        f.parse(c, "1", NO_STYLE);
+        assertThat(c.result).isNotInstanceOf(Date.class);
+
+        f.parse(c, "1", 0);
+        assertThat(c.result).isNotInstanceOf(Date.class);
+
+        f.parse(c, "1", 1);
+        assertThat(c.result).isEqualTo(DefaultDateSystem.X1904.getJavaDate(cal, 1));
+
+        f.parse(c, "3.14", 1);
+        assertThat(c.result).isInstanceOf(Date.class);
+
+        f.parse(c, "3.99", 1);
+        assertThat(c.result).isInstanceOf(Date.class);
     }
 
     @Test
     public void testGetDate() {
-        Calendar cal = new GregorianCalendar();
+        XlsxValueFactory.Parser f = new XlsxValueFactory.DateParser(new SimpleDateFormat());
+        CustomCallback c = new CustomCallback();
 
-        XlsxValueFactory f = newFactory();
+        f.parse(c, "2010-02-01");
+        assertThat(c.result).isEqualTo(toDate(2010, 2, 1));
 
-        assertThat(f.getValue("1", NO_TYPE, NO_STYLE)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NO_TYPE, 0)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NO_TYPE, 1)).isEqualTo(XlsxDateSystems.X1904.getJavaDate(cal, 1));
+        f.parse(c, "1");
+        assertThat(c.result).isNull();
 
-        assertThat(f.getValue("1", NUMBER_TYPE, NO_STYLE)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NUMBER_TYPE, 0)).isNotInstanceOf(Date.class);
-        assertThat(f.getValue("1", NUMBER_TYPE, 1)).isEqualTo(XlsxDateSystems.X1904.getJavaDate(cal, 1));
+        f.parse(c, "3.14");
+        assertThat(c.result).isNull();
 
-        assertThat(f.getValue("2010-02-01", DATE_TYPE, NO_STYLE)).isEqualTo(toDate(2010, 2, 1));
-
-        assertThat(f.getValue("3.14", NO_TYPE, 1)).isInstanceOf(Date.class).isNotEqualTo(f.getValue("3", NO_TYPE, 1));
-        assertThat(f.getValue("3.99", NO_TYPE, 1)).isInstanceOf(Date.class).isNotEqualTo(f.getValue("4", NO_TYPE, 1));
+        f.parse(c, "other");
+        assertThat(c.result).isNull();
     }
 
     @Test
-    public void testGetString() {
-        XlsxValueFactory f = newFactory();
+    public void testGetSharedString() {
+        XlsxValueFactory.Parser f = new XlsxValueFactory.SharedStringParser();
+        CustomCallback c = new CustomCallback();
 
-        assertThat(f.getValue("0", SHARED_STRING_TYPE, NO_STYLE)).isEqualTo("hello");
-        assertThat(f.getValue("1", SHARED_STRING_TYPE, NO_STYLE)).isEqualTo("world");
-        assertThat(f.getValue("-1", SHARED_STRING_TYPE, NO_STYLE)).isNull();
-        assertThat(f.getValue("other", SHARED_STRING_TYPE, NO_STYLE)).isNull();
+        f.parse(c, "0");
+        assertThat(c.result).isEqualTo("hello");
 
-        assertThat(f.getValue("0", STRING_TYPE, NO_STYLE)).isEqualTo("0");
-        assertThat(f.getValue("other", STRING_TYPE, NO_STYLE)).isEqualTo("other");
+        f.parse(c, "1");
+        assertThat(c.result).isEqualTo("world");
 
-        assertThat(f.getValue("0", INLINE_STRING_TYPE, NO_STYLE)).isEqualTo("0");
-        assertThat(f.getValue("other", INLINE_STRING_TYPE, NO_STYLE)).isEqualTo("other");
+        f.parse(c, "-1");
+        assertThat(c.result).isNull();
+
+        f.parse(c, "other");
+        assertThat(c.result).isNull();
+    }
+
+    private static final class CustomCallback implements XlsxValueFactory.Callback {
+
+        Object result = null;
+
+        @Override
+        public void onNumber(double number) {
+            result = number;
+        }
+
+        @Override
+        public void onDate(long date) {
+            result = new Date(date);
+        }
+
+        @Override
+        public void onSharedString(int index) {
+            result = SHARED_STRINGS.apply(index);
+        }
+
+        @Override
+        public void onString(String string) {
+            result = string;
+        }
+
+        @Override
+        public void onNull() {
+            result = null;
+        }
     }
 }

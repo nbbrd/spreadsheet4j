@@ -19,7 +19,6 @@ package spreadsheet.xlsx;
 import java.util.Calendar;
 import java.util.Date;
 import javax.annotation.Nonnull;
-import spreadsheet.xlsx.internal.XlsxDateSystems;
 
 /**
  * Class that deals with the internal representation of dates in Excel.
@@ -50,13 +49,26 @@ public interface XlsxDateSystem {
     Date getJavaDate(@Nonnull Calendar calendar, double date);
 
     /**
-     * Gets the default implementation for the specified date system.
+     * Convert an Excel date to java date.
      *
-     * @param date1904
-     * @return a non-null default implementation
+     * @param calendar the resource used to compute the java date
+     * @param date an Excel date
+     * @return a java date in millis
      */
-    @Nonnull
-    static XlsxDateSystem getDefault(boolean date1904) {
-        return date1904 ? XlsxDateSystems.X1904 : XlsxDateSystems.X1900;
+    long getJavaDateInMillis(@Nonnull Calendar calendar, double date);
+
+    /**
+     * Factory for an XlsxDateSystem.
+     */
+    interface Factory {
+
+        /**
+         * Gets an implementation for the specified date system.
+         *
+         * @param date1904
+         * @return a non-null implementation
+         */
+        @Nonnull
+        XlsxDateSystem of(boolean date1904);
     }
 }

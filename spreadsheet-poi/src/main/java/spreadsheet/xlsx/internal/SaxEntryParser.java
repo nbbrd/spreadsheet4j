@@ -20,19 +20,22 @@ import ioutil.IO;
 import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import spreadsheet.xlsx.XlsxParser;
+import spreadsheet.xlsx.XlsxDataType;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
  *
  * @author Philippe Charles
  */
 @lombok.AllArgsConstructor
-public final class SaxXlsxParser implements XlsxParser {
+public final class SaxEntryParser implements XlsxEntryParser {
 
     @lombok.NonNull
     private final XMLReader reader;
@@ -78,7 +81,7 @@ public final class SaxXlsxParser implements XlsxParser {
         private String sheetBounds = null;
         private String ref = null;
         private String rawDataType = null;
-        private Integer rawStyleIndex = null;
+        private String rawStyleIndex = null;
 
         @Override
         public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
@@ -86,12 +89,7 @@ public final class SaxXlsxParser implements XlsxParser {
                 case CELL_TAG:
                     ref = attributes.getValue(REFERENCE_ATTRIBUTE);
                     rawDataType = attributes.getValue(CELL_DATA_TYPE_ATTRIBUTE);
-                    String tmp = attributes.getValue(STYLE_INDEX_ATTRIBUTE);
-                    try {
-                        rawStyleIndex = tmp != null ? Integer.valueOf(tmp) : null;
-                    } catch (NumberFormatException ex) {
-                        throw new SAXException(ex);
-                    }
+                    rawStyleIndex = attributes.getValue(STYLE_INDEX_ATTRIBUTE);
                     break;
                 case CELL_VALUE_TAG:
                     stringBuilder.enable().clear();
@@ -107,8 +105,14 @@ public final class SaxXlsxParser implements XlsxParser {
 
         @Override
         public void endElement(String uri, String localName, String name) throws SAXException {
-            if (stringBuilder.isEnabled() && (name.equals(CELL_VALUE_TAG) /*|| name.equals(INLINE_STRING_TAG)*/)) {
-                visitor.onCell(ref, stringBuilder.disable().build(), rawDataType, rawStyleIndex);
+            if (stringBuilder.isEnabled()
+                    && ref != null
+                    && (name.equals(CELL_VALUE_TAG) /*|| name.equals(INLINE_STRING_TAG)*/)) {
+                XlsxDataType dataType = parseDataType(rawDataType);
+                int styleIndex = XlsxValueFactory.isStyleRequired(dataType)
+                        ? XlsxValueFactory.parseStyleIndex(rawStyleIndex)
+                        : XlsxValueFactory.NULL_STYLE_INDEX;
+                visitor.onCell(ref, stringBuilder.disable().build(), dataType, styleIndex);
             }
         }
 
@@ -126,6 +130,46 @@ public final class SaxXlsxParser implements XlsxParser {
         private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
         private static final String SHEET_DATA_TAG = "sheetData";
         //private static final String INLINE_STRING_TAG = "is";
+
+        @Nonnull
+        private static XlsxDataType parseDataType(@Nullable String rawDataType) {
+            if (rawDataType == null) {
+                return XlsxDataType.UNDEFINED;
+            }
+            if (rawDataType.length() == 1) {
+                switch (rawDataType.charAt(0)) {
+                    case NUMBER_TYPE:
+                        return XlsxDataType.NUMBER;
+                    case SHARED_STRING_TYPE:
+                        return XlsxDataType.SHARED_STRING;
+                    case DATE_TYPE:
+                        return XlsxDataType.DATE;
+                    case BOOLEAN_TYPE:
+                        return XlsxDataType.BOOLEAN;
+                    case ERROR_TYPE:
+                        return XlsxDataType.ERROR;
+                    default:
+                        return XlsxDataType.UNKNOWN;
+                }
+            }
+            switch (rawDataType) {
+                case STRING_TYPE:
+                    return XlsxDataType.STRING;
+                case INLINE_STRING_TYPE:
+                    return XlsxDataType.INLINE_STRING;
+                default:
+                    return XlsxDataType.UNKNOWN;
+            }
+        }
+
+        // http://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.cellvalues.aspx
+        private static final char BOOLEAN_TYPE = 'b';
+        private static final char NUMBER_TYPE = 'n';
+        private static final char ERROR_TYPE = 'e';
+        private static final char SHARED_STRING_TYPE = 's';
+        private static final String STRING_TYPE = "str";
+        private static final String INLINE_STRING_TYPE = "inlineStr";
+        private static final char DATE_TYPE = 'd';
     }
 
     /**
@@ -286,4 +330,6 @@ public final class SaxXlsxParser implements XlsxParser {
             return this;
         }
     }
+
+    public static final XlsxEntryParser.Factory FACTORY = () -> new SaxEntryParser(Sax.createReader());
 }

@@ -22,31 +22,49 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import javax.annotation.Nonnull;
+import lombok.AccessLevel;
+import spreadsheet.xlsx.internal.DefaultNumberingFormat;
+import spreadsheet.xlsx.internal.SaxEntryParser;
 import spreadsheet.xlsx.internal.XlsxBook;
+import spreadsheet.xlsx.internal.DefaultDateSystem;
+import spreadsheet.xlsx.internal.DefaultSheetBuilder;
+import spreadsheet.xlsx.internal.MultiSheetBuilder;
+import spreadsheet.xlsx.internal.ZipPackage;
 
 /**
  *
  * @author Philippe Charles
  * @since 2.2.0
  */
-@lombok.Data
+@lombok.Getter
+@lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class XlsxReader {
 
-    XlsxPackage.Factory packager = XlsxPackage.Factory.getDefault();
-    XlsxParser.Factory parser = XlsxParser.Factory.getDefault();
-    XlsxNumberingFormat numberingFormat = XlsxNumberingFormat.getDefault();
-    XlsxDateSystem dateSystem1900 = XlsxDateSystem.getDefault(false);
-    XlsxDateSystem dateSystem1904 = XlsxDateSystem.getDefault(true);
-    XlsxSheetBuilder.Factory builder = XlsxSheetBuilder.Factory.getDefault();
+    private final XlsxPackage.Factory packager;
+    private final XlsxEntryParser.Factory entryParser;
+    private final XlsxNumberingFormat.Factory numberingFormat;
+    private final XlsxDateSystem.Factory dateSystem;
+    @lombok.experimental.Wither
+    private final XlsxSheetBuilder.Factory sheetBuilder;
+
+    public XlsxReader() {
+        this(
+                ZipPackage.FACTORY,
+                SaxEntryParser.FACTORY,
+                DefaultNumberingFormat.FACTORY,
+                DefaultDateSystem.FACTORY,
+                MULTI_CORE ? MultiSheetBuilder::of : DefaultSheetBuilder::of
+        );
+    }
 
     @Nonnull
     public Book read(@Nonnull Path file) throws IOException {
-        return createBookOrClose(getPackager().open(file));
+        return createBookOrClose(packager.open(file));
     }
 
     @Nonnull
     public Book read(@Nonnull InputStream stream) throws IOException {
-        return createBookOrClose(getPackager().open(stream));
+        return createBookOrClose(packager.open(stream));
     }
 
     private Book createBookOrClose(XlsxPackage pkg) throws IOException {
@@ -57,4 +75,6 @@ public final class XlsxReader {
             throw ex;
         }
     }
+
+    private static final boolean MULTI_CORE = Runtime.getRuntime().availableProcessors() > 1;
 }

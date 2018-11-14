@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.annotation.concurrent.ThreadSafe;
-import spreadsheet.xlsx.internal.ZipPackageFactory;
 
 /**
  * Container for Office Open XML files.
@@ -86,10 +85,5 @@ public interface XlsxPackage extends Closeable {
 
         @Nonnull
         XlsxPackage open(@Nonnull File file) throws IOException;
-
-        @Nonnull
-        static Factory getDefault() {
-            return ZipPackageFactory.INSTANCE;
-        }
     }
 }

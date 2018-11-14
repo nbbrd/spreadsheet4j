@@ -41,6 +41,7 @@
         <assertj.version>3.11.1</assertj.version>
         <netbeans.version>RELEASE82</netbeans.version>
         <lombok.version>edge-SNAPSHOT</lombok.version>
+        <jmh.version>1.21</jmh.version>
 
         <!-- dependencies -->
         <java-io-util.version>0.0.2-SNAPSHOT</java-io-util.version>
@@ -48,7 +49,7 @@
         
     <dependencyManagement>
         <dependencies>
-            <!-- dev tools -->
+            <!-- dev support -->
             <dependency>     
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
@@ -75,10 +76,23 @@
                 <version>${netbeans.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-core</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openjdk.jmh</groupId>
+                <artifactId>jmh-generator-annprocess</artifactId>
+                <version>${jmh.version}</version>
+            </dependency>
+            
+            <!-- dependencies -->
+            <dependency>
                 <groupId>be.nbb.rd</groupId>
                 <artifactId>java-io-util</artifactId>
                 <version>${java-io-util.version}</version>
             </dependency>
+            
             <!-- modules -->
             <dependency>
                 <groupId>eu.europa.ec.joinup.sat</groupId>

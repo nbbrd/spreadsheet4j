@@ -23,7 +23,6 @@ import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import spreadsheet.xlsx.internal.XlsxSheetBuilders;
 
 /**
  *
@@ -36,7 +35,7 @@ public interface XlsxSheetBuilder extends Closeable {
     XlsxSheetBuilder reset(@Nonnull String sheetName, @Nullable String sheetBounds);
 
     @Nonnull
-    XlsxSheetBuilder put(@Nullable String ref, @Nonnull CharSequence value, @Nullable String dataType, @Nullable Integer styleIndex);
+    XlsxSheetBuilder put(@Nonnull String ref, @Nonnull CharSequence value, @Nonnull XlsxDataType dataType, int styleIndex);
 
     @Nonnull
     Sheet build();
@@ -48,9 +47,5 @@ public interface XlsxSheetBuilder extends Closeable {
                 @Nonnull XlsxDateSystem dateSystem,
                 @Nonnull IntFunction<String> sharedStrings,
                 @Nonnull IntPredicate dateFormats) throws IOException;
-
-        static Factory getDefault() {
-            return XlsxSheetBuilders::create;
-        }
     }
 }

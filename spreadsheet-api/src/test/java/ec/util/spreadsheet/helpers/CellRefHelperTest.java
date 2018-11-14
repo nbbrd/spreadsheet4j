@@ -17,7 +17,6 @@
 package ec.util.spreadsheet.helpers;
 
 import static ec.util.spreadsheet.helpers.CellRefHelper.getCellRef;
-import static ec.util.spreadsheet.helpers.CellRefHelper.getColumnIndex;
 import static ec.util.spreadsheet.helpers.CellRefHelper.getColumnLabel;
 import static ec.util.spreadsheet.helpers.CellRefHelper.getRowLabel;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,15 +40,6 @@ public class CellRefHelperTest {
     }
 
     @Test
-    public void testGetColumnIndex() {
-        assertThat(getColumnIndex("A")).isEqualTo(0);
-        assertThat(getColumnIndex("Z")).isEqualTo(25);
-        assertThat(getColumnIndex("AA")).isEqualTo(26);
-        assertThat(getColumnIndex("AB")).isEqualTo(27);
-        assertThat(getColumnIndex("BA")).isEqualTo(52);
-    }
-
-    @Test
     public void testGetColumnLabel() {
         assertThat(getColumnLabel(0)).isEqualTo("A");
         assertThat(getColumnLabel(26)).isEqualTo("AA");
@@ -65,24 +55,51 @@ public class CellRefHelperTest {
 
     @Test
     public void testParse() {
-        CellRefHelper cellRef = new CellRefHelper();
-        assertThatThrownBy(() -> cellRef.getColumnIndex()).isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> cellRef.getRowIndex()).isInstanceOf(IllegalStateException.class);
+        CellRefHelper r = new CellRefHelper();
+        assertThatThrownBy(() -> r.getColumnIndex()).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> r.getRowIndex()).isInstanceOf(IllegalStateException.class);
 
-        assertThat(cellRef.parse("A1")).isTrue();
-        assertThat(cellRef.getColumnIndex()).isEqualTo(0);
-        assertThat(cellRef.getRowIndex()).isEqualTo(0);
+        assertThat(r.parse("A1")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(0);
+        assertThat(r.getRowIndex()).isEqualTo(0);
 
-        assertThat(cellRef.parse("A2")).isTrue();
-        assertThat(cellRef.getColumnIndex()).isEqualTo(0);
-        assertThat(cellRef.getRowIndex()).isEqualTo(1);
+        assertThat(r.parse("A2")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(0);
+        assertThat(r.getRowIndex()).isEqualTo(1);
 
-        assertThat(cellRef.parse("B1")).isTrue();
-        assertThat(cellRef.getColumnIndex()).isEqualTo(1);
-        assertThat(cellRef.getRowIndex()).isEqualTo(0);
+        assertThat(r.parse("B1")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(1);
+        assertThat(r.getRowIndex()).isEqualTo(0);
 
-        assertThat(cellRef.parse("hello")).isFalse();
-        assertThatThrownBy(() -> cellRef.getColumnIndex()).isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> cellRef.getRowIndex()).isInstanceOf(IllegalStateException.class);
+        assertThat(r.parse("Z9")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(25);
+        assertThat(r.getRowIndex()).isEqualTo(8);
+
+        assertThat(r.parse("AA9")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(26);
+        assertThat(r.getRowIndex()).isEqualTo(8);
+
+        assertThat(r.parse("AB9")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(27);
+        assertThat(r.getRowIndex()).isEqualTo(8);
+
+        assertThat(r.parse("BA9")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(52);
+        assertThat(r.getRowIndex()).isEqualTo(8);
+
+        assertThat(r.parse("hello")).isFalse();
+        assertThatThrownBy(() -> r.getColumnIndex()).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> r.getRowIndex()).isInstanceOf(IllegalStateException.class);
+
+        assertThat(r.parse(null)).isFalse();
+        assertThat(r.parse("")).isFalse();
+        assertThat(r.parse("2")).isFalse();
+        assertThat(r.parse("A")).isFalse();
+        assertThat(r.parse("A0")).isFalse();
+        assertThat(r.parse("a2")).isFalse();
+        assertThat(r.parse("ä2")).isFalse();
+        assertThat(r.parse("_A2")).isFalse();
+        assertThat(r.parse("A_2")).isFalse();
+        assertThat(r.parse("A2_")).isFalse();
     }
 }

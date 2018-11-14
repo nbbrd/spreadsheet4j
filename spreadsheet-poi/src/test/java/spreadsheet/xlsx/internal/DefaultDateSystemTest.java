@@ -26,7 +26,7 @@ import spreadsheet.xlsx.XlsxDateSystem;
  *
  * @author Philippe Charles
  */
-public class XlsxDateSystemsTest {
+public class DefaultDateSystemTest {
 
     private final double EARLIEST_DATE_1900 = 1;
     private final double EARLIEST_DATE_1900_PLUS_1_SECOND = 1.000011574074074;
@@ -40,12 +40,12 @@ public class XlsxDateSystemsTest {
     public void testGetJavaDate() {
         Calendar cal = new GregorianCalendar();
 
-        XlsxDateSystem x1900 = XlsxDateSystems.X1900;
+        XlsxDateSystem x1900 = DefaultDateSystem.X1900;
         assertThat(x1900.getJavaDate(cal, EARLIEST_DATE_1900)).isEqualTo("1900-01-01T00:00:00.000");
         assertThat(x1900.getJavaDate(cal, EARLIEST_DATE_1900_PLUS_1_SECOND)).isEqualTo("1900-01-01T00:00:01.000");
         assertThat(x1900.getJavaDate(cal, EARLIEST_DATE_1900_PLUS_1_YEAR)).isEqualTo("1901-01-01T00:00:00.000");
 
-        XlsxDateSystem x1904 = XlsxDateSystems.X1904;
+        XlsxDateSystem x1904 = DefaultDateSystem.X1904;
         assertThat(x1904.getJavaDate(cal, EARLIEST_DATE_1904)).isEqualTo("1904-01-01T00:00:00.000");
         assertThat(x1904.getJavaDate(cal, EARLIEST_DATE_1904_PLUS_1_SECOND)).isEqualTo("1904-01-01T00:00:01.000");
         assertThat(x1904.getJavaDate(cal, EARLIEST_DATE_1904_PLUS_1_YEAR)).isEqualTo("1905-01-01T00:00:00.000");

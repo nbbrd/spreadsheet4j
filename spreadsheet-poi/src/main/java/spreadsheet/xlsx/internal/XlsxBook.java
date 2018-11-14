@@ -28,54 +28,52 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.XlsxParser;
 import spreadsheet.xlsx.XlsxReader;
 import spreadsheet.xlsx.XlsxSheetBuilder;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
+@lombok.RequiredArgsConstructor
 public final class XlsxBook extends Book {
 
     @Nonnull
     public static XlsxBook create(@Nonnull XlsxPackage pkg, @Nonnull XlsxReader reader) throws IOException {
-        XlsxParser parser = null;
-        XlsxSheetBuilder sheetBuilder = null;
+        XlsxEntryParser entryParser = null;
 
         try {
-            parser = reader.getParser().create();
+            entryParser = reader.getEntryParser().create();
 
-            WorkbookData data = parseWorkbook(pkg::getWorkbook, parser);
-            XlsxDateSystem dateSystem = data.date1904 ? reader.getDateSystem1904() : reader.getDateSystem1900();
-            IntFunction<String> sharedStrings = parseSharedStrings(pkg::getSharedStrings, parser)::get;
-            IntPredicate dateFormats = parseStyles(reader.getNumberingFormat(), pkg::getStyles, parser)::get;
+            WorkbookData data = parseWorkbook(pkg::getWorkbook, entryParser);
 
-            sheetBuilder = reader.getBuilder().create(dateSystem, sharedStrings, dateFormats);
-
-            return new XlsxBook(pkg, parser, data.sheets, sheetBuilder);
+            return new XlsxBook(pkg, entryParser, data.sheets, data.date1904,
+                    reader.getDateSystem(), reader.getNumberingFormat(), reader.getSheetBuilder());
         } catch (IOException ex) {
-            closeAll(ex, parser, sheetBuilder);
+            closeAll(ex, entryParser);
             throw ex;
         }
     }
 
     private final XlsxPackage pkg;
-    private final XlsxParser parser;
+    private final XlsxEntryParser entryParser;
     private final List<SheetMeta> sheets;
-    private final XlsxSheetBuilder sheetBuilder;
+    private final boolean date1904;
+    private final XlsxDateSystem.Factory dateSystemFactory;
+    private final XlsxNumberingFormat.Factory numberingFormatFactory;
+    private final XlsxSheetBuilder.Factory sheetBuilderFactory;
+    private XlsxSheetBuilder lazySheetBuilder = null;
 
     @Override
     public void close() throws IOException {
-        closeAll(null, pkg, parser, sheetBuilder);
+        closeAll(null, pkg, entryParser, lazySheetBuilder);
     }
 
     @Override
@@ -86,12 +84,22 @@ public final class XlsxBook extends Book {
     @Override
     public Sheet getSheet(int index) throws IOException {
         SheetMeta meta = sheets.get(index);
-        return parseSheet(meta.name, sheetBuilder, () -> pkg.getSheet(meta.relationId), parser);
+        return parseSheet(meta.name, getOrCreateSheetBuilder(), () -> pkg.getSheet(meta.relationId), entryParser);
     }
 
     @Override
     public String getSheetName(@Nonnegative int index) {
         return sheets.get(index).getName();
+    }
+
+    private XlsxSheetBuilder getOrCreateSheetBuilder() throws IOException {
+        if (lazySheetBuilder == null) {
+            XlsxDateSystem dateSystem = dateSystemFactory.of(date1904);
+            IntFunction<String> sharedStrings = parseSharedStrings(pkg::getSharedStrings, entryParser)::get;
+            boolean[] dateFormats = parseStyles(numberingFormatFactory.of(), pkg::getStyles, entryParser);
+            lazySheetBuilder = sheetBuilderFactory.create(dateSystem, sharedStrings, o -> dateFormats[o]);
+        }
+        return lazySheetBuilder;
     }
 
     static void closeAll(IOException initial, Closeable... closeables) throws IOException {
@@ -129,7 +137,7 @@ public final class XlsxBook extends Book {
         String name;
     }
 
-    static WorkbookData parseWorkbook(IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
+    static WorkbookData parseWorkbook(IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         WorkbookVisitorImpl result = new WorkbookVisitorImpl();
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitWorkbook(stream, result);
@@ -137,7 +145,7 @@ public final class XlsxBook extends Book {
         return result.build();
     }
 
-    private static final class WorkbookVisitorImpl implements XlsxParser.WorkbookVisitor {
+    private static final class WorkbookVisitorImpl implements XlsxEntryParser.WorkbookVisitor {
 
         private final List<SheetMeta> sheets = new ArrayList<>();
         private boolean date1904 = false;
@@ -157,7 +165,7 @@ public final class XlsxBook extends Book {
         }
     }
 
-    static List<String> parseSharedStrings(IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
+    static List<String> parseSharedStrings(IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         List<String> result = new ArrayList<>();
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSharedStrings(stream, o -> result.add(Objects.requireNonNull(o)));
@@ -165,7 +173,7 @@ public final class XlsxBook extends Book {
         return result;
     }
 
-    static List<Boolean> parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
+    static boolean[] parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         StylesVisitorImpl result = new StylesVisitorImpl(dateFormat);
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitStyles(stream, result);
@@ -173,7 +181,7 @@ public final class XlsxBook extends Book {
         return result.build();
     }
 
-    private static final class StylesVisitorImpl implements XlsxParser.StylesVisitor {
+    private static final class StylesVisitorImpl implements XlsxEntryParser.StylesVisitor {
 
         private final XlsxNumberingFormat dateFormat;
         private final List<Integer> orderedListOfIds = new ArrayList<>();
@@ -193,15 +201,18 @@ public final class XlsxBook extends Book {
             orderedListOfIds.add(formatId);
         }
 
-        public List<Boolean> build() {
+        public boolean[] build() {
             // Style order matters! -> accessed by index in sheets
-            return orderedListOfIds.stream()
-                    .map(o -> dateFormat.isExcelDateFormat(o, numberFormats.getOrDefault(o, null)))
-                    .collect(Collectors.toList());
+            boolean[] result = new boolean[orderedListOfIds.size()];
+            for (int i = 0; i < result.length; i++) {
+                int numFmtId = orderedListOfIds.get(i);
+                result[i] = dateFormat.isExcelDateFormat(numFmtId, numberFormats.getOrDefault(numFmtId, null));
+            }
+            return result;
         }
     }
 
-    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IO.Supplier<? extends InputStream> byteSource, XlsxParser parser) throws IOException {
+    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         SheetVisitorImpl result = new SheetVisitorImpl(name, sheetBuilder);
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSheet(stream, result);
@@ -209,7 +220,7 @@ public final class XlsxBook extends Book {
         return result.build();
     }
 
-    private static final class SheetVisitorImpl implements XlsxParser.SheetVisitor {
+    private static final class SheetVisitorImpl implements XlsxEntryParser.SheetVisitor {
 
         private final String sheetName;
         private final XlsxSheetBuilder sheetBuilder;
@@ -231,7 +242,7 @@ public final class XlsxBook extends Book {
         }
 
         @Override
-        public void onCell(String ref, CharSequence value, String dataType, Integer styleIndex) {
+        public void onCell(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
             if (!inData) {
                 throw new IllegalStateException();
             }
