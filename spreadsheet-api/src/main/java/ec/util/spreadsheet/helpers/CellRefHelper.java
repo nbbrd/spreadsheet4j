@@ -16,8 +16,6 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,16 +26,41 @@ import javax.annotation.Nullable;
  */
 public final class CellRefHelper {
 
-    private static final Pattern REF_PATTERN = Pattern.compile("(\\w+?)(\\d+?)");
-    private Matcher m;
+    private boolean match = false;
+    private int col = 0;
+    private int row = 0;
 
-    public boolean parse(@Nullable String ref) {
+    public boolean parse(@Nullable CharSequence ref) {
         if (ref == null) {
-            m = null;
-            return false;
+            return match = false;
         }
-        m = REF_PATTERN.matcher(ref);
-        return m.matches();
+
+        int length = ref.length();
+        int i = 0;
+
+        col = 0;
+        while (i < length) {
+            char c = ref.charAt(i);
+            if (c < 'A' || c > 'Z') {
+                break;
+            }
+            col = col * 26 + ((byte) c - (byte) 'A') + 1;
+            i++;
+        }
+        col--;
+
+        row = 0;
+        while (i < length) {
+            char c = ref.charAt(i);
+            if (c < '0' || c > '9') {
+                break;
+            }
+            row = row * 10 + ((byte) c - (byte) '0');
+            i++;
+        }
+        row--;
+
+        return match = (i == length && col >= 0 && row >= 0);
     }
 
     /**
@@ -48,7 +71,7 @@ public final class CellRefHelper {
     @Nonnegative
     public int getColumnIndex() throws IllegalStateException {
         checkMatch();
-        return getColumnIndex(m.group(1));
+        return col;
     }
 
     /**
@@ -59,23 +82,13 @@ public final class CellRefHelper {
     @Nonnegative
     public int getRowIndex() throws IllegalStateException {
         checkMatch();
-        return Integer.parseInt(m.group(2)) - 1;
+        return row;
     }
 
     private void checkMatch() throws IllegalStateException {
-        if (m == null) {
+        if (!match) {
             throw new IllegalStateException();
         }
-    }
-
-    //@VisibleForTesting
-    static int getColumnIndex(String label) {
-        int col = 0;
-        for (int i = 0; i < label.length(); i++) {
-            col = col * 26 + ((byte) label.charAt(i) - (byte) 'A') + 1;
-        }
-        col--;
-        return col;
     }
 
     @Nonnull
