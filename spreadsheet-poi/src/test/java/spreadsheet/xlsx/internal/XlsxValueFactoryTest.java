@@ -147,7 +147,7 @@ public class XlsxValueFactoryTest {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
             result = string;
         }
 

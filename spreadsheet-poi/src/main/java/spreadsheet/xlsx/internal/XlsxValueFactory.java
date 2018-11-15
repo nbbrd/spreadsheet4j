@@ -40,7 +40,7 @@ final class XlsxValueFactory {
 
         void onSharedString(int index);
 
-        void onString(String string);
+        void onString(CharSequence string);
 
         void onNull();
     }
@@ -85,12 +85,12 @@ final class XlsxValueFactory {
 
     interface Parser {
 
-        void parse(@Nonnull Callback callback, @Nonnull String rawValue);
+        void parse(@Nonnull Callback callback, @Nonnull CharSequence rawValue);
     }
 
     interface ParserWithStyle {
 
-        void parse(@Nonnull Callback callback, @Nonnull String rawValue, int styleIndex);
+        void parse(@Nonnull Callback callback, @Nonnull CharSequence rawValue, int styleIndex);
     }
 
     @lombok.AllArgsConstructor
@@ -106,9 +106,9 @@ final class XlsxValueFactory {
         }
 
         @Override
-        public void parse(Callback callback, String rawValue, int styleIndex) {
+        public void parse(Callback callback, CharSequence rawValue, int styleIndex) {
             try {
-                double number = Double.parseDouble(rawValue);
+                double number = Double.parseDouble(rawValue.toString());
                 switch (styleIndex) {
                     case NULL_STYLE_INDEX:
                         callback.onNumber(number);
@@ -133,9 +133,9 @@ final class XlsxValueFactory {
     static final class SharedStringParser implements Parser {
 
         @Override
-        public void parse(Callback callback, String rawValue) {
+        public void parse(Callback callback, CharSequence rawValue) {
             try {
-                callback.onSharedString(Integer.parseInt(rawValue));
+                callback.onSharedString(Integer.parseInt(rawValue.toString()));
 //            return sharedStrings.apply(Integer.parseInt(rawValue));
             } catch (NumberFormatException | IndexOutOfBoundsException ex) {
                 callback.onNull();
@@ -156,9 +156,9 @@ final class XlsxValueFactory {
         }
 
         @Override
-        public void parse(Callback callback, String rawValue) {
+        public void parse(Callback callback, CharSequence rawValue) {
             try {
-                callback.onDate(isoDateFormat.parse(rawValue).getTime());
+                callback.onDate(isoDateFormat.parse(rawValue.toString()).getTime());
             } catch (ParseException ex) {
                 callback.onNull();
             }

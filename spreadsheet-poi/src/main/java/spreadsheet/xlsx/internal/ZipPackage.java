@@ -88,8 +88,11 @@ public final class ZipPackage implements XlsxPackage {
 
     private static Map<String, String> parseRelationships(IO.Supplier<? extends InputStream> byteSource) throws IOException {
         Map<String, String> result = new HashMap<>();
-        return Sax.Parser
-                .of(new RelationshipsSaxEventHandler(result::put), IO.Supplier.of(result))
+        return Sax.Parser.<Map<String, String>>builder()
+                .factory(() -> SaxEntryParser.disableNamespaces(Sax.createReader()))
+                .contentHandler(new RelationshipsSaxEventHandler(result::put))
+                .after(IO.Supplier.of(result))
+                .build()
                 .parseStream(byteSource);
     }
 
@@ -104,7 +107,7 @@ public final class ZipPackage implements XlsxPackage {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            switch (localName) {
+            switch (qName) {
                 case RELATIONSHIP_TAG:
                     visitor.accept(attributes.getValue(ID_ATTRIBUTE), attributes.getValue(TARGET_ATTRIBUTE));
                     break;

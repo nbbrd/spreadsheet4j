@@ -126,7 +126,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
         }
 
         @Override
@@ -175,9 +175,9 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
             if (refHelper.parse(ref)) {
-                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string.toString());
             }
         }
 
@@ -226,9 +226,9 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
             if (refHelper.parse(ref)) {
-                sheet.putString(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+                sheet.putString(refHelper.getRowIndex(), refHelper.getColumnIndex(), string.toString());
             }
         }
 
