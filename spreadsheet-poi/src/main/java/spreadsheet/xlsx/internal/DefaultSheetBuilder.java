@@ -52,17 +52,21 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
     @Override
     public XlsxSheetBuilder reset(String sheetName, String sheetBounds) {
+        callback = newCallback(sheetName, sheetBounds);
+        return this;
+    }
+
+    private ExtCallback newCallback(String sheetName, String sheetBounds) {
         if (sheetBounds != null) {
             String[] references = sheetBounds.split(":");
             if (references.length == 2) {
                 CellRefHelper helper = new CellRefHelper();
                 if (helper.parse(references[1])) {
-                    callback = bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
+                    return bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
                 }
             }
         }
-        callback = unbounded(sheetName);
-        return this;
+        return unbounded(sheetName);
     }
 
     private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
