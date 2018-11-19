@@ -70,8 +70,8 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
-        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
-//        return new CompactCallback(refHelper, new CompactSheet.Builder(rowCount, columnCount, sheetName, sharedStrings));
+//        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
+        return new CompactCallback(refHelper, CompactSheet.builder(rowCount, columnCount, sheetName, sharedStrings));
     }
 
     private ExtCallback unbounded(String sheetName) {
