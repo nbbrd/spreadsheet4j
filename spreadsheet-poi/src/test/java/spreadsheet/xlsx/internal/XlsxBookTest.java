@@ -66,8 +66,8 @@ public class XlsxBookTest {
     public void testParseSheet() throws IOException {
         XlsxSheetBuilder builder = DefaultSheetBuilder.of(
                 DefaultDateSystem.X1900,
-                Arrays.asList("hello", "world")::get,
-                Arrays.asList(false, true)::get
+                Arrays.asList("hello", "world"),
+                new boolean[]{false, true}
         );
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("", builder, boom, emptyParser))

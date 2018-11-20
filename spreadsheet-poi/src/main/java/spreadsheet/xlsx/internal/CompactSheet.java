@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.IntFunction;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
@@ -44,7 +43,7 @@ public final class CompactSheet extends Sheet {
     private final int columnCount;
     private final String name;
     private final ByteBuffer data;
-    private final IntFunction<String> sharedStrings;
+    private final List<String> sharedStrings;
     private final List<String> localStrings;
 
     private final FlyweightCell flyweightCell = new FlyweightCell();
@@ -118,7 +117,7 @@ public final class CompactSheet extends Sheet {
     }
 
     private String getSharedStringAt(int index) {
-        return sharedStrings.apply(data.getInt(index + VALUE_OFFSET));
+        return sharedStrings.get(data.getInt(index + VALUE_OFFSET));
     }
 
     private String getLocalStringAt(int index) {
@@ -138,7 +137,7 @@ public final class CompactSheet extends Sheet {
     @Nonnull
     public static Builder builder(
             @Nonnegative int rowCount, @Nonnegative int columnCount,
-            @Nonnull String name, @Nonnull IntFunction<String> sharedStrings) {
+            @Nonnull String name, @Nonnull List<String> sharedStrings) {
         return new Builder(rowCount, columnCount, name, sharedStrings);
     }
 
@@ -234,10 +233,10 @@ public final class CompactSheet extends Sheet {
         private final int columnCount;
         private final String name;
         private final ByteBuffer data;
-        private final IntFunction<String> sharedStrings;
+        private final List<String> sharedStrings;
         private List<String> localStrings;
 
-        private Builder(int rowCount, int columnCount, String name, IntFunction<String> sharedStrings) {
+        private Builder(int rowCount, int columnCount, String name, List<String> sharedStrings) {
             this.rowCount = rowCount;
             this.columnCount = columnCount;
             this.name = Objects.requireNonNull(name);

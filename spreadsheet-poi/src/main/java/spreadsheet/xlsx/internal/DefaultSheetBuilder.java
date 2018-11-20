@@ -21,8 +21,7 @@ import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ec.util.spreadsheet.helpers.CellRefHelper;
 import java.util.Date;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
+import java.util.List;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -34,16 +33,16 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  */
 public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
-    public static DefaultSheetBuilder of(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
-        return new DefaultSheetBuilder(new XlsxValueFactory(dateSystem, dateFormats), sharedStrings);
+    public static DefaultSheetBuilder of(XlsxDateSystem dateSystem, List<String> sharedStrings, boolean[] dateFormats) {
+        return new DefaultSheetBuilder(new XlsxValueFactory(dateSystem, o -> dateFormats[o]), sharedStrings);
     }
 
     private final XlsxValueFactory valueFactory;
-    private final IntFunction<String> sharedStrings;
+    private final List<String> sharedStrings;
     private final CellRefHelper refHelper;
     private ExtCallback callback;
 
-    private DefaultSheetBuilder(XlsxValueFactory valueFactory, IntFunction<String> sharedStrings) {
+    private DefaultSheetBuilder(XlsxValueFactory valueFactory, List<String> sharedStrings) {
         this.valueFactory = valueFactory;
         this.sharedStrings = sharedStrings;
         this.refHelper = new CellRefHelper();
@@ -141,7 +140,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     @lombok.RequiredArgsConstructor
     private static final class ArraySheetCallback implements ExtCallback {
 
-        private final IntFunction<String> sharedStrings;
+        private final List<String> sharedStrings;
         private final CellRefHelper refHelper;
         private final ArraySheet.Builder sheet;
         private String ref;
@@ -174,7 +173,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         @Override
         public void onSharedString(int index) {
             if (refHelper.parse(ref)) {
-                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.apply(index));
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.get(index));
             }
         }
 

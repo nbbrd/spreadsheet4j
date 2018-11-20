@@ -19,8 +19,7 @@ package spreadsheet.xlsx;
 import ec.util.spreadsheet.Sheet;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -45,7 +44,8 @@ public interface XlsxSheetBuilder extends Closeable {
         @Nonnull
         XlsxSheetBuilder create(
                 @Nonnull XlsxDateSystem dateSystem,
-                @Nonnull IntFunction<String> sharedStrings,
-                @Nonnull IntPredicate dateFormats) throws IOException;
+                @Nonnull List<String> sharedStrings,
+                @Nonnull boolean[] dateFormats
+        ) throws IOException;
     }
 }

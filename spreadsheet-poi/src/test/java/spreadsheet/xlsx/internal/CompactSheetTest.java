@@ -20,6 +20,7 @@ import ec.util.spreadsheet.CellAssert;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetAssert;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import static org.assertj.core.api.Assertions.*;
@@ -35,27 +36,27 @@ public class CompactSheetTest {
     @SuppressWarnings("null")
     public void testBuilder() {
         assertThatNullPointerException()
-                .isThrownBy(() -> CompactSheet.builder(0, 0, null, o -> ""));
+                .isThrownBy(() -> CompactSheet.builder(0, 0, null, Collections.emptyList()));
         assertThatNullPointerException()
                 .isThrownBy(() -> CompactSheet.builder(0, 0, "", null));
     }
 
     @Test
     public void testGetName() {
-        assertThat(CompactSheet.builder(0, 0, "", o -> "").build().getName()).isEqualTo("");
-        assertThat(CompactSheet.builder(0, 0, "hello", o -> "").build().getName()).isEqualTo("hello");
+        assertThat(CompactSheet.builder(0, 0, "", Collections.emptyList()).build().getName()).isEqualTo("");
+        assertThat(CompactSheet.builder(0, 0, "hello", Collections.emptyList()).build().getName()).isEqualTo("hello");
     }
 
     @Test
     public void testGetRowCount() {
-        assertThat(CompactSheet.builder(0, 0, "", o -> "").build().getRowCount()).isEqualTo(0);
-        assertThat(CompactSheet.builder(10, 0, "", o -> "").build().getRowCount()).isEqualTo(10);
+        assertThat(CompactSheet.builder(0, 0, "", Collections.emptyList()).build().getRowCount()).isEqualTo(0);
+        assertThat(CompactSheet.builder(10, 0, "", Collections.emptyList()).build().getRowCount()).isEqualTo(10);
     }
 
     @Test
     public void testGetColCount() {
-        assertThat(CompactSheet.builder(0, 0, "", o -> "").build().getColumnCount()).isEqualTo(0);
-        assertThat(CompactSheet.builder(0, 10, "", o -> "").build().getColumnCount()).isEqualTo(10);
+        assertThat(CompactSheet.builder(0, 0, "", Collections.emptyList()).build().getColumnCount()).isEqualTo(0);
+        assertThat(CompactSheet.builder(0, 10, "", Collections.emptyList()).build().getColumnCount()).isEqualTo(10);
     }
 
     @Test
@@ -137,7 +138,7 @@ public class CompactSheetTest {
 
     @Test
     public void test() {
-        CompactSheet.Builder b = CompactSheet.builder(2, 3, "my_sheet", SHARED_STRINGS::get);
+        CompactSheet.Builder b = CompactSheet.builder(2, 3, "my_sheet", SHARED_STRINGS);
 
         assertContent(b.build(), "my_sheet", new Object[2][3]);
 
@@ -154,7 +155,7 @@ public class CompactSheetTest {
     }
 
     private static CompactSheet.Builder getSample() {
-        CompactSheet.Builder b = CompactSheet.builder(2, 3, "my_sheet", SHARED_STRINGS::get);
+        CompactSheet.Builder b = CompactSheet.builder(2, 3, "my_sheet", SHARED_STRINGS);
         b.putDate(0, 0, NOW.getTime());
         b.putNumber(0, 1, 3.14);
         b.putSharedString(0, 2, 1);

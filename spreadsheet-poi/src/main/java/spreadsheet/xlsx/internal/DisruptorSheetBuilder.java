@@ -23,8 +23,7 @@ import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import ec.util.spreadsheet.Sheet;
 import java.io.IOException;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
+import java.util.List;
 import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -35,7 +34,7 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  */
 public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
 
-    public static DisruptorSheetBuilder of(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
+    public static DisruptorSheetBuilder of(XlsxDateSystem dateSystem, List<String> sharedStrings, boolean[] dateFormats) {
         return new DisruptorSheetBuilder(DefaultSheetBuilder.of(dateSystem, sharedStrings, dateFormats));
     }
 
