@@ -21,8 +21,7 @@ import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ec.util.spreadsheet.helpers.CellRefHelper;
 import java.util.Date;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
+import java.util.List;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -34,16 +33,16 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  */
 public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
-    public static DefaultSheetBuilder of(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
-        return new DefaultSheetBuilder(new XlsxValueFactory(dateSystem, dateFormats), sharedStrings);
+    public static DefaultSheetBuilder of(XlsxDateSystem dateSystem, List<String> sharedStrings, boolean[] dateFormats) {
+        return new DefaultSheetBuilder(new XlsxValueFactory(dateSystem, o -> dateFormats[o]), sharedStrings);
     }
 
     private final XlsxValueFactory valueFactory;
-    private final IntFunction<String> sharedStrings;
+    private final List<String> sharedStrings;
     private final CellRefHelper refHelper;
     private ExtCallback callback;
 
-    private DefaultSheetBuilder(XlsxValueFactory valueFactory, IntFunction<String> sharedStrings) {
+    private DefaultSheetBuilder(XlsxValueFactory valueFactory, List<String> sharedStrings) {
         this.valueFactory = valueFactory;
         this.sharedStrings = sharedStrings;
         this.refHelper = new CellRefHelper();
@@ -52,22 +51,26 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
     @Override
     public XlsxSheetBuilder reset(String sheetName, String sheetBounds) {
+        callback = newCallback(sheetName, sheetBounds);
+        return this;
+    }
+
+    private ExtCallback newCallback(String sheetName, String sheetBounds) {
         if (sheetBounds != null) {
             String[] references = sheetBounds.split(":");
             if (references.length == 2) {
                 CellRefHelper helper = new CellRefHelper();
                 if (helper.parse(references[1])) {
-                    callback = bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
+                    return bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
                 }
             }
         }
-        callback = unbounded(sheetName);
-        return this;
+        return unbounded(sheetName);
     }
 
     private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
-        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
-//        return new CompactCallback(refHelper, new CompactSheet.Builder(rowCount, columnCount, sheetName, sharedStrings));
+//        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
+        return new CompactCallback(refHelper, CompactSheet.builder(rowCount, columnCount, sheetName, sharedStrings));
     }
 
     private ExtCallback unbounded(String sheetName) {
@@ -126,7 +129,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
         }
 
         @Override
@@ -137,7 +140,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     @lombok.RequiredArgsConstructor
     private static final class ArraySheetCallback implements ExtCallback {
 
-        private final IntFunction<String> sharedStrings;
+        private final List<String> sharedStrings;
         private final CellRefHelper refHelper;
         private final ArraySheet.Builder sheet;
         private String ref;
@@ -170,14 +173,14 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         @Override
         public void onSharedString(int index) {
             if (refHelper.parse(ref)) {
-                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.apply(index));
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), sharedStrings.get(index));
             }
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
             if (refHelper.parse(ref)) {
-                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+                sheet.value(refHelper.getRowIndex(), refHelper.getColumnIndex(), string.toString());
             }
         }
 
@@ -226,9 +229,9 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
         }
 
         @Override
-        public void onString(String string) {
+        public void onString(CharSequence string) {
             if (refHelper.parse(ref)) {
-                sheet.putString(refHelper.getRowIndex(), refHelper.getColumnIndex(), string);
+                sheet.putString(refHelper.getRowIndex(), refHelper.getColumnIndex(), string.toString());
             }
         }
 

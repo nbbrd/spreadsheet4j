@@ -70,8 +70,9 @@ public class SaxEntryParserTest {
 
         XlsxSheetBuilder b = MultiSheetBuilder.of(
                 DefaultDateSystem.X1904,
-                Arrays.asList("1", "2", "3", "4", "5", "6", "7")::get,
-                Arrays.asList(false, true)::get);
+                Arrays.asList("1", "2", "3", "4", "5", "6", "7"),
+                new boolean[]{false, true}
+        );
 
         SheetAssert.assertThat(XlsxBook.parseSheet("regular", b, () -> files.applyWithIO("/RegularXlsxSheet.xml"), parser))
                 .hasName("regular")

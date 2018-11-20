@@ -25,8 +25,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
@@ -38,7 +36,7 @@ import spreadsheet.xlsx.XlsxSheetBuilder;
  */
 public final class MultiSheetBuilder implements XlsxSheetBuilder {
 
-    public static MultiSheetBuilder of(XlsxDateSystem dateSystem, IntFunction<String> sharedStrings, IntPredicate dateFormats) {
+    public static MultiSheetBuilder of(XlsxDateSystem dateSystem, List<String> sharedStrings, boolean[] dateFormats) {
         return new MultiSheetBuilder(DefaultSheetBuilder.of(dateSystem, sharedStrings, dateFormats));
     }
 

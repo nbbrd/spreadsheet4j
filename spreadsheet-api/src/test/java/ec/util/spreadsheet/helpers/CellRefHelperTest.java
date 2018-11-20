@@ -63,6 +63,10 @@ public class CellRefHelperTest {
         assertThat(r.getColumnIndex()).isEqualTo(0);
         assertThat(r.getRowIndex()).isEqualTo(0);
 
+        assertThat(r.parse("A10")).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(0);
+        assertThat(r.getRowIndex()).isEqualTo(9);
+
         assertThat(r.parse("A2")).isTrue();
         assertThat(r.getColumnIndex()).isEqualTo(0);
         assertThat(r.getRowIndex()).isEqualTo(1);
