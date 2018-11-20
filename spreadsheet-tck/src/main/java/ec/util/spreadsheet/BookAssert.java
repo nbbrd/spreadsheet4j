@@ -106,9 +106,13 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
             expected.add(summarize(index, book.getSheet(index)));
         }
 
-        List<Tuple> actual = new ArrayList<>();
-        book.forEach((sheet, i) -> actual.add(summarize(i, sheet)));
-        s.assertThat(actual).containsExactlyElementsOf(expected);
+        List<Tuple> normal = new ArrayList<>();
+        book.forEach((sheet, i) -> normal.add(summarize(i, sheet)));
+        s.assertThat(normal).containsExactlyElementsOf(expected);
+
+        Tuple[] parallel = new Tuple[book.getSheetCount()];
+        book.parallelForEach((sheet, i) -> parallel[i] = summarize(i, sheet));
+        s.assertThat(parallel).containsExactlyElementsOf(expected);
     }
 
     private static Tuple summarize(int index, Sheet sheet) {

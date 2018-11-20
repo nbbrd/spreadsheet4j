@@ -19,15 +19,19 @@ package spreadsheet.xlsx.internal;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
 import ioutil.IO;
+import ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import spreadsheet.xlsx.XlsxDataType;
@@ -99,16 +103,38 @@ public final class XlsxBook extends Book {
 
     @Override
     public Sheet getSheet(int index) throws IOException {
-        SheetMeta meta = sheets.get(index);
         if (mainSheetBuilder == null) {
             mainSheetBuilder = mainSheetBuilderFactory.create(dateSystem.get(), sharedStrings.getWithIO(), dateFormats.getWithIO());
         }
-        return parseSheet(meta.name, mainSheetBuilder, () -> pkg.getSheet(meta.relationId), mainEntryParser);
+        return getSheet(index, mainSheetBuilder, mainEntryParser);
     }
 
     @Override
     public String getSheetName(@Nonnegative int index) {
         return sheets.get(index).getName();
+    }
+
+    @Override
+    public void parallelForEach(ObjIntConsumer<? super Sheet> action) throws IOException {
+        XlsxDateSystem x = dateSystem.get();
+        List<String> y = sharedStrings.getWithIO();
+        boolean[] z = dateFormats.getWithIO();
+
+        IntStream.range(0, getSheetCount())
+                .parallel()
+                .forEach(index -> {
+                    try {
+                        Sheet sheet = getSheet(index, DefaultSheetBuilder.of(x, y, z), new SaxEntryParser(Sax.createReader()));
+                        action.accept(sheet, index);
+                    } catch (IOException ex) {
+                        throw new UncheckedIOException(ex);
+                    }
+                });
+    }
+
+    private Sheet getSheet(int index, XlsxSheetBuilder sheetBuilder, XlsxEntryParser entryParser) throws IOException {
+        SheetMeta meta = sheets.get(index);
+        return parseSheet(meta.name, sheetBuilder, () -> pkg.getSheet(meta.relationId), entryParser);
     }
 
     static void closeAll(IOException initial, Closeable... closeables) throws IOException {
