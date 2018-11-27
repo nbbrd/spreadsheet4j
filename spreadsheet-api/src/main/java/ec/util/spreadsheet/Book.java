@@ -108,6 +108,23 @@ public abstract class Book implements Closeable {
     }
 
     /**
+     * Performs in parallel the given action for each sheet of the book until
+     * all sheets have been processed or an exception has been thrown.
+     *
+     * @implSpec
+     * <p>
+     * The default implementation behaves as the regular foreach.
+     *
+     * @param action The action to be performed for each sheet
+     * @throws NullPointerException if the specified action is null
+     * @throws IOException if something goes wrong during loading
+     * @since 2.2.2
+     */
+    public void parallelForEach(@Nonnull ObjIntConsumer<? super Sheet> action) throws IOException {
+        forEach(action);
+    }
+
+    /**
      * Closes this book and releases any resources associated with it.
      *
      * @throws IOException if an I/O error occurs.

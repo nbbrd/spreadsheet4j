@@ -20,22 +20,33 @@ import ioutil.IO;
 import ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import spreadsheet.xlsx.XlsxParser;
+import spreadsheet.xlsx.XlsxDataType;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
-public final class SaxXlsxParser implements XlsxParser {
+public final class SaxEntryParser implements XlsxEntryParser {
 
     @lombok.NonNull
     private final XMLReader reader;
+
+    public SaxEntryParser(XMLReader reader) {
+        this.reader = disableNamespaces(reader);
+    }
 
     @Override
     public void visitWorkbook(InputStream stream, WorkbookVisitor visitor) throws IOException {
@@ -75,40 +86,48 @@ public final class SaxXlsxParser implements XlsxParser {
 
         private final SheetVisitor visitor;
         private final SaxStringBuilder stringBuilder = new SaxStringBuilder();
+        private int level = 0;
         private String sheetBounds = null;
         private String ref = null;
         private String rawDataType = null;
-        private Integer rawStyleIndex = null;
+        private String rawStyleIndex = null;
 
         @Override
         public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
-            switch (name) {
-                case CELL_TAG:
-                    ref = attributes.getValue(REFERENCE_ATTRIBUTE);
-                    rawDataType = attributes.getValue(CELL_DATA_TYPE_ATTRIBUTE);
-                    String tmp = attributes.getValue(STYLE_INDEX_ATTRIBUTE);
-                    try {
-                        rawStyleIndex = tmp != null ? Integer.valueOf(tmp) : null;
-                    } catch (NumberFormatException ex) {
-                        throw new SAXException(ex);
+            switch (level) {
+                case 1:
+                    switch (name) {
+                        case SHEET_DIMENSIONS_TAG:
+                            sheetBounds = attributes.getValue(SHEET_BOUNDS_ATTRIBUTE);
+                            break;
+                        case SHEET_DATA_TAG:
+                            visitor.onSheetData(sheetBounds);
+                            break;
                     }
                     break;
-                case CELL_VALUE_TAG:
-                    stringBuilder.enable().clear();
+                case 3:
+                    if (isEqualTo(name, CELL_TAG)) {
+                        parseCellAttributes(attributes);
+                    }
                     break;
-                case SHEET_DIMENSIONS_TAG:
-                    sheetBounds = attributes.getValue(SHEET_BOUNDS_ATTRIBUTE);
-                    break;
-                case SHEET_DATA_TAG:
-                    visitor.onSheetData(sheetBounds);
+                case 4:
+                    if (isEqualTo(name, CELL_VALUE_TAG)) {
+                        stringBuilder.enable().clear();
+                    }
                     break;
             }
+            level++;
         }
 
         @Override
         public void endElement(String uri, String localName, String name) throws SAXException {
-            if (stringBuilder.isEnabled() && (name.equals(CELL_VALUE_TAG) /*|| name.equals(INLINE_STRING_TAG)*/)) {
-                visitor.onCell(ref, stringBuilder.disable().build(), rawDataType, rawStyleIndex);
+            level--;
+            switch (level) {
+                case 4:
+                    if (isEqualTo(name, CELL_VALUE_TAG)) {
+                        pushCellValue();
+                    }
+                    break;
             }
         }
 
@@ -117,15 +136,87 @@ public final class SaxXlsxParser implements XlsxParser {
             stringBuilder.appendIfNeeded(ch, start, length);
         }
 
-        private static final String CELL_TAG = "c";
-        private static final String REFERENCE_ATTRIBUTE = "r";
-        private static final String STYLE_INDEX_ATTRIBUTE = "s";
-        private static final String CELL_DATA_TYPE_ATTRIBUTE = "t";
-        private static final String CELL_VALUE_TAG = "v";
+        private void pushCellValue() {
+            if (ref != null) {
+                XlsxDataType dataType = parseDataType(rawDataType);
+                int styleIndex = XlsxValueFactory.isStyleRequired(dataType)
+                        ? XlsxValueFactory.parseStyleIndex(rawStyleIndex)
+                        : XlsxValueFactory.NULL_STYLE_INDEX;
+                visitor.onCell(ref, stringBuilder.disable().build(), dataType, styleIndex);
+            }
+        }
+
+        private void parseCellAttributes(Attributes attributes) {
+            ref = null;
+            rawDataType = null;
+            rawStyleIndex = null;
+            for (int i = 0; i < attributes.getLength(); i++) {
+                String attribute = attributes.getLocalName(i);
+                if (attribute.length() == 1) {
+                    switch (attribute.charAt(0)) {
+                        case REFERENCE_ATTRIBUTE:
+                            ref = attributes.getValue(i);
+                            break;
+                        case CELL_DATA_TYPE_ATTRIBUTE:
+                            rawDataType = attributes.getValue(i);
+                            break;
+                        case STYLE_INDEX_ATTRIBUTE:
+                            rawStyleIndex = attributes.getValue(i);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static final char CELL_TAG = 'c';
+        private static final char REFERENCE_ATTRIBUTE = 'r';
+        private static final char STYLE_INDEX_ATTRIBUTE = 's';
+        private static final char CELL_DATA_TYPE_ATTRIBUTE = 't';
+        private static final char CELL_VALUE_TAG = 'v';
         private static final String SHEET_DIMENSIONS_TAG = "dimension";
         private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
         private static final String SHEET_DATA_TAG = "sheetData";
         //private static final String INLINE_STRING_TAG = "is";
+
+        @Nonnull
+        private static XlsxDataType parseDataType(@Nullable String rawDataType) {
+            if (rawDataType == null) {
+                return XlsxDataType.UNDEFINED;
+            }
+            if (rawDataType.length() == 1) {
+                switch (rawDataType.charAt(0)) {
+                    case NUMBER_TYPE:
+                        return XlsxDataType.NUMBER;
+                    case SHARED_STRING_TYPE:
+                        return XlsxDataType.SHARED_STRING;
+                    case DATE_TYPE:
+                        return XlsxDataType.DATE;
+                    case BOOLEAN_TYPE:
+                        return XlsxDataType.BOOLEAN;
+                    case ERROR_TYPE:
+                        return XlsxDataType.ERROR;
+                    default:
+                        return XlsxDataType.UNKNOWN;
+                }
+            }
+            switch (rawDataType) {
+                case STRING_TYPE:
+                    return XlsxDataType.STRING;
+                case INLINE_STRING_TYPE:
+                    return XlsxDataType.INLINE_STRING;
+                default:
+                    return XlsxDataType.UNKNOWN;
+            }
+        }
+
+        // http://msdn.microsoft.com/en-us/library/documentformat.openxml.spreadsheet.cellvalues.aspx
+        private static final char BOOLEAN_TYPE = 'b';
+        private static final char NUMBER_TYPE = 'n';
+        private static final char ERROR_TYPE = 'e';
+        private static final char SHARED_STRING_TYPE = 's';
+        private static final String STRING_TYPE = "str";
+        private static final String INLINE_STRING_TYPE = "inlineStr";
+        private static final char DATE_TYPE = 'd';
     }
 
     /**
@@ -253,10 +344,10 @@ public final class SaxXlsxParser implements XlsxParser {
     private static final class SaxStringBuilder {
 
         private boolean enabled = false;
-        private StringBuilder content = new StringBuilder();
+        private char[] content;
 
         public SaxStringBuilder clear() {
-            content = new StringBuilder();
+            content = null;
             return this;
         }
 
@@ -275,15 +366,61 @@ public final class SaxXlsxParser implements XlsxParser {
         }
 
         public CharSequence build() {
-            // we defer CharSequence@toString()
-            return content;
+            return new CharWrapper(content);
         }
 
         public SaxStringBuilder appendIfNeeded(char[] ch, int start, int length) {
             if (isEnabled()) {
-                content.append(ch, start, length);
+                if (content == null) {
+                    content = Arrays.copyOfRange(ch, start, start + length);
+                } else {
+                    int oldLength = content.length;
+                    content = Arrays.copyOf(content, oldLength + length);
+                    System.arraycopy(ch, start, content, oldLength, length);
+                }
             }
             return this;
         }
     }
+
+    @lombok.AllArgsConstructor
+    private static final class CharWrapper implements CharSequence {
+
+        private final char[] chars;
+
+        @Override
+        public int length() {
+            return chars.length;
+        }
+
+        @Override
+        public char charAt(int index) {
+            return chars[index];
+        }
+
+        @Override
+        public CharSequence subSequence(int start, int end) {
+            throw new RuntimeException();
+        }
+
+        @Override
+        public String toString() {
+            return new String(chars);
+        }
+    }
+
+    static boolean isEqualTo(String input, char c) {
+        return input.length() == 1 && input.charAt(0) == c;
+    }
+
+    static XMLReader disableNamespaces(XMLReader reader) {
+        try {
+            reader.setFeature("http://xml.org/sax/features/namespaces", false);
+        } catch (SAXNotRecognizedException | SAXNotSupportedException ex) {
+            Logger.getLogger(SaxEntryParser.class.getName()).log(Level.FINE, null, ex);
+        }
+        return reader;
+    }
+
+    public static final XlsxEntryParser.Factory FACTORY = () -> new SaxEntryParser(Sax.createReader());
 }

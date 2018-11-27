@@ -89,4 +89,6 @@ public enum DefaultNumberingFormat implements XlsxNumberingFormat {
         while (iterator.hasNext() && !predicate.test(iterator.nextInt())) {
         }
     }
+
+    public static final XlsxNumberingFormat.Factory FACTORY = () -> DefaultNumberingFormat.INSTANCE;
 }
