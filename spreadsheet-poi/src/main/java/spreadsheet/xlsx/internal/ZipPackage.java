@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -148,7 +149,16 @@ public final class ZipPackage implements XlsxPackage {
 
         @Override
         public XlsxPackage open(File file) throws IOException {
-            return open(() -> Zip.loaderOf(file));
+            try {
+                return open(() -> Zip.loaderOf(file));
+            } catch (ZipException ex) {
+                if (!ex.getMessage().contains(file.getPath())) {
+                    ZipException ex2 = new ZipException(ex.getMessage() + ": " + file.getPath());
+                    ex2.addSuppressed(ex);
+                    throw ex2;
+                }
+                throw ex;
+            }
         }
 
         private XlsxPackage open(IO.Supplier<IO.ResourceLoader<String>> source) throws IOException {

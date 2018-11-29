@@ -17,6 +17,7 @@
 package ec.util.spreadsheet.poi;
 
 import ec.util.spreadsheet.Book;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +28,6 @@ import java.nio.file.NoSuchFileException;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
-import org.apache.poi.EmptyFileException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.openide.util.lookup.ServiceProvider;
 import spreadsheet.xlsx.XlsxReader;
@@ -71,26 +69,19 @@ public class ExcelBookFactory extends Book.Factory {
     @Override
     public Book load(File file) throws IOException {
         checkFile(file);
-        if (fast.get()) {
-            return new XlsxReader().read(file.toPath());
-        }
-        try {
-            return PoiBook.create(file);
-        } catch (OpenXML4JException | InvalidOperationException | EmptyFileException ex) {
-            throw new IOException(ex);
-        }
+        return fast.get()
+                ? new XlsxReader().read(file.toPath())
+                : PoiBook.create(file);
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
-        if (fast.get()) {
-            return new XlsxReader().read(stream);
+        if (stream.available() == 0) {
+            throw new EOFException();
         }
-        try {
-            return PoiBook.create(stream);
-        } catch (OpenXML4JException ex) {
-            throw new IOException(ex);
-        }
+        return fast.get()
+                ? new XlsxReader().read(stream)
+                : PoiBook.create(stream);
     }
 
     @Override
@@ -108,12 +99,15 @@ public class ExcelBookFactory extends Book.Factory {
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @Nonnull
-    private static File checkFile(@Nonnull File file) throws FileSystemException {
-        if (!file.exists() || file.isDirectory()) {
+    private static File checkFile(@Nonnull File file) throws IOException {
+        if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }
-        if (!file.canRead()) {
+        if (!file.canRead() || file.isDirectory()) {
             throw new AccessDeniedException(file.getPath());
+        }
+        if (file.length() == 0) {
+            throw new EOFException(file.getPath());
         }
         return file;
     }

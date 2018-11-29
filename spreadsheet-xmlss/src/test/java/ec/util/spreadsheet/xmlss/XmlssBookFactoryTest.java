@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -39,6 +40,7 @@ public class XmlssBookFactoryTest {
     public void testCompliance() throws IOException {
         File valid = createContent(temp.newFile("valid.xml"));
         File invalid = temp.newFile("invalid.xml");
+        Files.write(invalid.toPath(), Arrays.asList("..."));
         assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
     }
 

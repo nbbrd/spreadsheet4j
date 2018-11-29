@@ -25,8 +25,10 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import ec.util.spreadsheet.helpers.ArraySheet;
+import ioutil.IO;
 import ioutil.Sax;
 import ioutil.Xml;
+import java.io.File;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,14 +40,26 @@ import org.xml.sax.helpers.DefaultHandler;
 final class XmlssBook extends Book {
 
     @Nonnull
-    public static XmlssBook create(@Nonnull InputStream stream) throws IOException {
-        return new XmlssBook(loadContent(stream));
+    public static XmlssBook parse(@Nonnull File file) throws IOException {
+        return parse(o -> o.parseFile(file));
     }
 
-    private static List<ArraySheet> loadContent(InputStream stream) throws IOException {
+    @Nonnull
+    public static XmlssBook parse(@Nonnull InputStream stream) throws IOException {
+        return parse(o -> o.parseStream(stream));
+    }
+
+    private static XmlssBook parse(Loader loader) throws IOException {
+        return new XmlssBook(loadContent(loader));
+    }
+
+    private interface Loader extends IO.Function<Sax.Parser<List<ArraySheet>>, List<ArraySheet>> {
+    }
+
+    private static List<ArraySheet> loadContent(Loader loader) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
         try {
-            return Sax.Parser.of(handler, handler::build).parseStream(stream);
+            return loader.applyWithIO(Sax.Parser.of(handler, handler::build));
         } catch (Xml.WrappedException ex) {
             if (isTrailingSectionContentNotAllowed(ex.getCause(), handler.isEndWorkbookNotified())) {
                 return handler.build();
