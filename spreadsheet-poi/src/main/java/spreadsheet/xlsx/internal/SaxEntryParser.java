@@ -366,7 +366,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
         }
 
         public CharSequence build() {
-            return new CharWrapper(content);
+            return content != null ? new CharWrapper(content) : "";
         }
 
         public SaxStringBuilder appendIfNeeded(char[] ch, int start, int length) {
@@ -386,6 +386,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
     @lombok.AllArgsConstructor
     private static final class CharWrapper implements CharSequence {
 
+        @lombok.NonNull
         private final char[] chars;
 
         @Override
