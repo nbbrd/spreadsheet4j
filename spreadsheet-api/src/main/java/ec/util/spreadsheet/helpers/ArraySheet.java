@@ -213,16 +213,10 @@ public final class ArraySheet extends Sheet implements Serializable {
 
     @Nonnull
     public static Builder builder(@Nullable String sheetBounds) {
-        if (sheetBounds != null) {
-            String[] references = sheetBounds.split(":");
-            if (references.length == 2) {
-                CellRefHelper helper = new CellRefHelper();
-                if (helper.parse(references[1])) {
-                    return builder(helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
-                }
-            }
-        }
-        return builder();
+        CellRefHelper helper = new CellRefHelper();
+        return helper.parseEnd(sheetBounds)
+                ? builder(helper.getRowIndex() + 1, helper.getColumnIndex() + 1)
+                : builder();
     }
 
     public abstract static class Builder {
