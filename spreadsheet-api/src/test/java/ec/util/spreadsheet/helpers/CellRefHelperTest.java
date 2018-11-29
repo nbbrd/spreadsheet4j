@@ -19,6 +19,7 @@ package ec.util.spreadsheet.helpers;
 import static ec.util.spreadsheet.helpers.CellRefHelper.getCellRef;
 import static ec.util.spreadsheet.helpers.CellRefHelper.getColumnLabel;
 import static ec.util.spreadsheet.helpers.CellRefHelper.getRowLabel;
+import java.util.function.Predicate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
@@ -59,51 +60,51 @@ public class CellRefHelperTest {
         assertThatThrownBy(() -> r.getColumnIndex()).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> r.getRowIndex()).isInstanceOf(IllegalStateException.class);
 
-        assertThat(r.parse("A1")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(0);
-        assertThat(r.getRowIndex()).isEqualTo(0);
+        assertMatch(r, o -> o.parse("A1"), 0, 0);
+        assertMatch(r, o -> o.parse("A10"), 0, 9);
+        assertMatch(r, o -> o.parse("A2"), 0, 1);
+        assertMatch(r, o -> o.parse("B1"), 1, 0);
+        assertMatch(r, o -> o.parse("Z9"), 25, 8);
+        assertMatch(r, o -> o.parse("AA9"), 26, 8);
+        assertMatch(r, o -> o.parse("AB9"), 27, 8);
+        assertMatch(r, o -> o.parse("BA9"), 52, 8);
 
-        assertThat(r.parse("A10")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(0);
-        assertThat(r.getRowIndex()).isEqualTo(9);
+        assertMismatch(r, o -> o.parse(null));
+        assertMismatch(r, o -> o.parse(""));
+        assertMismatch(r, o -> o.parse("2"));
+        assertMismatch(r, o -> o.parse("A"));
+        assertMismatch(r, o -> o.parse("A0"));
+        assertMismatch(r, o -> o.parse("a2"));
+        assertMismatch(r, o -> o.parse("ä2"));
+        assertMismatch(r, o -> o.parse("_A2"));
+        assertMismatch(r, o -> o.parse("A_2"));
+        assertMismatch(r, o -> o.parse("A2_"));
+        assertMismatch(r, o -> o.parse("hello"));
+    }
 
-        assertThat(r.parse("A2")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(0);
-        assertThat(r.getRowIndex()).isEqualTo(1);
+    @Test
+    public void testParseEnd() {
+        CellRefHelper r = new CellRefHelper();
 
-        assertThat(r.parse("B1")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(1);
-        assertThat(r.getRowIndex()).isEqualTo(0);
+        assertMismatch(r, o -> o.parseEnd(null));
+        assertMismatch(r, o -> o.parseEnd(""));
+        assertMismatch(r, o -> o.parseEnd("A1"));
+        assertMismatch(r, o -> o.parseEnd("A1:"));
+        assertMismatch(r, o -> o.parseEnd("A1:2"));
+        assertMismatch(r, o -> o.parseEnd("A1:B2_"));
 
-        assertThat(r.parse("Z9")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(25);
-        assertThat(r.getRowIndex()).isEqualTo(8);
+        assertMatch(r, o -> o.parseEnd("A1:B10"), 1, 9);
+    }
 
-        assertThat(r.parse("AA9")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(26);
-        assertThat(r.getRowIndex()).isEqualTo(8);
+    private static void assertMatch(CellRefHelper r, Predicate<CellRefHelper> test, int columnIndex, int rowIndex) {
+        assertThat(test.test(r)).isTrue();
+        assertThat(r.getColumnIndex()).isEqualTo(columnIndex);
+        assertThat(r.getRowIndex()).isEqualTo(rowIndex);
+    }
 
-        assertThat(r.parse("AB9")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(27);
-        assertThat(r.getRowIndex()).isEqualTo(8);
-
-        assertThat(r.parse("BA9")).isTrue();
-        assertThat(r.getColumnIndex()).isEqualTo(52);
-        assertThat(r.getRowIndex()).isEqualTo(8);
-
-        assertThat(r.parse("hello")).isFalse();
+    private static void assertMismatch(CellRefHelper r, Predicate<CellRefHelper> test) {
+        assertThat(test.test(r)).isFalse();
         assertThatThrownBy(() -> r.getColumnIndex()).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> r.getRowIndex()).isInstanceOf(IllegalStateException.class);
-
-        assertThat(r.parse(null)).isFalse();
-        assertThat(r.parse("")).isFalse();
-        assertThat(r.parse("2")).isFalse();
-        assertThat(r.parse("A")).isFalse();
-        assertThat(r.parse("A0")).isFalse();
-        assertThat(r.parse("a2")).isFalse();
-        assertThat(r.parse("ä2")).isFalse();
-        assertThat(r.parse("_A2")).isFalse();
-        assertThat(r.parse("A_2")).isFalse();
-        assertThat(r.parse("A2_")).isFalse();
     }
 }

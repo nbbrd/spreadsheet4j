@@ -33,6 +33,13 @@ import org.junit.Test;
 public class CompactSheetTest {
 
     @Test
+    public void testIsOverflow() {
+        assertThat(CompactSheet.isOverflow(0, 0)).isFalse();
+        assertThat(CompactSheet.isOverflow(10, 20)).isFalse();
+        assertThat(CompactSheet.isOverflow(29775, 16384)).isTrue();
+    }
+
+    @Test
     @SuppressWarnings("null")
     public void testBuilder() {
         assertThatNullPointerException()

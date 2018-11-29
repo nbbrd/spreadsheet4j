@@ -56,24 +56,13 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     private ExtCallback newCallback(String sheetName, String sheetBounds) {
-        if (sheetBounds != null) {
-            String[] references = sheetBounds.split(":");
-            if (references.length == 2) {
-                CellRefHelper helper = new CellRefHelper();
-                if (helper.parse(references[1])) {
-                    return bounded(sheetName, helper.getRowIndex() + 1, helper.getColumnIndex() + 1);
-                }
+        if (refHelper.parseEnd(sheetBounds)) {
+            int rowCount = refHelper.getRowIndex() + 1;
+            int columnCount = refHelper.getColumnIndex() + 1;
+            if (!CompactSheet.isOverflow(rowCount, columnCount)) {
+                return new CompactCallback(refHelper, CompactSheet.builder(rowCount, columnCount, sheetName, sharedStrings));
             }
         }
-        return unbounded(sheetName);
-    }
-
-    private ExtCallback bounded(String sheetName, int rowCount, int columnCount) {
-//        return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder(rowCount, columnCount).name(sheetName));
-        return new CompactCallback(refHelper, CompactSheet.builder(rowCount, columnCount, sheetName, sharedStrings));
-    }
-
-    private ExtCallback unbounded(String sheetName) {
         return new ArraySheetCallback(sharedStrings, refHelper, ArraySheet.builder().name(sheetName));
     }
 

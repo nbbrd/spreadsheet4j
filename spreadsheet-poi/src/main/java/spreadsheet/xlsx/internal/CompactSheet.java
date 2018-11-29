@@ -227,6 +227,11 @@ public final class CompactSheet extends Sheet {
         }
     }
 
+    public static boolean isOverflow(int rowCount, int columnCount) {
+        long result = (long) rowCount * (long) columnCount * CELL_BYTES;
+        return (int) result != result;
+    }
+
     public static final class Builder {
 
         private final int rowCount;

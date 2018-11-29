@@ -30,16 +30,37 @@ public final class CellRefHelper {
     private int col = 0;
     private int row = 0;
 
+    private boolean withMatch(boolean condition) {
+        return match = condition;
+    }
+
+    public boolean parseEnd(@Nullable CharSequence dimension) {
+        if (dimension != null) {
+            int length = dimension.length();
+            for (int i = 0; i < length; i++) {
+                if (dimension.charAt(i) == ':') {
+                    return parse(dimension, i + 1, length);
+                }
+            }
+        }
+        return withMatch(false);
+    }
+
     public boolean parse(@Nullable CharSequence ref) {
-        if (ref == null) {
-            return match = false;
+        return ref != null
+                ? parse(ref, 0, ref.length())
+                : withMatch(false);
+    }
+
+    private boolean parse(@Nonnull CharSequence ref, int begIdx, int endIdx) {
+        if (endIdx <= begIdx) {
+            return withMatch(false);
         }
 
-        int length = ref.length();
-        int i = 0;
+        int i = begIdx;
 
         col = 0;
-        while (i < length) {
+        while (i < endIdx) {
             char c = ref.charAt(i);
             if (c < 'A' || c > 'Z') {
                 break;
@@ -50,7 +71,7 @@ public final class CellRefHelper {
         col--;
 
         row = 0;
-        while (i < length) {
+        while (i < endIdx) {
             char c = ref.charAt(i);
             if (c < '0' || c > '9') {
                 break;
@@ -60,7 +81,7 @@ public final class CellRefHelper {
         }
         row--;
 
-        return match = (i == length && col >= 0 && row >= 0);
+        return withMatch(i == endIdx && col >= 0 && row >= 0);
     }
 
     /**
