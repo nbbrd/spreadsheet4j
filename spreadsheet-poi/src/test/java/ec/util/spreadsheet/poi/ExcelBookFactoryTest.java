@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.assertj.core.util.DateUtil;
 import static org.junit.Assert.assertEquals;
@@ -42,6 +43,7 @@ public class ExcelBookFactoryTest {
     private static File VALID_FILE;
     private static File EMPTY_FILE;
     private static File MISSING_FILE;
+    private static File INVALID_FILE;
 
     private static ExcelBookFactory FAST_FACTORY;
     private static ExcelBookFactory NORMAL_FACTORY;
@@ -62,6 +64,9 @@ public class ExcelBookFactoryTest {
         MISSING_FILE = Files.createTempFile("Missing", ".xlsx").toFile();
         MISSING_FILE.delete();
 
+        INVALID_FILE = Files.createTempFile("invalid", ".xlsx").toFile();
+        Files.write(INVALID_FILE.toPath(), Arrays.asList("..."));
+
         FAST_FACTORY = new ExcelBookFactory();
         FAST_FACTORY.setFast(true);
 
@@ -71,8 +76,8 @@ public class ExcelBookFactoryTest {
 
     @Test
     public void testCompliance() throws IOException {
-        assertThat(FAST_FACTORY).isCompliant(VALID_FILE, EMPTY_FILE);
-        assertThat(NORMAL_FACTORY).isCompliant(VALID_FILE, EMPTY_FILE);
+        assertThat(FAST_FACTORY).isCompliant(VALID_FILE, INVALID_FILE);
+        assertThat(NORMAL_FACTORY).isCompliant(VALID_FILE, INVALID_FILE);
     }
 
     @Test

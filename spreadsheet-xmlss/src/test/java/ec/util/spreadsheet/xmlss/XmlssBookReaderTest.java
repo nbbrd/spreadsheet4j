@@ -30,7 +30,7 @@ import org.junit.Test;
  *
  * @author Philippe Charles
  */
-public class XmlssBookTest {
+public class XmlssBookReaderTest {
 
     @Test
     public void test() throws IOException {
@@ -42,15 +42,15 @@ public class XmlssBookTest {
         }
 
         try (ByteArrayInputStream stream = new ByteArrayInputStream(original.getBytes())) {
-            try (XmlssBook xxx = XmlssBook.create(stream)) {
-                assertThat(ArrayBook.copyOf(xxx)).isEqualTo(book);
+            try (ArrayBook xxx = XmlssBookReader.parse(stream)) {
+                assertThat(xxx).isEqualTo(book);
             }
         }
 
         String xmlWithTrailingSection = original + "\0";
         try (ByteArrayInputStream stream = new ByteArrayInputStream(xmlWithTrailingSection.getBytes())) {
-            try (XmlssBook xxx = XmlssBook.create(stream)) {
-                assertThat(ArrayBook.copyOf(xxx)).isEqualTo(book);
+            try (ArrayBook xxx = XmlssBookReader.parse(stream)) {
+                assertThat(xxx).isEqualTo(book);
             }
         }
     }

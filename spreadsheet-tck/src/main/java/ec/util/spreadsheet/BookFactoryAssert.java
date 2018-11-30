@@ -20,12 +20,16 @@ import static ec.util.spreadsheet.Assertions.msg;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Optional;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.SoftAssertions;
 
@@ -43,19 +47,25 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
         return new BookFactoryAssert(actual);
     }
 
+    public BookFactoryAssert isCompliant(File valid) throws IOException {
+        return isCompliant(valid, null);
+    }
+
     public BookFactoryAssert isCompliant(File valid, File invalid) throws IOException {
         isNotNull();
         SoftAssertions s = new SoftAssertions();
-        assertCompliance(s, actual, valid, invalid);
+        assertCompliance(s, actual, valid, Optional.ofNullable(invalid));
         s.assertAll();
         return this;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
-    private static void assertCompliance(SoftAssertions s, Book.Factory factory, File valid, File invalid) throws IOException {
+    private static void assertCompliance(SoftAssertions s, Book.Factory factory, File valid, Optional<File> invalid) throws IOException {
         s.assertThat(factory.getName()).isNotNull();
         s.assertThat(factory.accept(valid)).isTrue();
-        s.assertThat(factory.accept(invalid)).isTrue();
+        if (invalid.isPresent()) {
+            s.assertThat(factory.accept(invalid.get())).isTrue();
+        }
 
         s.assertThatThrownBy(() -> factory.isSupportedDataType(NULL_CLASS))
                 .as(msg(factory, "isSupportedDataType(nullClass)", NullPointerException.class))
@@ -64,7 +74,12 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
         if (factory.canLoad()) {
             assertLoadNull(s, factory);
             assertLoadValid(s, factory, valid);
-            assertLoadInvalid(s, factory, invalid);
+            if (invalid.isPresent()) {
+                assertLoadInvalid(s, factory, invalid.get());
+            }
+            assertLoadEmpty(s, factory);
+            assertLoadMissing(s, factory);
+            assertLoadDir(s, factory);
         } else {
             assertLoadUnsupported(s, factory, valid);
         }
@@ -109,7 +124,95 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
     }
 
     private static void assertLoadInvalid(SoftAssertions s, Book.Factory f, File invalidFile) throws IOException {
-        // TODO
+        Class<? extends IOException> invalidException = IOException.class;
+
+        s.assertThatThrownBy(() -> f.load(invalidFile))
+                .as(msg(f, "load(invalidFile)", invalidException))
+                .isNotInstanceOf(EOFException.class)
+                .isInstanceOf(invalidException)
+                .hasMessageContaining(invalidFile.getName());
+
+        try (InputStream stream = Files.newInputStream(invalidFile.toPath())) {
+            s.assertThatThrownBy(() -> f.load(stream))
+                    .as(msg(f, "load(invalidStream)", invalidException))
+                    .isNotInstanceOf(EOFException.class)
+                    .isInstanceOf(invalidException);
+        }
+
+        s.assertThatThrownBy(() -> f.load(invalidFile.toPath()))
+                .as(msg(f, "load(invalidPath)", invalidException))
+                .isNotInstanceOf(EOFException.class)
+                .isInstanceOf(invalidException)
+                .hasMessageContaining(invalidFile.getName());
+
+        s.assertThatThrownBy(() -> f.load(invalidFile.toURI().toURL()))
+                .as(msg(f, "load(invalidURL)", invalidException))
+                .isNotInstanceOf(EOFException.class)
+                .isInstanceOf(invalidException);
+    }
+
+    private static void assertLoadEmpty(SoftAssertions s, Book.Factory f) throws IOException {
+        File empty = File.createTempFile("empty", "file");
+
+        s.assertThatThrownBy(() -> f.load(empty))
+                .as(msg(f, "load(emptyFile)", EOFException.class))
+                .isInstanceOf(EOFException.class)
+                .hasMessage(empty.getPath());
+
+        try (InputStream stream = Files.newInputStream(empty.toPath())) {
+            s.assertThatThrownBy(() -> f.load(stream))
+                    .as(msg(f, "load(emptyStream)", EOFException.class))
+                    .isInstanceOf(EOFException.class);
+        }
+
+        s.assertThatThrownBy(() -> f.load(empty.toPath()))
+                .as(msg(f, "load(emptyPath)", EOFException.class))
+                .isInstanceOf(EOFException.class)
+                .hasMessage(empty.getPath());
+
+        s.assertThatThrownBy(() -> f.load(empty.toURI().toURL()))
+                .as(msg(f, "load(emptyURL)", EOFException.class))
+                .isInstanceOf(EOFException.class);
+
+        empty.delete();
+    }
+
+    private static void assertLoadMissing(SoftAssertions s, Book.Factory f) throws IOException {
+        File missing = File.createTempFile("missing", "file");
+        missing.delete();
+
+        s.assertThatThrownBy(() -> f.load(missing))
+                .as(msg(f, "load(missingFile)", NoSuchFileException.class))
+                .isInstanceOf(NoSuchFileException.class)
+                .hasMessage(missing.getPath());
+
+        s.assertThatThrownBy(() -> f.load(missing.toPath()))
+                .as(msg(f, "load(missingPath)", NoSuchFileException.class))
+                .isInstanceOf(NoSuchFileException.class)
+                .hasMessage(missing.getPath());
+
+        s.assertThatThrownBy(() -> f.load(missing.toURI().toURL()))
+                .as(msg(f, "load(missingURL)", NoSuchFileException.class))
+                .isInstanceOf(NoSuchFileException.class);
+    }
+
+    private static void assertLoadDir(SoftAssertions s, Book.Factory f) throws IOException {
+        File folder = org.assertj.core.util.Files.newTemporaryFolder();
+
+        s.assertThatThrownBy(() -> f.load(folder))
+                .as(msg(f, "load(folderAsFile)", AccessDeniedException.class))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessage(folder.getPath());
+
+        s.assertThatThrownBy(() -> f.load(folder.toPath()))
+                .as(msg(f, "load(folderAsPath)", AccessDeniedException.class))
+                .isInstanceOf(AccessDeniedException.class)
+                .hasMessage(folder.getPath());
+
+//        s.assertThatThrownBy(() -> f.load(folder.toURI().toURL()))
+//                .as(msg(f, "load(folderAsURL)", AccessDeniedException.class))
+//                .isInstanceOf(AccessDeniedException.class);
+        folder.delete();
     }
 
     private static void assertLoadUnsupported(SoftAssertions s, Book.Factory f, File valid) throws IOException {

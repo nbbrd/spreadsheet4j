@@ -17,11 +17,16 @@
 package ec.util.spreadsheet.poi;
 
 import ec.util.spreadsheet.Book;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.FileSystemException;
+import java.nio.file.NoSuchFileException;
 import java.util.Locale;
+import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -44,11 +49,15 @@ public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
     public Book load(File file) throws IOException {
+        checkFile(file);
         return PoiBook.createClassic(file);
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
+        if (stream.available() == 0) {
+            throw new EOFException();
+        }
         return PoiBook.createClassic(stream);
     }
 
@@ -58,4 +67,17 @@ public class ExcelClassicBookFactory extends Book.Factory {
         PoiBookWriter.copy(book, target);
         target.write(stream);
     }
+
+    //<editor-fold defaultstate="collapsed" desc="Implementation details">
+    @Nonnull
+    private static File checkFile(@Nonnull File file) throws FileSystemException {
+        if (!file.exists()) {
+            throw new NoSuchFileException(file.getPath());
+        }
+        if (!file.canRead() || file.isDirectory()) {
+            throw new AccessDeniedException(file.getPath());
+        }
+        return file;
+    }
+    //</editor-fold>
 }

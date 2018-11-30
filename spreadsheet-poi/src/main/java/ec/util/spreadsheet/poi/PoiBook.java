@@ -18,16 +18,21 @@ package ec.util.spreadsheet.poi;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -40,23 +45,47 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 final class PoiBook extends Book {
 
     @Nonnull
-    public static PoiBook create(@Nonnull File file) throws IOException, InvalidFormatException {
-        return new PoiBook(new XSSFWorkbook(OPCPackage.open(file.getPath(), PackageAccess.READ)));
+    public static PoiBook create(@Nonnull File file) throws IOException {
+        try {
+            return new PoiBook(new XSSFWorkbook(OPCPackage.open(file.getPath(), PackageAccess.READ)));
+        } catch (OpenXML4JException | OpenXML4JRuntimeException | UnsupportedFileFormatException ex) {
+            throw new IOException(file.getPath(), ex);
+        } catch (EmptyFileException ex) {
+            throw new EOFException();
+        }
     }
 
     @Nonnull
-    public static PoiBook create(@Nonnull InputStream stream) throws IOException, InvalidFormatException {
-        return new PoiBook(new XSSFWorkbook(OPCPackage.open(stream)));
+    public static PoiBook create(@Nonnull InputStream stream) throws IOException {
+        try {
+            return new PoiBook(new XSSFWorkbook(OPCPackage.open(stream)));
+        } catch (OpenXML4JException | OpenXML4JRuntimeException | UnsupportedFileFormatException ex) {
+            throw new IOException(ex);
+        } catch (EmptyFileException ex) {
+            throw new EOFException();
+        }
     }
 
     @Nonnull
     public static PoiBook createClassic(@Nonnull File file) throws IOException {
-        return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(file)));
+        try {
+            return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(file)));
+        } catch (NotOLE2FileException | UnsupportedFileFormatException ex) {
+            throw new IOException(file.getPath(), ex);
+        } catch (EmptyFileException ex) {
+            throw new EOFException(file.getPath());
+        }
     }
 
     @Nonnull
     public static PoiBook createClassic(@Nonnull InputStream stream) throws IOException {
-        return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(stream)));
+        try {
+            return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(stream)));
+        } catch (NotOLE2FileException | UnsupportedFileFormatException ex) {
+            throw new IOException(ex);
+        } catch (EmptyFileException ex) {
+            throw new EOFException();
+        }
     }
 
     private final Workbook workbook;

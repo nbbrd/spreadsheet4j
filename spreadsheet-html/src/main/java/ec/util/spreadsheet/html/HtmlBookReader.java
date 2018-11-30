@@ -18,10 +18,13 @@ package ec.util.spreadsheet.html;
 
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -59,16 +62,34 @@ final class HtmlBookReader {
 
     @Nonnull
     public ArrayBook read(@Nonnull File file) throws IOException {
+        checkFile(file);
         return readHtml(Jsoup.parse(file, getCharsetNameOrNull(), baseUri));
     }
 
     @Nonnull
     public ArrayBook read(@Nonnull InputStream stream) throws IOException {
         Objects.requireNonNull(stream);
+        if (stream.available() == 0) {
+            throw new EOFException();
+        }
         return readHtml(Jsoup.parse(stream, getCharsetNameOrNull(), baseUri));
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
+    @Nonnull
+    private static File checkFile(@Nonnull File file) throws IOException {
+        if (!file.exists()) {
+            throw new NoSuchFileException(file.getPath());
+        }
+        if (!file.canRead() || file.isDirectory()) {
+            throw new AccessDeniedException(file.getPath());
+        }
+        if (file.length() == 0) {
+            throw new EOFException(file.getPath());
+        }
+        return file;
+    }
+
     private String getCharsetNameOrNull() {
         return charset != null ? charset.name() : null;
     }
