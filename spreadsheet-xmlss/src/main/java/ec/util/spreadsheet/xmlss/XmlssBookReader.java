@@ -16,15 +16,11 @@
  */
 package ec.util.spreadsheet.xmlss;
 
-import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.Sheet;
+import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnull;
 
-import ec.util.spreadsheet.helpers.ArraySheet;
 import ioutil.IO;
 import ioutil.Sax;
 import ioutil.Xml;
@@ -37,26 +33,26 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @author Philippe Charles
  */
-final class XmlssBook extends Book {
+final class XmlssBookReader {
+
+    private XmlssBookReader() {
+        // static class
+    }
 
     @Nonnull
-    public static XmlssBook parse(@Nonnull File file) throws IOException {
+    public static ArrayBook parse(@Nonnull File file) throws IOException {
         return parse(o -> o.parseFile(file));
     }
 
     @Nonnull
-    public static XmlssBook parse(@Nonnull InputStream stream) throws IOException {
+    public static ArrayBook parse(@Nonnull InputStream stream) throws IOException {
         return parse(o -> o.parseStream(stream));
     }
 
-    private static XmlssBook parse(Loader loader) throws IOException {
-        return new XmlssBook(loadContent(loader));
+    private interface Loader extends IO.Function<Sax.Parser<ArrayBook>, ArrayBook> {
     }
 
-    private interface Loader extends IO.Function<Sax.Parser<List<ArraySheet>>, List<ArraySheet>> {
-    }
-
-    private static List<ArraySheet> loadContent(Loader loader) throws IOException {
+    private static ArrayBook parse(Loader loader) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
         try {
             return loader.applyWithIO(Sax.Parser.of(handler, handler::build));
@@ -72,22 +68,6 @@ final class XmlssBook extends Book {
         return cause instanceof SAXException && endWorkbookNotified;
     }
 
-    private final List<ArraySheet> sheets;
-
-    private XmlssBook(List<ArraySheet> sheets) {
-        this.sheets = sheets;
-    }
-
-    @Override
-    public int getSheetCount() {
-        return sheets.size();
-    }
-
-    @Override
-    public Sheet getSheet(int index) throws IOException {
-        return sheets.get(index);
-    }
-
 //    @VisibleForTesting
     static final class BookSax2EventHandler extends DefaultHandler /*implements IBuilder<ImmutableList<Sheet>>*/ {
 
@@ -98,7 +78,7 @@ final class XmlssBook extends Book {
         private static final String CELL_TAG = "Cell";
         private static final String DATA_TAG = "Data";
 
-        private final List<ArraySheet> sheets;
+        private final ArrayBook.Builder result;
         private int rowNum;
         private int colNum;
         private String dataType;
@@ -107,7 +87,7 @@ final class XmlssBook extends Book {
         private boolean endWorkbookNotified;
 
         public BookSax2EventHandler() {
-            this.sheets = new ArrayList<>();
+            this.result = ArrayBook.builder();
             this.rowNum = -1;
             this.colNum = -1;
             this.dataType = null;
@@ -120,8 +100,8 @@ final class XmlssBook extends Book {
             return endWorkbookNotified;
         }
 
-        public List<ArraySheet> build() {
-            return new ArrayList<>(sheets);
+        public ArrayBook build() {
+            return result.build();
         }
 
         @Override
@@ -152,7 +132,7 @@ final class XmlssBook extends Book {
                     endWorkbookNotified = true;
                     break;
                 case WORKSHEET_TAG:
-                    sheets.add(builder.build());
+                    result.sheet(builder.build());
                     rowNum = -1;
                     builder.clear();
                     break;

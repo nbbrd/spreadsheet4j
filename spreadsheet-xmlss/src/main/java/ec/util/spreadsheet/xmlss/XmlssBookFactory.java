@@ -51,12 +51,12 @@ public class XmlssBookFactory extends Book.Factory {
 
     @Override
     public Book load(File file) throws IOException {
-        return XmlssBook.parse(file);
+        return XmlssBookReader.parse(file);
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
-        return XmlssBook.parse(stream);
+        return XmlssBookReader.parse(stream);
     }
 
     @Override
