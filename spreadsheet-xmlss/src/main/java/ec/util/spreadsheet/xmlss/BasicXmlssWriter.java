@@ -47,6 +47,7 @@ final class BasicXmlssWriter {
     public void beginWorkbook() throws XMLStreamException {
 //        writer.writeStartDocument("utf-8", "1.0");
         writer.writeStartDocument();
+        writer.writeProcessingInstruction(XmlssBookFactory.XML_HEADER_TARGET, XmlssBookFactory.XML_HEADER_DATA);
         writer.writeStartElement("Workbook");
         writer.writeAttribute("xmlns", "urn:schemas-microsoft-com:office:spreadsheet");
         writer.writeAttribute("xmlns:o", "urn:schemas-microsoft-com:office:office");
@@ -110,7 +111,7 @@ final class BasicXmlssWriter {
         writer.writeCharacters(sd);
         writer.writeEndElement(); // data
         writer.writeEndElement(); // cell
-        needIndex = false;        
+        needIndex = false;
     }
 
     public void writeCell(double val) throws XMLStreamException {
@@ -129,7 +130,7 @@ final class BasicXmlssWriter {
         }
         writer.writeEndElement(); // data
         writer.writeEndElement(); // cell
-        needIndex = false;        
+        needIndex = false;
     }
 
     public void writeCell(String txt) throws XMLStreamException {
@@ -143,11 +144,11 @@ final class BasicXmlssWriter {
         writer.writeCharacters(txt != null ? txt : "");
         writer.writeEndElement(); // data
         writer.writeEndElement(); // cell
-        needIndex = false;        
+        needIndex = false;
     }
-    
+
     public void writeCell() {
         cellIndex++;
-        needIndex = true;        
+        needIndex = true;
     }
 }

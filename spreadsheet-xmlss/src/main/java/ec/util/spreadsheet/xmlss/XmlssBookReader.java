@@ -40,12 +40,12 @@ final class XmlssBookReader {
     }
 
     @Nonnull
-    public static ArrayBook parse(@Nonnull File file) throws IOException {
+    public static ArrayBook parseFile(@Nonnull File file) throws IOException {
         return parse(o -> o.parseFile(file));
     }
 
     @Nonnull
-    public static ArrayBook parse(@Nonnull InputStream stream) throws IOException {
+    public static ArrayBook parseStream(@Nonnull InputStream stream) throws IOException {
         return parse(o -> o.parseStream(stream));
     }
 
@@ -85,6 +85,7 @@ final class XmlssBookReader {
         private String text;
         private final XmlssSheetBuilder builder;
         private boolean endWorkbookNotified;
+        private boolean headerFound;
 
         public BookSax2EventHandler() {
             this.result = ArrayBook.builder();
@@ -94,6 +95,7 @@ final class XmlssBookReader {
             this.text = null;
             this.builder = XmlssSheetBuilder.create();
             this.endWorkbookNotified = false;
+            this.headerFound = false;
         }
 
         public boolean isEndWorkbookNotified() {
@@ -105,7 +107,19 @@ final class XmlssBookReader {
         }
 
         @Override
+        public void processingInstruction(String target, String data) throws SAXException {
+            if (!headerFound) {
+                headerFound = XmlssBookFactory.XML_HEADER_TARGET.equals(target)
+                        && XmlssBookFactory.XML_HEADER_DATA.equals(data);
+            }
+        }
+
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if (!headerFound) {
+                throw new SAXException("Missing header");
+
+            }
             switch (qName) {
                 case WORKSHEET_TAG:
                     builder.name(attributes.getValue(SS_URI, "Name"));
