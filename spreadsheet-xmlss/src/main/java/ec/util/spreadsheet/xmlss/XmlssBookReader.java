@@ -26,7 +26,9 @@ import ioutil.Sax;
 import ioutil.Xml;
 import java.io.File;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -57,8 +59,15 @@ final class XmlssBookReader {
         try {
             return loader.applyWithIO(Sax.Parser.of(handler, handler::build));
         } catch (Xml.WrappedException ex) {
-            if (isTrailingSectionContentNotAllowed(ex.getCause(), handler.isEndWorkbookNotified())) {
+            Throwable cause = ex.getCause();
+            if (isTrailingSectionContentNotAllowed(cause, handler.isEndWorkbookNotified())) {
                 return handler.build();
+            }
+            if (cause instanceof MissingHeaderException) {
+                throw new XmlssContentException(((MissingHeaderException) cause).getMessage());
+            }
+            if (cause instanceof SAXParseException) {
+                throw new XmlssFormatException(cause);
             }
             throw ex;
         }
@@ -66,6 +75,21 @@ final class XmlssBookReader {
 
     private static boolean isTrailingSectionContentNotAllowed(Throwable cause, boolean endWorkbookNotified) {
         return cause instanceof SAXException && endWorkbookNotified;
+    }
+
+    private static final class MissingHeaderException extends SAXException {
+
+        public MissingHeaderException(Locator locator) {
+            super(newMessage(locator));
+        }
+
+        static String newMessage(Locator locator) {
+            String result = "Missing header";
+            if (locator != null && locator.getSystemId() != null) {
+                result += " in " + locator.getSystemId();
+            }
+            return result;
+        }
     }
 
 //    @VisibleForTesting
@@ -86,6 +110,7 @@ final class XmlssBookReader {
         private final XmlssSheetBuilder builder;
         private boolean endWorkbookNotified;
         private boolean headerFound;
+        private Locator locator;
 
         public BookSax2EventHandler() {
             this.result = ArrayBook.builder();
@@ -96,6 +121,7 @@ final class XmlssBookReader {
             this.builder = XmlssSheetBuilder.create();
             this.endWorkbookNotified = false;
             this.headerFound = false;
+            this.locator = null;
         }
 
         public boolean isEndWorkbookNotified() {
@@ -104,6 +130,11 @@ final class XmlssBookReader {
 
         public ArrayBook build() {
             return result.build();
+        }
+
+        @Override
+        public void setDocumentLocator(Locator locator) {
+            this.locator = locator;
         }
 
         @Override
@@ -117,8 +148,7 @@ final class XmlssBookReader {
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             if (!headerFound) {
-                throw new SAXException("Missing header");
-
+                throw new MissingHeaderException(locator);
             }
             switch (qName) {
                 case WORKSHEET_TAG:

@@ -21,6 +21,7 @@ import ec.util.spreadsheet.BookAssert;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -29,7 +30,6 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -57,11 +57,26 @@ public class XmlssBookReaderTest {
                     .hasSameContentAs(original, true);
         }
 
-        assertThatIOException().isThrownBy(() -> {
-            try (InputStream stream = Top5.WITHOUT_HEADER.newStream()) {
-                XmlssBookReader.parseStream(stream);
-            }
-        }).withCauseInstanceOf(SAXException.class);
+        assertThatExceptionOfType(XmlssContentException.class)
+                .isThrownBy(() -> {
+                    try (InputStream stream = Top5.WITHOUT_HEADER.newStream()) {
+                        XmlssBookReader.parseStream(stream);
+                    }
+                });
+
+        assertThatExceptionOfType(XmlssFormatException.class)
+                .isThrownBy(() -> {
+                    try (InputStream stream = Top5.NOT_XML.newStream()) {
+                        XmlssBookReader.parseStream(stream);
+                    }
+                });
+
+        assertThatExceptionOfType(EOFException.class)
+                .isThrownBy(() -> {
+                    try (InputStream stream = Top5.EMPTY.newStream()) {
+                        XmlssBookReader.parseStream(stream);
+                    }
+                });
     }
 
     @Test
@@ -76,9 +91,16 @@ public class XmlssBookReaderTest {
                 .assertThat(XmlssBookReader.parseFile(Top5.WITH_TRAILING_SECTION.newFile(temp)))
                 .hasSameContentAs(original, true);
 
-        assertThatIOException()
+        assertThatExceptionOfType(XmlssContentException.class)
                 .isThrownBy(() -> XmlssBookReader.parseFile(Top5.WITHOUT_HEADER.newFile(temp)))
-                .withCauseInstanceOf(SAXException.class);
+                .withMessageContaining("file:/");
+
+        assertThatExceptionOfType(XmlssFormatException.class)
+                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.NOT_XML.newFile(temp)))
+                .withMessageContaining("file:/");
+
+        assertThatExceptionOfType(EOFException.class)
+                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.EMPTY.newFile(temp)));
     }
 
     @Test

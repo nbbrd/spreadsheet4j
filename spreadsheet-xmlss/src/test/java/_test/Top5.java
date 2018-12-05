@@ -40,9 +40,11 @@ import org.junit.rules.TemporaryFolder;
  */
 public enum Top5 {
 
-    ORIGINAL(URLs.contentOf(Top5.class.getResource("/Top5Browsers.xml"), StandardCharsets.UTF_8)),
-    WITH_TRAILING_SECTION(URLs.contentOf(Top5.class.getResource("/Top5Browsers.xml"), StandardCharsets.UTF_8) + "\0"),
-    WITHOUT_HEADER(URLs.contentOf(Top5.class.getResource("/Top5Browsers.xml"), StandardCharsets.UTF_8).replace("<?mso-application progid=\"Excel.Sheet\"?>", ""));
+    ORIGINAL(Holder.CONTENT),
+    WITH_TRAILING_SECTION(Holder.CONTENT + "\0"),
+    WITHOUT_HEADER(Holder.CONTENT.replace("<?mso-application progid=\"Excel.Sheet\"?>", "")),
+    NOT_XML("... not xml ..."),
+    EMPTY("");
 
     private final String content;
 
@@ -93,5 +95,10 @@ public enum Top5 {
                 .hasCellValue(0, 1, "IE")
                 .hasCellValue(1, 0, new GregorianCalendar(2008, 6, 1).getTime())
                 .hasCellValue(41, 6, 0.93);
+    }
+
+    private static final class Holder {
+
+        static final String CONTENT = URLs.contentOf(Top5.class.getResource("/Top5Browsers.xml"), StandardCharsets.UTF_8);
     }
 }
