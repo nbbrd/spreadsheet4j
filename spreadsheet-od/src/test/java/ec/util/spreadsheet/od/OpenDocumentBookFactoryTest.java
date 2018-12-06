@@ -16,16 +16,18 @@
  */
 package ec.util.spreadsheet.od;
 
-import static ec.util.spreadsheet.Assertions.assertThat;
-import ec.util.spreadsheet.helpers.ArrayBook;
-import ec.util.spreadsheet.helpers.ArraySheet;
+import _test.Top5;
+import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.io.InputStream;
+import java.util.function.Supplier;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIOException;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -34,29 +36,95 @@ import org.junit.rules.TemporaryFolder;
  */
 public class OpenDocumentBookFactoryTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
+    @ClassRule
+    public static TemporaryFolder TEMP = new TemporaryFolder();
+    private static File ORIGINAL;
+    private static File BAD_EXTENSION;
+    private static File WITH_TRAILING_SECTION;
+    private static File NOT_ODS;
+    private static File EMPTY;
+    private static File MISSING;
+
+    @BeforeClass
+    public static void initFiles() {
+        ORIGINAL = Top5.ORIGINAL.file(TEMP);
+        BAD_EXTENSION = Top5.BAD_EXTENSION.file(TEMP);
+        WITH_TRAILING_SECTION = Top5.WITH_TRAILING_SECTION.file(TEMP);
+        NOT_ODS = Top5.NOT_ODS.file(TEMP);
+        EMPTY = Top5.EMPTY.file(TEMP);
+        MISSING = Top5.MISSING.file(TEMP);
+    }
 
     @Test
     public void testCompliance() throws IOException {
-        File valid = createContent(temp.newFile("valid.ods"));
         // FIXME: find a way to detect invalid files
 //        File invalid = temp.newFile("invalid.ods");
 //        Files.write(invalid.toPath(), Arrays.asList("..."));
-        assertThat(new OpenDocumentBookFactory()).isCompliant(valid);
+        BookFactoryAssert.assertThat(new OpenDocumentBookFactory()).isCompliant(ORIGINAL);
     }
 
-    private static File createContent(File file) throws IOException {
-        Date jan2012 = new GregorianCalendar(2012, Calendar.JANUARY, 1).getTime();
+    @Test
+    public void testLoadFile() throws IOException {
+        OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        ArraySheet.Builder sheetBuilder = ArraySheet.builder();
+        try (Book book = x.load(ORIGINAL)) {
+            Top5.assertTop5Book(book);
+        }
+        try (Book book = x.load(BAD_EXTENSION)) {
+            Top5.assertTop5Book(book);
+        }
+        try (Book book = x.load(WITH_TRAILING_SECTION)) {
+            Top5.assertTop5Book(book);
+        }
+//        assertThatIOException().isThrownBy(() -> x.load(NOT_ODS));
+        assertThatIOException().isThrownBy(() -> x.load(EMPTY));
+        assertThatIOException().isThrownBy(() -> x.load(MISSING));
+    }
 
-        ArrayBook input = ArrayBook.builder()
-                .sheet(sheetBuilder.clear().name("first").row(1, 1, "hello", 3.14d, jan2012).build())
-                .sheet(sheetBuilder.clear().name("second").row(3, 0, "world", 123, jan2012).build())
-                .build();
+    private static Book doLoad(OpenDocumentBookFactory x, Supplier<InputStream> byteSource) throws IOException {
+        try (InputStream stream = byteSource.get()) {
+            return x.load(stream);
+        }
+    }
 
-        new OpenDocumentBookFactory().store(file, input);
-        return file;
+    @Test
+    public void testLoadStream() throws IOException {
+        OpenDocumentBookFactory x = new OpenDocumentBookFactory();
+
+        try (Book book = doLoad(x, Top5.ORIGINAL::stream)) {
+            Top5.assertTop5Book(book);
+        }
+        try (Book book = doLoad(x, Top5.BAD_EXTENSION::stream)) {
+            Top5.assertTop5Book(book);
+        }
+        try (Book book = doLoad(x, Top5.WITH_TRAILING_SECTION::stream)) {
+            Top5.assertTop5Book(book);
+        }
+//        assertThatIOException().isThrownBy(() -> doLoad(x, Top5.NOT_ODS::stream));
+        assertThatIOException().isThrownBy(() -> doLoad(x, Top5.EMPTY::stream));
+    }
+
+    @Test
+    public void testAcceptFile() {
+        OpenDocumentBookFactory x = new OpenDocumentBookFactory();
+
+        assertThat(x.accept(ORIGINAL)).isTrue();
+        assertThat(x.accept(MISSING)).isTrue();
+        assertThat(x.accept(WITH_TRAILING_SECTION)).isTrue();
+        assertThat(x.accept(BAD_EXTENSION)).isFalse();
+        assertThat(x.accept(NOT_ODS)).isFalse();
+        assertThat(x.accept(EMPTY)).isFalse();
+    }
+
+    @Test
+    public void testAcceptPath() throws IOException {
+        OpenDocumentBookFactory x = new OpenDocumentBookFactory();
+
+        assertThat(x.accept(ORIGINAL.toPath())).isTrue();
+        assertThat(x.accept(MISSING.toPath())).isTrue();
+        assertThat(x.accept(WITH_TRAILING_SECTION.toPath())).isTrue();
+        assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
+        assertThat(x.accept(NOT_ODS.toPath())).isFalse();
+        assertThat(x.accept(EMPTY.toPath())).isFalse();
     }
 }

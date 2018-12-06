@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.swing.table.DefaultTableModel;
@@ -44,8 +46,17 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public boolean accept(File pathname) {
-        return pathname.getName().toLowerCase(Locale.ENGLISH).endsWith(".ods");
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
     }
 
     @Override
@@ -77,7 +88,6 @@ public class OpenDocumentBookFactory extends Book.Factory {
         toOdSpreadSheet(book).saveAs(file);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     private static SpreadSheet toOdSpreadSheet(Book book) throws IOException {
         SpreadSheet result = SpreadSheet.createEmpty(new DefaultTableModel());
         book.forEach((sheet, index) -> {
@@ -103,5 +113,28 @@ public class OpenDocumentBookFactory extends Book.Factory {
         }
         return file;
     }
-    //</editor-fold>
+
+    private static boolean hasValidExtension(Path file) {
+        String tmp = file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT);
+        return tmp.endsWith(".ods");
+    }
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static boolean hasValidHeader(Path file) {
+        try {
+            try (InputStream stream = Files.newInputStream(file)) {
+                int first = stream.read();
+                if (first == -1 || first != 0x50) {
+                    return false;
+                }
+                int second = stream.read();
+                if (second == -1 || second != 0x4B) {
+                    return false;
+                }
+                return true;
+            }
+        } catch (IOException ex) {
+            return false;
+        }
+    }
 }
