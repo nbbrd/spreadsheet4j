@@ -40,34 +40,46 @@ import org.junit.rules.TemporaryFolder;
  */
 public enum Top5 {
 
-    ORIGINAL(Holder.CONTENT),
-    WITH_TRAILING_SECTION(Holder.CONTENT + "\0"),
-    WITHOUT_HEADER(Holder.CONTENT.replace("<?mso-application progid=\"Excel.Sheet\"?>", "")),
-    NOT_XML("... not xml ..."),
-    EMPTY("");
+    ORIGINAL(Holder.CONTENT, "original.xml"),
+    WITH_TRAILING_SECTION(Holder.CONTENT + "\0", "withTrailingSection.xml"),
+    WITHOUT_HEADER(Holder.CONTENT.replace("<?mso-application progid=\"Excel.Sheet\"?>", ""), "withoutHeader.xml"),
+    NOT_XML("... not xml ...", "notXml.xml"),
+    EMPTY("", "empty.xml"),
+    MISSING(null, "missing.xml"),
+    BAD_EXTENSION(Holder.CONTENT, "badExtension.zip");
 
     private final String content;
+    private final String fileName;
 
-    private Top5(String content) {
+    private Top5(String content, String fileName) {
         this.content = content;
+        this.fileName = fileName;
     }
 
-    public File newFile(TemporaryFolder tmp) {
-        return newFile(tmp, "top5_file_" + name() + ".xml", content);
+    public String getFileName() {
+        return fileName;
     }
 
-    public Path newPath(TemporaryFolder tmp) {
-        return newFile(tmp, "top5_path_" + name() + ".xml", content).toPath();
+    public File file(TemporaryFolder tmp) {
+        return newFile(tmp, "file_" + fileName, content);
     }
 
-    public InputStream newStream() {
+    public Path path(TemporaryFolder tmp) {
+        return newFile(tmp, "path_" + fileName, content).toPath();
+    }
+
+    public InputStream stream() {
         return newInputStream(content);
     }
 
     private static File newFile(TemporaryFolder temp, String fileName, String content) {
         try {
             File result = temp.newFile(fileName);
-            Files.write(result.toPath(), Collections.singleton(content));
+            if (content != null) {
+                Files.write(result.toPath(), Collections.singleton(content));
+            } else {
+                result.delete();
+            }
             return result;
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);

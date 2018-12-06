@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 import javax.xml.stream.XMLOutputFactory;
@@ -60,7 +61,7 @@ public class XmlssBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(Path file) throws IOException {
-        return hasValidExtension(file) /*&& (Files.exists(file) ? hasValidHeader(file) : true)*/;
+        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
     }
 
     @Override
@@ -86,8 +87,12 @@ public class XmlssBookFactory extends Book.Factory {
         return file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
-    private static boolean hasValidHeader(Path file) throws IOException {
-        return Stax.StreamParser.valueOf(XmlssBookFactory::hasValidHeader).parsePath(file);
+    private static boolean hasValidHeader(Path file) {
+        try {
+            return Stax.StreamParser.valueOf(XmlssBookFactory::hasValidHeader).parsePath(file);
+        } catch (IOException ex) {
+            return false;
+        }
     }
 
     private static boolean hasValidHeader(XMLStreamReader xml) throws XMLStreamException {
