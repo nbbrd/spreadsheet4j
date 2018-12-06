@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystemException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.Locale;
 import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,13 +40,22 @@ import org.openide.util.lookup.ServiceProvider;
 public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
-    public boolean accept(File pathname) {
-        return pathname.getName().toLowerCase(Locale.ROOT).endsWith(".xls");
+    public String getName() {
+        return "Excel Classic";
     }
 
     @Override
-    public String getName() {
-        return "Excel Classic";
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
     }
 
     @Override
@@ -68,7 +79,6 @@ public class ExcelClassicBookFactory extends Book.Factory {
         target.write(stream);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @Nonnull
     private static File checkFile(@Nonnull File file) throws FileSystemException {
         if (!file.exists()) {
@@ -79,5 +89,30 @@ public class ExcelClassicBookFactory extends Book.Factory {
         }
         return file;
     }
-    //</editor-fold>
+
+    private static boolean hasValidExtension(Path file) {
+        String tmp = file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT);
+        return tmp.endsWith(".xls");
+    }
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static boolean hasValidHeader(Path file) {
+        try {
+            try (InputStream stream = Files.newInputStream(file)) {
+                for (byte expected : HEADER) {
+                    int actual = stream.read();
+                    if (actual == -1 || ((byte) actual) != expected) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    private static final byte[] HEADER = {
+        (byte) 0xD0, (byte) 0xCF, (byte) 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, (byte) 0x1A, (byte) 0xE1
+    };
 }
