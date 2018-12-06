@@ -18,75 +18,28 @@ package _test;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.BookAssert;
+import ec.util.spreadsheet.Sample;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetAssert;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.assertj.core.util.DateUtil;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum Top5 {
+@lombok.experimental.UtilityClass
+public class Top5 {
 
-    ORIGINAL(Holder.CONTENT, "original.ods"),
-    WITH_TRAILING_SECTION(concat(Holder.CONTENT, (byte) '\0'), "withTrailingSection.ods"),
-    NOT_ODS("... not ods ...".getBytes(), "notOds.ods"),
-    EMPTY(new byte[0], "empty.ods"),
-    MISSING(null, "missing.ods"),
-    BAD_EXTENSION(Holder.CONTENT, "badExtension.xml");
+    private final byte[] CONTENT = Sample.bytesOf(Top5.class.getResource("/Top5Browsers.ods"));
 
-    private final byte[] content;
-    private final String fileName;
-
-    private Top5(byte[] content, String fileName) {
-        this.content = content;
-        this.fileName = fileName;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public File file(TemporaryFolder tmp) {
-        return newFile(tmp, "file_" + fileName, content);
-    }
-
-    public Path path(TemporaryFolder tmp) {
-        return newFile(tmp, "path_" + fileName, content).toPath();
-    }
-
-    public InputStream stream() {
-        return newInputStream(content);
-    }
-
-    private static File newFile(TemporaryFolder temp, String fileName, byte[] content) {
-        try {
-            File result = temp.newFile(fileName);
-            if (content != null) {
-                Files.write(result.toPath(), content);
-            } else {
-                result.delete();
-            }
-            return result;
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    public static InputStream newInputStream(byte[] content) {
-        return new ByteArrayInputStream(content);
-    }
+    public final Sample VALID = Sample.of("valid.ods", CONTENT);
+    public final Sample VALID_WITH_TAIL = Sample.of("validWithTail.ods", Sample.concat(CONTENT, (byte) '\0'));
+    public final Sample INVALID_FORMAT = Sample.of("invalidFormat.ods", "...");
+    public final Sample EMPTY = Sample.of("empty.ods", new byte[0]);
+    public final Sample MISSING = Sample.of("missing.ods");
+    public final Sample BAD_EXTENSION = Sample.of("badExtension.xml", CONTENT);
 
     public static void assertTop5Book(Book book) throws IOException {
         BookAssert
@@ -99,40 +52,11 @@ public enum Top5 {
         SheetAssert
                 .assertThat(sheet)
                 .hasName("Top 5 Browsers - Monthly")
-//                .hasRowCount(42)
+                //                .hasRowCount(42)
                 .hasColumnCount(7)
                 .hasCellValue(0, 0, null)
                 .hasCellValue(0, 1, "IE")
                 .hasCellValue(1, 0, DateUtil.parse("2008-07-01"))
                 .hasCellValue(41, 6, 0.93);
-    }
-
-    private static final class Holder {
-
-        static final byte[] CONTENT = load();
-
-        private static byte[] load() {
-            try (InputStream stream = Top5.class.getResourceAsStream("/Top5Browsers.ods")) {
-                return toByteArray(stream);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-    }
-
-    public static byte[] toByteArray(InputStream input) throws IOException {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] buffer = new byte[8024];
-        int n = 0;
-        while (-1 != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
-        }
-        return output.toByteArray();
-    }
-
-    private static byte[] concat(byte[] l, byte... r) {
-        byte[] result = Arrays.copyOf(l, l.length + r.length);
-        System.arraycopy(r, 0, result, l.length, r.length);
-        return result;
     }
 }

@@ -19,10 +19,8 @@ package ec.util.spreadsheet.poi;
 import _test.Top5x;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.BookFactoryAssert;
-import ioutil.IO;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -38,10 +36,10 @@ public class ExcelBookFactoryTest {
     @ClassRule
     public static TemporaryFolder TEMP = new TemporaryFolder();
     private static ExcelBookFactory[] FACTORIES;
-    private static File ORIGINAL;
+    private static File VALID;
     private static File BAD_EXTENSION;
-    private static File WITH_TRAILING_SECTION;
-    private static File NOT_XLSX;
+    private static File VALID_WITH_TAIL;
+    private static File INVALID_FORMAT;
     private static File EMPTY;
     private static File MISSING;
 
@@ -50,10 +48,10 @@ public class ExcelBookFactoryTest {
         FACTORIES = new ExcelBookFactory[]{new ExcelBookFactory(), new ExcelBookFactory()};
         FACTORIES[0].setFast(true);
         FACTORIES[1].setFast(false);
-        ORIGINAL = Top5x.ORIGINAL.file(TEMP);
+        VALID = Top5x.VALID.file(TEMP);
         BAD_EXTENSION = Top5x.BAD_EXTENSION.file(TEMP);
-        WITH_TRAILING_SECTION = Top5x.WITH_TRAILING_SECTION.file(TEMP);
-        NOT_XLSX = Top5x.NOT_XLSX.file(TEMP);
+        VALID_WITH_TAIL = Top5x.VALID_WITH_TAIL.file(TEMP);
+        INVALID_FORMAT = Top5x.INVALID_FORMAT.file(TEMP);
         EMPTY = Top5x.EMPTY.file(TEMP);
         MISSING = Top5x.MISSING.file(TEMP);
     }
@@ -61,59 +59,53 @@ public class ExcelBookFactoryTest {
     @Test
     public void testCompliance() throws IOException {
         for (ExcelBookFactory x : FACTORIES) {
-            BookFactoryAssert.assertThat(x).isCompliant(ORIGINAL, NOT_XLSX);
+            BookFactoryAssert.assertThat(x).isCompliant(VALID, INVALID_FORMAT);
         }
     }
 
     @Test
     public void testLoadFile() throws IOException {
         for (ExcelBookFactory x : FACTORIES) {
-            try (Book book = x.load(ORIGINAL)) {
+            try (Book book = x.load(VALID)) {
                 Top5x.assertTop5Book(book);
             }
             try (Book book = x.load(BAD_EXTENSION)) {
                 Top5x.assertTop5Book(book);
             }
-            try (Book book = x.load(WITH_TRAILING_SECTION)) {
+            try (Book book = x.load(VALID_WITH_TAIL)) {
                 Top5x.assertTop5Book(book);
             }
-            assertThatIOException().isThrownBy(() -> x.load(NOT_XLSX));
+            assertThatIOException().isThrownBy(() -> x.load(INVALID_FORMAT));
             assertThatIOException().isThrownBy(() -> x.load(EMPTY));
             assertThatIOException().isThrownBy(() -> x.load(MISSING));
-        }
-    }
-
-    private static Book doLoad(ExcelBookFactory x, IO.Supplier<InputStream> byteSource) throws IOException {
-        try (InputStream stream = byteSource.getWithIO()) {
-            return x.load(stream);
         }
     }
 
     @Test
     public void testLoadStream() throws IOException {
         for (ExcelBookFactory x : FACTORIES) {
-            try (Book book = doLoad(x, Top5x.ORIGINAL::stream)) {
+            try (Book book = Top5x.VALID.loadStream(x)) {
                 Top5x.assertTop5Book(book);
             }
-            try (Book book = doLoad(x, Top5x.BAD_EXTENSION::stream)) {
+            try (Book book = Top5x.BAD_EXTENSION.loadStream(x)) {
                 Top5x.assertTop5Book(book);
             }
-            try (Book book = doLoad(x, Top5x.WITH_TRAILING_SECTION::stream)) {
+            try (Book book = Top5x.VALID_WITH_TAIL.loadStream(x)) {
                 Top5x.assertTop5Book(book);
             }
-            assertThatIOException().isThrownBy(() -> doLoad(x, Top5x.NOT_XLSX::stream));
-            assertThatIOException().isThrownBy(() -> doLoad(x, Top5x.EMPTY::stream));
+            assertThatIOException().isThrownBy(() -> Top5x.INVALID_FORMAT.loadStream(x));
+            assertThatIOException().isThrownBy(() -> Top5x.EMPTY.loadStream(x));
         }
     }
 
     @Test
     public void testAcceptFile() {
         for (ExcelBookFactory x : FACTORIES) {
-            assertThat(x.accept(ORIGINAL)).isTrue();
+            assertThat(x.accept(VALID)).isTrue();
             assertThat(x.accept(MISSING)).isTrue();
-            assertThat(x.accept(WITH_TRAILING_SECTION)).isTrue();
+            assertThat(x.accept(VALID_WITH_TAIL)).isTrue();
             assertThat(x.accept(BAD_EXTENSION)).isFalse();
-            assertThat(x.accept(NOT_XLSX)).isFalse();
+            assertThat(x.accept(INVALID_FORMAT)).isFalse();
             assertThat(x.accept(EMPTY)).isFalse();
         }
     }
@@ -121,11 +113,11 @@ public class ExcelBookFactoryTest {
     @Test
     public void testAcceptPath() throws IOException {
         for (ExcelBookFactory x : FACTORIES) {
-            assertThat(x.accept(ORIGINAL.toPath())).isTrue();
+            assertThat(x.accept(VALID.toPath())).isTrue();
             assertThat(x.accept(MISSING.toPath())).isTrue();
-            assertThat(x.accept(WITH_TRAILING_SECTION.toPath())).isTrue();
+            assertThat(x.accept(VALID_WITH_TAIL.toPath())).isTrue();
             assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
-            assertThat(x.accept(NOT_XLSX.toPath())).isFalse();
+            assertThat(x.accept(INVALID_FORMAT.toPath())).isFalse();
             assertThat(x.accept(EMPTY.toPath())).isFalse();
         }
     }

@@ -17,6 +17,7 @@
 package ec.util.spreadsheet.od;
 
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.FileHelper;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.swing.table.DefaultTableModel;
 import org.jopendocument.dom.ODPackage;
@@ -56,7 +56,8 @@ public class OpenDocumentBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(Path file) throws IOException {
-        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
+        return FileHelper.hasExtension(file, ".ods")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
     }
 
     @Override
@@ -114,27 +115,6 @@ public class OpenDocumentBookFactory extends Book.Factory {
         return file;
     }
 
-    private static boolean hasValidExtension(Path file) {
-        String tmp = file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT);
-        return tmp.endsWith(".ods");
-    }
-
     // https://en.wikipedia.org/wiki/List_of_file_signatures
-    private static boolean hasValidHeader(Path file) {
-        try {
-            try (InputStream stream = Files.newInputStream(file)) {
-                int first = stream.read();
-                if (first == -1 || first != 0x50) {
-                    return false;
-                }
-                int second = stream.read();
-                if (second == -1 || second != 0x4B) {
-                    return false;
-                }
-                return true;
-            }
-        } catch (IOException ex) {
-            return false;
-        }
-    }
+    private static final byte[] ZIP_HEADER = {(byte) 0x50, (byte) 0x4B};
 }

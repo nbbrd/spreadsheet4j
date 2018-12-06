@@ -17,6 +17,7 @@
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.FileHelper;
 import ioutil.Stax;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,6 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -61,7 +61,8 @@ public class XmlssBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(Path file) throws IOException {
-        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
+        return FileHelper.hasExtension(file, ".xml")
+                && (Files.exists(file) ? hasValidHeader(file) : true);
     }
 
     @Override
@@ -81,10 +82,6 @@ public class XmlssBookFactory extends Book.Factory {
 
     private XmlssBookWriter newWriter() {
         return new XmlssBookWriter(xof, StandardCharsets.UTF_8);
-    }
-
-    private static boolean hasValidExtension(Path file) {
-        return file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT).endsWith(".xml");
     }
 
     private static boolean hasValidHeader(Path file) {

@@ -21,6 +21,7 @@ import ec.util.spreadsheet.BookAssert;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ioutil.IO;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
@@ -53,11 +54,11 @@ public class XmlssBookReaderTest {
     public void testParseStream() throws IOException {
         assertThatNullPointerException().isThrownBy(() -> XmlssBookReader.parseStream(null));
 
-        ArrayBook original = doParseStream(Top5.ORIGINAL::stream);
+        ArrayBook original = doParseStream(Top5.VALID::stream);
         Top5.assertTop5Book(original);
 
         BookAssert
-                .assertThat(doParseStream(Top5.WITH_TRAILING_SECTION::stream))
+                .assertThat(doParseStream(Top5.VALID_WITH_TAIL::stream))
                 .hasSameContentAs(original, true);
 
         BookAssert
@@ -65,10 +66,10 @@ public class XmlssBookReaderTest {
                 .hasSameContentAs(original, true);
 
         assertThatExceptionOfType(XmlssContentException.class)
-                .isThrownBy(() -> doParseStream(Top5.WITHOUT_HEADER::stream));
+                .isThrownBy(() -> doParseStream(Top5.INVALID_CONTENT::stream));
 
         assertThatExceptionOfType(XmlssFormatException.class)
-                .isThrownBy(() -> doParseStream(Top5.NOT_XML::stream));
+                .isThrownBy(() -> doParseStream(Top5.INVALID_FORMAT::stream));
 
         assertThatExceptionOfType(EOFException.class)
                 .isThrownBy(() -> doParseStream(Top5.EMPTY::stream));
@@ -79,11 +80,11 @@ public class XmlssBookReaderTest {
     public void testParseFile() throws IOException {
         assertThatNullPointerException().isThrownBy(() -> XmlssBookReader.parseFile(null));
 
-        ArrayBook original = XmlssBookReader.parseFile(Top5.ORIGINAL.file(temp));
+        ArrayBook original = XmlssBookReader.parseFile(Top5.VALID.file(temp));
         Top5.assertTop5Book(original);
 
         BookAssert
-                .assertThat(XmlssBookReader.parseFile(Top5.WITH_TRAILING_SECTION.file(temp)))
+                .assertThat(XmlssBookReader.parseFile(Top5.VALID_WITH_TAIL.file(temp)))
                 .hasSameContentAs(original, true);
 
         BookAssert
@@ -91,11 +92,11 @@ public class XmlssBookReaderTest {
                 .hasSameContentAs(original, true);
 
         assertThatExceptionOfType(XmlssContentException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.WITHOUT_HEADER.file(temp)))
+                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.INVALID_CONTENT.file(temp)))
                 .withMessageContaining("file:/");
 
         assertThatExceptionOfType(XmlssFormatException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.NOT_XML.file(temp)))
+                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.INVALID_FORMAT.file(temp)))
                 .withMessageContaining("file:/");
 
         assertThatExceptionOfType(EOFException.class)
@@ -116,14 +117,14 @@ public class XmlssBookReaderTest {
             original = new String(stream.toByteArray());
         }
 
-        try (InputStream stream = Top5.newInputStream(original)) {
+        try (InputStream stream = new ByteArrayInputStream(original.getBytes())) {
             try (ArrayBook xxx = XmlssBookReader.parseStream(stream)) {
                 assertThat(xxx).isEqualTo(book);
             }
         }
 
         String xmlWithTrailingSection = original + "\0";
-        try (InputStream stream = Top5.newInputStream(xmlWithTrailingSection)) {
+        try (InputStream stream = new ByteArrayInputStream(xmlWithTrailingSection.getBytes())) {
             try (ArrayBook xxx = XmlssBookReader.parseStream(stream)) {
                 assertThat(xxx).isEqualTo(book);
             }

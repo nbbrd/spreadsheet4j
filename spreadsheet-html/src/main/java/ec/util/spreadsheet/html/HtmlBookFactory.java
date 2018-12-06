@@ -17,11 +17,11 @@
 package ec.util.spreadsheet.html;
 
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.FileHelper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Locale;
 import javax.xml.stream.XMLOutputFactory;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -60,8 +60,7 @@ public class HtmlBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File pathname) {
-        String tmp = pathname.getName().toLowerCase(Locale.ENGLISH);
-        return tmp.endsWith(".html") || tmp.endsWith(".htm");
+        return FileHelper.hasExtension(pathname, ".html", ".htm");
     }
 
     @Override

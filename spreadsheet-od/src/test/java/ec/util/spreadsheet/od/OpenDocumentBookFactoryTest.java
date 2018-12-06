@@ -21,8 +21,6 @@ import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIOException;
 import org.junit.BeforeClass;
@@ -38,19 +36,19 @@ public class OpenDocumentBookFactoryTest {
 
     @ClassRule
     public static TemporaryFolder TEMP = new TemporaryFolder();
-    private static File ORIGINAL;
+    private static File VALID;
     private static File BAD_EXTENSION;
-    private static File WITH_TRAILING_SECTION;
-    private static File NOT_ODS;
+    private static File VALID_WITH_TAIL;
+    private static File INVALID_FORMAT;
     private static File EMPTY;
     private static File MISSING;
 
     @BeforeClass
     public static void initFiles() {
-        ORIGINAL = Top5.ORIGINAL.file(TEMP);
+        VALID = Top5.VALID.file(TEMP);
         BAD_EXTENSION = Top5.BAD_EXTENSION.file(TEMP);
-        WITH_TRAILING_SECTION = Top5.WITH_TRAILING_SECTION.file(TEMP);
-        NOT_ODS = Top5.NOT_ODS.file(TEMP);
+        VALID_WITH_TAIL = Top5.VALID_WITH_TAIL.file(TEMP);
+        INVALID_FORMAT = Top5.INVALID_FORMAT.file(TEMP);
         EMPTY = Top5.EMPTY.file(TEMP);
         MISSING = Top5.MISSING.file(TEMP);
     }
@@ -60,20 +58,20 @@ public class OpenDocumentBookFactoryTest {
         // FIXME: find a way to detect invalid files
 //        File invalid = temp.newFile("invalid.ods");
 //        Files.write(invalid.toPath(), Arrays.asList("..."));
-        BookFactoryAssert.assertThat(new OpenDocumentBookFactory()).isCompliant(ORIGINAL);
+        BookFactoryAssert.assertThat(new OpenDocumentBookFactory()).isCompliant(VALID);
     }
 
     @Test
     public void testLoadFile() throws IOException {
         OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        try (Book book = x.load(ORIGINAL)) {
+        try (Book book = x.load(VALID)) {
             Top5.assertTop5Book(book);
         }
         try (Book book = x.load(BAD_EXTENSION)) {
             Top5.assertTop5Book(book);
         }
-        try (Book book = x.load(WITH_TRAILING_SECTION)) {
+        try (Book book = x.load(VALID_WITH_TAIL)) {
             Top5.assertTop5Book(book);
         }
 //        assertThatIOException().isThrownBy(() -> x.load(NOT_ODS));
@@ -81,38 +79,32 @@ public class OpenDocumentBookFactoryTest {
         assertThatIOException().isThrownBy(() -> x.load(MISSING));
     }
 
-    private static Book doLoad(OpenDocumentBookFactory x, Supplier<InputStream> byteSource) throws IOException {
-        try (InputStream stream = byteSource.get()) {
-            return x.load(stream);
-        }
-    }
-
     @Test
     public void testLoadStream() throws IOException {
         OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        try (Book book = doLoad(x, Top5.ORIGINAL::stream)) {
+        try (Book book = Top5.VALID.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
-        try (Book book = doLoad(x, Top5.BAD_EXTENSION::stream)) {
+        try (Book book = Top5.BAD_EXTENSION.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
-        try (Book book = doLoad(x, Top5.WITH_TRAILING_SECTION::stream)) {
+        try (Book book = Top5.VALID_WITH_TAIL.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
 //        assertThatIOException().isThrownBy(() -> doLoad(x, Top5.NOT_ODS::stream));
-        assertThatIOException().isThrownBy(() -> doLoad(x, Top5.EMPTY::stream));
+        assertThatIOException().isThrownBy(() -> Top5.EMPTY.loadStream(x));
     }
 
     @Test
     public void testAcceptFile() {
         OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        assertThat(x.accept(ORIGINAL)).isTrue();
+        assertThat(x.accept(VALID)).isTrue();
         assertThat(x.accept(MISSING)).isTrue();
-        assertThat(x.accept(WITH_TRAILING_SECTION)).isTrue();
+        assertThat(x.accept(VALID_WITH_TAIL)).isTrue();
         assertThat(x.accept(BAD_EXTENSION)).isFalse();
-        assertThat(x.accept(NOT_ODS)).isFalse();
+        assertThat(x.accept(INVALID_FORMAT)).isFalse();
         assertThat(x.accept(EMPTY)).isFalse();
     }
 
@@ -120,11 +112,11 @@ public class OpenDocumentBookFactoryTest {
     public void testAcceptPath() throws IOException {
         OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        assertThat(x.accept(ORIGINAL.toPath())).isTrue();
+        assertThat(x.accept(VALID.toPath())).isTrue();
         assertThat(x.accept(MISSING.toPath())).isTrue();
-        assertThat(x.accept(WITH_TRAILING_SECTION.toPath())).isTrue();
+        assertThat(x.accept(VALID_WITH_TAIL.toPath())).isTrue();
         assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
-        assertThat(x.accept(NOT_ODS.toPath())).isFalse();
+        assertThat(x.accept(INVALID_FORMAT.toPath())).isFalse();
         assertThat(x.accept(EMPTY.toPath())).isFalse();
     }
 }

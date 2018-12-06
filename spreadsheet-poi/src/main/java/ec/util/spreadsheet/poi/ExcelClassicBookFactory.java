@@ -16,6 +16,7 @@
  */
 package ec.util.spreadsheet.poi;
 
+import ec.util.spreadsheet.helpers.FileHelper;
 import ec.util.spreadsheet.Book;
 import java.io.EOFException;
 import java.io.File;
@@ -27,7 +28,6 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openide.util.lookup.ServiceProvider;
@@ -55,7 +55,8 @@ public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(Path file) throws IOException {
-        return hasValidExtension(file) && (Files.exists(file) ? hasValidHeader(file) : true);
+        return FileHelper.hasExtension(file, ".xls")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, XLS_HEADER) : true);
     }
 
     @Override
@@ -90,29 +91,6 @@ public class ExcelClassicBookFactory extends Book.Factory {
         return file;
     }
 
-    private static boolean hasValidExtension(Path file) {
-        String tmp = file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT);
-        return tmp.endsWith(".xls");
-    }
-
     // https://en.wikipedia.org/wiki/List_of_file_signatures
-    private static boolean hasValidHeader(Path file) {
-        try {
-            try (InputStream stream = Files.newInputStream(file)) {
-                for (byte expected : HEADER) {
-                    int actual = stream.read();
-                    if (actual == -1 || ((byte) actual) != expected) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        } catch (IOException ex) {
-            return false;
-        }
-    }
-
-    private static final byte[] HEADER = {
-        (byte) 0xD0, (byte) 0xCF, (byte) 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, (byte) 0x1A, (byte) 0xE1
-    };
+    private static final byte[] XLS_HEADER = {(byte) 0xD0, (byte) 0xCF, (byte) 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, (byte) 0x1A, (byte) 0xE1};
 }

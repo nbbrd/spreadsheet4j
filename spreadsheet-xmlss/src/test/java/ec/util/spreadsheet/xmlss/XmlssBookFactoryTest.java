@@ -36,8 +36,8 @@ public class XmlssBookFactoryTest {
 
     @Test
     public void testCompliance() throws IOException {
-        File valid = Top5.ORIGINAL.file(temp);
-        File invalid = Top5.NOT_XML.file(temp);
+        File valid = Top5.VALID.file(temp);
+        File invalid = Top5.INVALID_FORMAT.file(temp);
         BookFactoryAssert.assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
     }
 
@@ -45,12 +45,12 @@ public class XmlssBookFactoryTest {
     public void testAcceptFile() throws IOException {
         XmlssBookFactory x = new XmlssBookFactory();
 
-        assertThat(x.accept(Top5.ORIGINAL.file(temp))).isTrue();
-        assertThat(x.accept(Top5.WITH_TRAILING_SECTION.file(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID.file(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.file(temp))).isTrue();
         assertThat(x.accept(Top5.MISSING.file(temp))).isTrue();
-        assertThat(x.accept(Top5.WITHOUT_HEADER.file(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_CONTENT.file(temp))).isFalse();
         assertThat(x.accept(Top5.EMPTY.file(temp))).isFalse();
-        assertThat(x.accept(Top5.NOT_XML.file(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.file(temp))).isFalse();
         assertThat(x.accept(Top5.BAD_EXTENSION.file(temp))).isFalse();
     }
 
@@ -58,12 +58,12 @@ public class XmlssBookFactoryTest {
     public void testAcceptPath() throws IOException {
         XmlssBookFactory x = new XmlssBookFactory();
 
-        assertThat(x.accept(Top5.ORIGINAL.path(temp))).isTrue();
-        assertThat(x.accept(Top5.WITH_TRAILING_SECTION.path(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID.path(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.path(temp))).isTrue();
         assertThat(x.accept(Top5.MISSING.path(temp))).isTrue();
-        assertThat(x.accept(Top5.WITHOUT_HEADER.path(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_CONTENT.path(temp))).isFalse();
         assertThat(x.accept(Top5.EMPTY.path(temp))).isFalse();
-        assertThat(x.accept(Top5.NOT_XML.path(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.path(temp))).isFalse();
         assertThat(x.accept(Top5.BAD_EXTENSION.path(temp))).isFalse();
     }
 }

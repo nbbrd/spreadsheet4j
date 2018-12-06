@@ -18,75 +18,28 @@ package _test;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.BookAssert;
+import ec.util.spreadsheet.Sample;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetAssert;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import org.apache.commons.compress.utils.IOUtils;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.assertj.core.util.DateUtil;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
  * @author Philippe Charles
  */
-public enum Top5 {
+@lombok.experimental.UtilityClass
+public class Top5 {
 
-    ORIGINAL(Holder.CONTENT, "original.xls"),
-    WITH_TRAILING_SECTION(concat(Holder.CONTENT, (byte) '\0'), "withTrailingSection.xls"),
-    NOT_XLS("... not xml ...".getBytes(), "notXls.xls"),
-    EMPTY(new byte[0], "empty.xls"),
-    MISSING(null, "missing.xls"),
-    BAD_EXTENSION(Holder.CONTENT, "badExtension.xml");
+    private static final byte[] CONTENT = Sample.bytesOf(Top5.class.getResource("/Top5Browsers.xls"));
 
-    private final byte[] content;
-    private final String fileName;
-
-    private Top5(byte[] content, String fileName) {
-        this.content = content;
-        this.fileName = fileName;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public File file(TemporaryFolder tmp) {
-        return newFile(tmp, "file_" + fileName, content);
-    }
-
-    public Path path(TemporaryFolder tmp) {
-        return newFile(tmp, "path_" + fileName, content).toPath();
-    }
-
-    public InputStream stream() {
-        return newInputStream(content);
-    }
-
-    private static File newFile(TemporaryFolder temp, String fileName, byte[] content) {
-        try {
-            File result = temp.newFile(fileName);
-            if (content != null) {
-                Files.write(result.toPath(), content);
-            } else {
-                result.delete();
-            }
-            return result;
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
-    }
-
-    public static InputStream newInputStream(byte[] content) {
-        return new ByteArrayInputStream(content);
-    }
+    public final Sample VALID = Sample.of("valid.xls", CONTENT);
+    public final Sample VALID_WITH_TAIL = Sample.of("validWithTail.xls", Sample.concat(CONTENT, (byte) '\0'));
+    public final Sample INVALID_FORMAT = Sample.of("invalidFormat.xls", "...");
+    public final Sample EMPTY = Sample.of("empty.xls", new byte[0]);
+    public final Sample MISSING = Sample.of("missing.xls");
+    public final Sample BAD_EXTENSION = Sample.of("badExtension.xml", CONTENT);
 
     public static void assertTop5Book(Book book) throws IOException {
         BookAssert
@@ -105,24 +58,5 @@ public enum Top5 {
                 .hasCellValue(0, 1, "IE")
                 .hasCellValue(1, 0, DateUtil.parse("2008-07-01"))
                 .hasCellValue(41, 6, 0.93);
-    }
-
-    private static final class Holder {
-
-        static final byte[] CONTENT = load();
-
-        private static byte[] load() {
-            try (InputStream stream = Top5.class.getResourceAsStream("/Top5Browsers.xls")) {
-                return IOUtils.toByteArray(stream);
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-    }
-
-    private static byte[] concat(byte[] l, byte... r) {
-        byte[] result = Arrays.copyOf(l, l.length + r.length);
-        System.arraycopy(r, 0, result, l.length, r.length);
-        return result;
     }
 }
