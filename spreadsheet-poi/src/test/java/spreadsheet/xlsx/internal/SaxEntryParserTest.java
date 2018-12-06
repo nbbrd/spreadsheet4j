@@ -31,7 +31,7 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import test.EmptyInputStream;
+import _test.EmptyInputStream;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**

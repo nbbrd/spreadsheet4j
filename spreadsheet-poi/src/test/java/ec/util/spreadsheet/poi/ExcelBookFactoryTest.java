@@ -16,21 +16,18 @@
  */
 package ec.util.spreadsheet.poi;
 
-import static ec.util.spreadsheet.Assertions.assertThat;
+import _test.Top5x;
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.BookFactoryAssert;
+import ioutil.IO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.assertj.core.util.DateUtil;
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  *
@@ -38,75 +35,98 @@ import org.junit.Test;
  */
 public class ExcelBookFactoryTest {
 
-    private static final URL TOP5 = ExcelBookFactoryTest.class.getResource("/Top5Browsers.xlsx");
-
-    private static File VALID_FILE;
-    private static File EMPTY_FILE;
-    private static File MISSING_FILE;
-    private static File INVALID_FILE;
-
-    private static ExcelBookFactory FAST_FACTORY;
-    private static ExcelBookFactory NORMAL_FACTORY;
+    @ClassRule
+    public static TemporaryFolder TEMP = new TemporaryFolder();
+    private static ExcelBookFactory[] FACTORIES;
+    private static File ORIGINAL;
+    private static File BAD_EXTENSION;
+    private static File WITH_TRAILING_SECTION;
+    private static File NOT_XLSX;
+    private static File EMPTY;
+    private static File MISSING;
 
     @BeforeClass
-    public static void beforeClass() throws IOException {
-        Path top5 = Files.createTempFile("top5", ".xlsx");
-        try (InputStream stream = TOP5.openStream()) {
-            Files.copy(stream, top5, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        VALID_FILE = top5.toFile();
-        VALID_FILE.deleteOnExit();
-
-        EMPTY_FILE = Files.createTempFile("Empty", ".xlsx").toFile();
-        EMPTY_FILE.deleteOnExit();
-
-        MISSING_FILE = Files.createTempFile("Missing", ".xlsx").toFile();
-        MISSING_FILE.delete();
-
-        INVALID_FILE = Files.createTempFile("invalid", ".xlsx").toFile();
-        Files.write(INVALID_FILE.toPath(), Arrays.asList("..."));
-
-        FAST_FACTORY = new ExcelBookFactory();
-        FAST_FACTORY.setFast(true);
-
-        NORMAL_FACTORY = new ExcelBookFactory();
-        NORMAL_FACTORY.setFast(false);
+    public static void initFiles() {
+        FACTORIES = new ExcelBookFactory[]{new ExcelBookFactory(), new ExcelBookFactory()};
+        FACTORIES[0].setFast(true);
+        FACTORIES[1].setFast(false);
+        ORIGINAL = Top5x.ORIGINAL.file(TEMP);
+        BAD_EXTENSION = Top5x.BAD_EXTENSION.file(TEMP);
+        WITH_TRAILING_SECTION = Top5x.WITH_TRAILING_SECTION.file(TEMP);
+        NOT_XLSX = Top5x.NOT_XLSX.file(TEMP);
+        EMPTY = Top5x.EMPTY.file(TEMP);
+        MISSING = Top5x.MISSING.file(TEMP);
     }
 
     @Test
     public void testCompliance() throws IOException {
-        assertThat(FAST_FACTORY).isCompliant(VALID_FILE, INVALID_FILE);
-        assertThat(NORMAL_FACTORY).isCompliant(VALID_FILE, INVALID_FILE);
-    }
-
-    @Test
-    public void testLoadEmptyAndMissing() {
-        assertThatThrownBy(() -> FAST_FACTORY.load(EMPTY_FILE)).isInstanceOf(IOException.class);
-        assertThatThrownBy(() -> NORMAL_FACTORY.load(EMPTY_FILE)).isInstanceOf(IOException.class);
-        assertThatThrownBy(() -> FAST_FACTORY.load(MISSING_FILE)).isInstanceOf(IOException.class);
-        assertThatThrownBy(() -> NORMAL_FACTORY.load(MISSING_FILE)).isInstanceOf(IOException.class);
-    }
-
-    @Test
-    public void testGetSheetCount() throws Exception {
-        try (InputStream stream = TOP5.openStream()) {
-            try (Book book = FAST_FACTORY.load(stream)) {
-                assertEquals(3, book.getSheetCount());
-            }
+        for (ExcelBookFactory x : FACTORIES) {
+            BookFactoryAssert.assertThat(x).isCompliant(ORIGINAL, NOT_XLSX);
         }
     }
 
     @Test
-    public void testGetSheet() throws Exception {
-        try (InputStream stream = TOP5.openStream()) {
-            try (Book book = FAST_FACTORY.load(stream)) {
-                assertThat(book.getSheet(0))
-                        .hasCellValue(0, 0, null)
-                        .hasCellValue(0, 1, "IE")
-                        .hasCellValue(1, 0, DateUtil.parse("2008-07-01"))
-                        .hasCellValue(1, 1, 68.57);
+    public void testLoadFile() throws IOException {
+        for (ExcelBookFactory x : FACTORIES) {
+            try (Book book = x.load(ORIGINAL)) {
+                Top5x.assertTop5Book(book);
             }
+            try (Book book = x.load(BAD_EXTENSION)) {
+                Top5x.assertTop5Book(book);
+            }
+            try (Book book = x.load(WITH_TRAILING_SECTION)) {
+                Top5x.assertTop5Book(book);
+            }
+            assertThatIOException().isThrownBy(() -> x.load(NOT_XLSX));
+            assertThatIOException().isThrownBy(() -> x.load(EMPTY));
+            assertThatIOException().isThrownBy(() -> x.load(MISSING));
+        }
+    }
+
+    private static Book doLoad(ExcelBookFactory x, IO.Supplier<InputStream> byteSource) throws IOException {
+        try (InputStream stream = byteSource.getWithIO()) {
+            return x.load(stream);
+        }
+    }
+
+    @Test
+    public void testLoadStream() throws IOException {
+        for (ExcelBookFactory x : FACTORIES) {
+            try (Book book = doLoad(x, Top5x.ORIGINAL::stream)) {
+                Top5x.assertTop5Book(book);
+            }
+            try (Book book = doLoad(x, Top5x.BAD_EXTENSION::stream)) {
+                Top5x.assertTop5Book(book);
+            }
+            try (Book book = doLoad(x, Top5x.WITH_TRAILING_SECTION::stream)) {
+                Top5x.assertTop5Book(book);
+            }
+            assertThatIOException().isThrownBy(() -> doLoad(x, Top5x.NOT_XLSX::stream));
+            assertThatIOException().isThrownBy(() -> doLoad(x, Top5x.EMPTY::stream));
+        }
+    }
+
+    @Test
+    public void testAcceptFile() {
+        for (ExcelBookFactory x : FACTORIES) {
+            assertThat(x.accept(ORIGINAL)).isTrue();
+            assertThat(x.accept(MISSING)).isTrue();
+            assertThat(x.accept(WITH_TRAILING_SECTION)).isTrue();
+            assertThat(x.accept(BAD_EXTENSION)).isFalse();
+            assertThat(x.accept(NOT_XLSX)).isFalse();
+            assertThat(x.accept(EMPTY)).isFalse();
+        }
+    }
+
+    @Test
+    public void testAcceptPath() throws IOException {
+        for (ExcelBookFactory x : FACTORIES) {
+            assertThat(x.accept(ORIGINAL.toPath())).isTrue();
+            assertThat(x.accept(MISSING.toPath())).isTrue();
+            assertThat(x.accept(WITH_TRAILING_SECTION.toPath())).isTrue();
+            assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
+            assertThat(x.accept(NOT_XLSX.toPath())).isFalse();
+            assertThat(x.accept(EMPTY.toPath())).isFalse();
         }
     }
 }

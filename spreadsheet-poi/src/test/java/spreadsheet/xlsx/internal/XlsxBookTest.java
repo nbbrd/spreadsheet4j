@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import test.EmptyInputStream;
+import _test.EmptyInputStream;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
