@@ -22,10 +22,8 @@ import ec.util.spreadsheet.Sample;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetAssert;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.assertj.core.util.DateUtil;
-import org.assertj.core.util.URLs;
 
 /**
  *
@@ -34,15 +32,14 @@ import org.assertj.core.util.URLs;
 @lombok.experimental.UtilityClass
 public class Top5 {
 
-    private static final String CONTENT = URLs.contentOf(Top5.class.getResource("/Top5Browsers.xml"), StandardCharsets.UTF_8);
+    private static final byte[] CONTENT = Sample.bytesOf(Top5.class.getResource("/Top5Browsers.xls"));
 
-    public final Sample VALID = Sample.of("valid.xml", CONTENT);
-    public final Sample VALID_WITH_TAIL = Sample.of("validWithTail.xml", CONTENT + "\0");
-    public final Sample INVALID_CONTENT = Sample.of("invalidContent.xml", CONTENT.replace("<?mso-application progid=\"Excel.Sheet\"?>", ""));
-    public final Sample INVALID_FORMAT = Sample.of("invalidFormat.xml", "...");
-    public final Sample EMPTY = Sample.of("empty.xml", "");
-    public final Sample MISSING = Sample.of("missing.xml");
-    public final Sample BAD_EXTENSION = Sample.of("badExtension.zip", CONTENT);
+    public final Sample VALID = Sample.of("valid.xls", CONTENT);
+    public final Sample VALID_WITH_TAIL = Sample.of("validWithTail.xls", Sample.concat(CONTENT, (byte) '\0'));
+    public final Sample INVALID_FORMAT = Sample.of("invalidFormat.xls", "...");
+    public final Sample EMPTY = Sample.of("empty.xls", new byte[0]);
+    public final Sample MISSING = Sample.of("missing.xls");
+    public final Sample BAD_EXTENSION = Sample.of("badExtension.xml", CONTENT);
 
     public static void assertTop5Book(Book book) throws IOException {
         BookAssert

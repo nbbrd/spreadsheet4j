@@ -16,6 +16,7 @@
  */
 package ec.util.spreadsheet.poi;
 
+import ec.util.spreadsheet.helpers.FileHelper;
 import ec.util.spreadsheet.Book;
 import java.io.EOFException;
 import java.io.File;
@@ -23,9 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.FileSystemException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.Locale;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -61,9 +62,18 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public boolean accept(File pathname) {
-        String tmp = pathname.getName().toLowerCase(Locale.ROOT);
-        return tmp.endsWith(".xlsx") || tmp.endsWith(".xlsm");
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".xlsx", ".xlsm")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
     }
 
     @Override
@@ -97,7 +107,6 @@ public class ExcelBookFactory extends Book.Factory {
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @Nonnull
     private static File checkFile(@Nonnull File file) throws IOException {
         if (!file.exists()) {
@@ -111,5 +120,7 @@ public class ExcelBookFactory extends Book.Factory {
         }
         return file;
     }
-    //</editor-fold>
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static final byte[] ZIP_HEADER = {(byte) 0x50, (byte) 0x4B};
 }

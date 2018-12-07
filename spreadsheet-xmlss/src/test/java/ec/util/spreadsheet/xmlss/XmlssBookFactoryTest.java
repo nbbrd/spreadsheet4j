@@ -20,9 +20,6 @@ import _test.Top5;
 import ec.util.spreadsheet.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,39 +36,34 @@ public class XmlssBookFactoryTest {
 
     @Test
     public void testCompliance() throws IOException {
-        File valid = Top5.ORIGINAL.newFile(temp);
-        File invalid = temp.newFile("invalid.xml");
-        Files.write(invalid.toPath(), Arrays.asList("..."));
+        File valid = Top5.VALID.file(temp);
+        File invalid = Top5.INVALID_FORMAT.file(temp);
         BookFactoryAssert.assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
     }
 
     @Test
     public void testAcceptFile() throws IOException {
-        XmlssBookFactory factory = new XmlssBookFactory();
+        XmlssBookFactory x = new XmlssBookFactory();
 
-        File valid = Top5.ORIGINAL.newFile(temp);
-        assertThat(factory.accept(valid)).isTrue();
-
-        File missing = temp.newFile("other.xml");
-        missing.delete();
-        assertThat(factory.accept(missing)).isTrue();
-
-        File badExtension = temp.newFile("other.zip");
-        assertThat(factory.accept(badExtension)).isFalse();
+        assertThat(x.accept(Top5.VALID.file(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.file(temp))).isTrue();
+        assertThat(x.accept(Top5.MISSING.file(temp))).isTrue();
+        assertThat(x.accept(Top5.INVALID_CONTENT.file(temp))).isFalse();
+        assertThat(x.accept(Top5.EMPTY.file(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.file(temp))).isFalse();
+        assertThat(x.accept(Top5.BAD_EXTENSION.file(temp))).isFalse();
     }
 
     @Test
     public void testAcceptPath() throws IOException {
-        XmlssBookFactory factory = new XmlssBookFactory();
+        XmlssBookFactory x = new XmlssBookFactory();
 
-        Path valid = Top5.ORIGINAL.newFile(temp).toPath();
-        assertThat(factory.accept(valid)).isTrue();
-
-        Path missing = temp.newFile("other.xml").toPath();
-        Files.delete(missing);
-        assertThat(factory.accept(missing)).isTrue();
-
-        Path badExtension = temp.newFile("other.zip").toPath();
-        assertThat(factory.accept(badExtension)).isFalse();
+        assertThat(x.accept(Top5.VALID.path(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.path(temp))).isTrue();
+        assertThat(x.accept(Top5.MISSING.path(temp))).isTrue();
+        assertThat(x.accept(Top5.INVALID_CONTENT.path(temp))).isFalse();
+        assertThat(x.accept(Top5.EMPTY.path(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.path(temp))).isFalse();
+        assertThat(x.accept(Top5.BAD_EXTENSION.path(temp))).isFalse();
     }
 }

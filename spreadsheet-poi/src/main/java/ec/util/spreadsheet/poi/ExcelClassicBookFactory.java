@@ -16,6 +16,7 @@
  */
 package ec.util.spreadsheet.poi;
 
+import ec.util.spreadsheet.helpers.FileHelper;
 import ec.util.spreadsheet.Book;
 import java.io.EOFException;
 import java.io.File;
@@ -24,8 +25,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.FileSystemException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.Locale;
+import java.nio.file.Path;
 import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.openide.util.lookup.ServiceProvider;
@@ -38,13 +40,23 @@ import org.openide.util.lookup.ServiceProvider;
 public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
-    public boolean accept(File pathname) {
-        return pathname.getName().toLowerCase(Locale.ROOT).endsWith(".xls");
+    public String getName() {
+        return "Excel Classic";
     }
 
     @Override
-    public String getName() {
-        return "Excel Classic";
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".xls")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, XLS_HEADER) : true);
     }
 
     @Override
@@ -68,7 +80,6 @@ public class ExcelClassicBookFactory extends Book.Factory {
         target.write(stream);
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @Nonnull
     private static File checkFile(@Nonnull File file) throws FileSystemException {
         if (!file.exists()) {
@@ -79,5 +90,7 @@ public class ExcelClassicBookFactory extends Book.Factory {
         }
         return file;
     }
-    //</editor-fold>
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static final byte[] XLS_HEADER = {(byte) 0xD0, (byte) 0xCF, (byte) 0x11, (byte) 0xE0, (byte) 0xA1, (byte) 0xB1, (byte) 0x1A, (byte) 0xE1};
 }
