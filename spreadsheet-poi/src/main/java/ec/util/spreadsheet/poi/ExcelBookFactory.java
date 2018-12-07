@@ -40,6 +40,8 @@ import spreadsheet.xlsx.XlsxReader;
 @ServiceProvider(service = Book.Factory.class)
 public class ExcelBookFactory extends Book.Factory {
 
+    private static final boolean USE_SHARED_STRINGS = true;
+
     private final AtomicBoolean fast;
 
     public ExcelBookFactory() {
@@ -96,8 +98,7 @@ public class ExcelBookFactory extends Book.Factory {
 
     @Override
     public void store(OutputStream stream, Book book) throws IOException {
-        // Currenty, inline string is not supported in FastPoiBook -> use of shared strings table
-        SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, true);
+        SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, USE_SHARED_STRINGS);
         try {
             PoiBookWriter.copy(book, target);
             target.write(stream);

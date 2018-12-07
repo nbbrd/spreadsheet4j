@@ -78,9 +78,6 @@ public final class SaxEntryParser implements XlsxEntryParser {
 
     private static final IO.Supplier VOID = IO.Supplier.of(null);
 
-    /**
-     * FIXME: missing support of inline string <is><t>hello</t></is>
-     */
     @lombok.RequiredArgsConstructor
     private static final class SheetSaxEventHandler extends DefaultHandler {
 
@@ -111,8 +108,14 @@ public final class SaxEntryParser implements XlsxEntryParser {
                     }
                     break;
                 case 4:
-                    if (isEqualTo(name, CELL_VALUE_TAG)) {
-                        stringBuilder.enable().clear();
+                    if (isChar(name)) {
+                        if (name.charAt(0) == CELL_VALUE_TAG) {
+                            stringBuilder.enable().clear();
+                        }
+                    } else {
+                        if (name.equals(INLINE_STRING_TAG)) {
+                            stringBuilder.enable().clear();
+                        }
                     }
                     break;
             }
@@ -124,8 +127,14 @@ public final class SaxEntryParser implements XlsxEntryParser {
             level--;
             switch (level) {
                 case 4:
-                    if (isEqualTo(name, CELL_VALUE_TAG)) {
-                        pushCellValue();
+                    if (isChar(name)) {
+                        if (name.charAt(0) == CELL_VALUE_TAG) {
+                            pushCellValue();
+                        }
+                    } else {
+                        if (name.equals(INLINE_STRING_TAG)) {
+                            pushCellValue();
+                        }
                     }
                     break;
             }
@@ -152,7 +161,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
             rawStyleIndex = null;
             for (int i = 0; i < attributes.getLength(); i++) {
                 String attribute = attributes.getLocalName(i);
-                if (attribute.length() == 1) {
+                if (isChar(attribute)) {
                     switch (attribute.charAt(0)) {
                         case REFERENCE_ATTRIBUTE:
                             ref = attributes.getValue(i);
@@ -176,14 +185,14 @@ public final class SaxEntryParser implements XlsxEntryParser {
         private static final String SHEET_DIMENSIONS_TAG = "dimension";
         private static final String SHEET_BOUNDS_ATTRIBUTE = "ref";
         private static final String SHEET_DATA_TAG = "sheetData";
-        //private static final String INLINE_STRING_TAG = "is";
+        private static final String INLINE_STRING_TAG = "is";
 
         @Nonnull
         private static XlsxDataType parseDataType(@Nullable String rawDataType) {
             if (rawDataType == null) {
                 return XlsxDataType.UNDEFINED;
             }
-            if (rawDataType.length() == 1) {
+            if (isChar(rawDataType)) {
                 switch (rawDataType.charAt(0)) {
                     case NUMBER_TYPE:
                         return XlsxDataType.NUMBER;
@@ -408,6 +417,10 @@ public final class SaxEntryParser implements XlsxEntryParser {
         public String toString() {
             return new String(chars);
         }
+    }
+
+    static boolean isChar(String input) {
+        return input.length() == 1;
     }
 
     static boolean isEqualTo(String input, char c) {

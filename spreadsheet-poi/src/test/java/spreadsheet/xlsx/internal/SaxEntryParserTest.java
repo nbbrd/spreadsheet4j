@@ -84,6 +84,12 @@ public class SaxEntryParserTest {
                 .hasColumnCount(7)
                 .hasRowCount(42);
 
+        SheetAssert.assertThat(XlsxBook.parseSheet("inlineStrings", b, () -> files.applyWithIO("/InlineStrings.xml"), parser))
+                .hasName("inlineStrings")
+                .hasColumnCount(1)
+                .hasRowCount(1)
+                .hasCellValue(0, 0, "hello world");
+
         assertThatThrownBy(() -> XlsxBook.parseSheet("empty", b, empty, parser))
                 .isInstanceOf(EOFException.class)
                 .hasNoCause();
