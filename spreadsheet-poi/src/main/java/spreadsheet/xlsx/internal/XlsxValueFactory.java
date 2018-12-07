@@ -73,7 +73,6 @@ final class XlsxValueFactory {
                 callback.onString(value.toString());
                 break;
             case INLINE_STRING:
-                // TODO: rawValue might contain rich text
                 callback.onString(value.toString());
                 break;
             default:

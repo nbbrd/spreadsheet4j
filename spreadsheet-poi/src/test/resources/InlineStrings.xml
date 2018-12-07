@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><dimension ref="A1"/><sheetViews><sheetView workbookViewId="0" tabSelected="true"/></sheetViews><sheetFormatPr defaultRowHeight="15.0"/><cols><col min="1" max="1" width="11.11328125" customWidth="true"/></cols><sheetData>
+<row r="1">
+<c r="A1" t="inlineStr"><is><t>hello world</t></is></c></row>
+</sheetData><pageMargins bottom="0.75" footer="0.3" header="0.3" left="0.7" right="0.7" top="0.75"/></worksheet>
