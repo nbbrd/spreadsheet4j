@@ -16,20 +16,19 @@
  */
 package ec.util.spreadsheet.poi;
 
+import ec.util.spreadsheet.helpers.FileHelper;
 import ec.util.spreadsheet.Book;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.FileSystemException;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.util.Locale;
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nonnull;
-import org.apache.poi.EmptyFileException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.openide.util.lookup.ServiceProvider;
 import spreadsheet.xlsx.XlsxReader;
@@ -40,6 +39,8 @@ import spreadsheet.xlsx.XlsxReader;
  */
 @ServiceProvider(service = Book.Factory.class)
 public class ExcelBookFactory extends Book.Factory {
+
+    private static final boolean USE_SHARED_STRINGS = true;
 
     private final AtomicBoolean fast;
 
@@ -63,40 +64,41 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public boolean accept(File pathname) {
-        String tmp = pathname.getName().toLowerCase(Locale.ROOT);
-        return tmp.endsWith(".xlsx") || tmp.endsWith(".xlsm");
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".xlsx", ".xlsm")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
     }
 
     @Override
     public Book load(File file) throws IOException {
         checkFile(file);
-        if (fast.get()) {
-            return new XlsxReader().read(file.toPath());
-        }
-        try {
-            return PoiBook.create(file);
-        } catch (OpenXML4JException | InvalidOperationException | EmptyFileException ex) {
-            throw new IOException(ex);
-        }
+        return fast.get()
+                ? new XlsxReader().read(file.toPath())
+                : PoiBook.create(file);
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
-        if (fast.get()) {
-            return new XlsxReader().read(stream);
+        if (stream.available() == 0) {
+            throw new EOFException();
         }
-        try {
-            return PoiBook.create(stream);
-        } catch (OpenXML4JException ex) {
-            throw new IOException(ex);
-        }
+        return fast.get()
+                ? new XlsxReader().read(stream)
+                : PoiBook.create(stream);
     }
 
     @Override
     public void store(OutputStream stream, Book book) throws IOException {
-        // Currenty, inline string is not supported in FastPoiBook -> use of shared strings table
-        SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, true);
+        SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, USE_SHARED_STRINGS);
         try {
             PoiBookWriter.copy(book, target);
             target.write(stream);
@@ -106,16 +108,20 @@ public class ExcelBookFactory extends Book.Factory {
         }
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Implementation details">
     @Nonnull
-    private static File checkFile(@Nonnull File file) throws FileSystemException {
-        if (!file.exists() || file.isDirectory()) {
+    private static File checkFile(@Nonnull File file) throws IOException {
+        if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }
-        if (!file.canRead()) {
+        if (!file.canRead() || file.isDirectory()) {
             throw new AccessDeniedException(file.getPath());
+        }
+        if (file.length() == 0) {
+            throw new EOFException(file.getPath());
         }
         return file;
     }
-    //</editor-fold>
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static final byte[] ZIP_HEADER = {(byte) 0x50, (byte) 0x4B};
 }

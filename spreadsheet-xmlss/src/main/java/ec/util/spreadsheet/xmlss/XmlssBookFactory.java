@@ -17,13 +17,19 @@
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.FileHelper;
+import ioutil.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -45,13 +51,28 @@ public class XmlssBookFactory extends Book.Factory {
     }
 
     @Override
-    public boolean accept(File pathname) {
-        return pathname.getName().toLowerCase(Locale.ROOT).endsWith(".xml");
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".xml")
+                && (Files.exists(file) ? hasValidHeader(file) : true);
+    }
+
+    @Override
+    public Book load(File file) throws IOException {
+        return XmlssBookReader.parseFile(file);
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
-        return XmlssBook.create(stream);
+        return XmlssBookReader.parseStream(stream);
     }
 
     @Override
@@ -62,4 +83,28 @@ public class XmlssBookFactory extends Book.Factory {
     private XmlssBookWriter newWriter() {
         return new XmlssBookWriter(xof, StandardCharsets.UTF_8);
     }
+
+    private static boolean hasValidHeader(Path file) {
+        try {
+            return Stax.StreamParser.valueOf(XmlssBookFactory::hasValidHeader).parsePath(file);
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    private static boolean hasValidHeader(XMLStreamReader xml) throws XMLStreamException {
+        while (xml.hasNext()) {
+            switch (xml.next()) {
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                    return XML_HEADER_TARGET.equals(xml.getPITarget())
+                            && XML_HEADER_DATA.equals(xml.getPIData());
+                case XMLStreamConstants.START_ELEMENT:
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    static final String XML_HEADER_TARGET = "mso-application";
+    static final String XML_HEADER_DATA = "progid=\"Excel.Sheet\"";
 }

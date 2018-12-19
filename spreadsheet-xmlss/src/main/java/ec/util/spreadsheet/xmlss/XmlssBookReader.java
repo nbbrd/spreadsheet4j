@@ -16,39 +16,58 @@
  */
 package ec.util.spreadsheet.xmlss;
 
-import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.Sheet;
+import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnull;
 
-import ec.util.spreadsheet.helpers.ArraySheet;
+import ioutil.IO;
 import ioutil.Sax;
 import ioutil.Xml;
+import java.io.File;
 import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  *
  * @author Philippe Charles
  */
-final class XmlssBook extends Book {
+final class XmlssBookReader {
 
-    @Nonnull
-    public static XmlssBook create(@Nonnull InputStream stream) throws IOException {
-        return new XmlssBook(loadContent(stream));
+    private XmlssBookReader() {
+        // static class
     }
 
-    private static List<ArraySheet> loadContent(InputStream stream) throws IOException {
+    @Nonnull
+    public static ArrayBook parseFile(@Nonnull File file) throws IOException {
+        return parse(o -> o.parseFile(file));
+    }
+
+    @Nonnull
+    public static ArrayBook parseStream(@Nonnull InputStream stream) throws IOException {
+        return parse(o -> o.parseStream(stream));
+    }
+
+    private interface Loader extends IO.Function<Sax.Parser<ArrayBook>, ArrayBook> {
+    }
+
+    private static ArrayBook parse(Loader loader) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
         try {
-            return Sax.Parser.of(handler, handler::build).parseStream(stream);
+            return loader.applyWithIO(Sax.Parser.of(handler, handler::build));
         } catch (Xml.WrappedException ex) {
-            if (isTrailingSectionContentNotAllowed(ex.getCause(), handler.isEndWorkbookNotified())) {
+            Throwable cause = ex.getCause();
+            if (isTrailingSectionContentNotAllowed(cause, handler.isEndWorkbookNotified())) {
                 return handler.build();
+            }
+            if (cause instanceof MissingHeaderException) {
+                throw new XmlssContentException(((MissingHeaderException) cause).getMessage());
+            }
+            if (cause instanceof SAXParseException) {
+                throw new XmlssFormatException(cause);
             }
             throw ex;
         }
@@ -58,20 +77,19 @@ final class XmlssBook extends Book {
         return cause instanceof SAXException && endWorkbookNotified;
     }
 
-    private final List<ArraySheet> sheets;
+    private static final class MissingHeaderException extends SAXException {
 
-    private XmlssBook(List<ArraySheet> sheets) {
-        this.sheets = sheets;
-    }
+        public MissingHeaderException(Locator locator) {
+            super(newMessage(locator));
+        }
 
-    @Override
-    public int getSheetCount() {
-        return sheets.size();
-    }
-
-    @Override
-    public Sheet getSheet(int index) throws IOException {
-        return sheets.get(index);
+        static String newMessage(Locator locator) {
+            String result = "Missing header";
+            if (locator != null && locator.getSystemId() != null) {
+                result += " in " + locator.getSystemId();
+            }
+            return result;
+        }
     }
 
 //    @VisibleForTesting
@@ -84,34 +102,54 @@ final class XmlssBook extends Book {
         private static final String CELL_TAG = "Cell";
         private static final String DATA_TAG = "Data";
 
-        private final List<ArraySheet> sheets;
+        private final ArrayBook.Builder result;
         private int rowNum;
         private int colNum;
         private String dataType;
         private String text;
         private final XmlssSheetBuilder builder;
         private boolean endWorkbookNotified;
+        private boolean headerFound;
+        private Locator locator;
 
         public BookSax2EventHandler() {
-            this.sheets = new ArrayList<>();
+            this.result = ArrayBook.builder();
             this.rowNum = -1;
             this.colNum = -1;
             this.dataType = null;
             this.text = null;
             this.builder = XmlssSheetBuilder.create();
             this.endWorkbookNotified = false;
+            this.headerFound = false;
+            this.locator = null;
         }
 
         public boolean isEndWorkbookNotified() {
             return endWorkbookNotified;
         }
 
-        public List<ArraySheet> build() {
-            return new ArrayList<>(sheets);
+        public ArrayBook build() {
+            return result.build();
+        }
+
+        @Override
+        public void setDocumentLocator(Locator locator) {
+            this.locator = locator;
+        }
+
+        @Override
+        public void processingInstruction(String target, String data) throws SAXException {
+            if (!headerFound) {
+                headerFound = XmlssBookFactory.XML_HEADER_TARGET.equals(target)
+                        && XmlssBookFactory.XML_HEADER_DATA.equals(data);
+            }
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            if (!headerFound) {
+                throw new MissingHeaderException(locator);
+            }
             switch (qName) {
                 case WORKSHEET_TAG:
                     builder.name(attributes.getValue(SS_URI, "Name"));
@@ -138,7 +176,7 @@ final class XmlssBook extends Book {
                     endWorkbookNotified = true;
                     break;
                 case WORKSHEET_TAG:
-                    sheets.add(builder.build());
+                    result.sheet(builder.build());
                     rowNum = -1;
                     builder.clear();
                     break;

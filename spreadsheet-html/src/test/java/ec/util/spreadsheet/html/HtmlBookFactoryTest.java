@@ -39,8 +39,7 @@ public class HtmlBookFactoryTest {
     @Test
     public void testCompliance() throws IOException {
         File valid = createContent(temp.newFile("valid.htm"));
-        File invalid = temp.newFile("invalid.htm");
-        assertThat(new HtmlBookFactory()).isCompliant(valid, invalid);
+        assertThat(new HtmlBookFactory()).isCompliant(valid);
     }
 
     @Test

@@ -1,37 +1,41 @@
 /*
- * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ * Copyright 2013 National Bank of Belgium
+ *
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package test;
+package ec.util.spreadsheet.xmlss;
 
-import java.io.InputStream;
+import java.io.IOException;
 
 /**
  *
  * @author Philippe Charles
  */
-@lombok.AllArgsConstructor
-public final class EmptyInputStream extends InputStream {
+final class XmlssContentException extends IOException {
 
-    @Override
-    public int read() {
-        return -1;
+    public XmlssContentException() {
     }
 
-    @Override
-    public int available() {
-        return 0;
+    public XmlssContentException(String message) {
+        super(message);
+    }
+
+    public XmlssContentException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public XmlssContentException(Throwable cause) {
+        super(cause);
     }
 }

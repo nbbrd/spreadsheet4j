@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
@@ -186,6 +188,8 @@ public abstract class Book implements Closeable {
         public Book load(@Nonnull File file) throws IOException {
             try (InputStream stream = new FileInputStream(file)) {
                 return load(stream);
+            } catch (FileNotFoundException ex) {
+                throw translate(ex);
             }
         }
 
@@ -200,6 +204,8 @@ public abstract class Book implements Closeable {
         public Book load(@Nonnull URL url) throws IOException {
             try (InputStream stream = url.openStream()) {
                 return load(stream);
+            } catch (FileNotFoundException ex) {
+                throw translate(ex);
             }
         }
 
@@ -282,5 +288,13 @@ public abstract class Book implements Closeable {
                     || Number.class.isAssignableFrom(type)
                     || String.class.isAssignableFrom(type);
         }
+    }
+
+    private static IOException translate(FileNotFoundException ex) {
+        String msg = ex.getMessage();
+        if (msg != null && !msg.isEmpty()) {
+            return new NoSuchFileException(msg);
+        }
+        return ex;
     }
 }

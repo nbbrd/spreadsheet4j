@@ -32,6 +32,7 @@ deploy:
   - provider: releases
     api_key: "${GITHUB_KEY}"
     skip_cleanup: true
+    draft: true
     on:
       tags: true
       repo: "${DEPLOY_REPO}"

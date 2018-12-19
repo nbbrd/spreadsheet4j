@@ -31,7 +31,7 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import test.EmptyInputStream;
+import _test.EmptyInputStream;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
@@ -83,6 +83,12 @@ public class SaxEntryParserTest {
                 .hasName("formulas")
                 .hasColumnCount(7)
                 .hasRowCount(42);
+
+        SheetAssert.assertThat(XlsxBook.parseSheet("inlineStrings", b, () -> files.applyWithIO("/InlineStrings.xml"), parser))
+                .hasName("inlineStrings")
+                .hasColumnCount(1)
+                .hasRowCount(1)
+                .hasCellValue(0, 0, "hello world");
 
         assertThatThrownBy(() -> XlsxBook.parseSheet("empty", b, empty, parser))
                 .isInstanceOf(EOFException.class)

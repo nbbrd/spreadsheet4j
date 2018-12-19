@@ -17,11 +17,17 @@
 package ec.util.spreadsheet.od;
 
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.FileHelper;
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Locale;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import javax.annotation.Nonnull;
 import javax.swing.table.DefaultTableModel;
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -40,17 +46,31 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public boolean accept(File pathname) {
-        return pathname.getName().toLowerCase(Locale.ENGLISH).endsWith(".ods");
+    public boolean accept(File file) {
+        try {
+            return accept(file.toPath());
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".ods")
+                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
     }
 
     @Override
     public Book load(File file) throws IOException {
+        checkFile(file);
         return new OdBook(SpreadSheet.create(new ODPackage(file)));
     }
 
     @Override
     public Book load(InputStream stream) throws IOException {
+        if (stream.available() == 0) {
+            throw new EOFException();
+        }
         return new OdBook(SpreadSheet.create(new ODPackage(stream)));
     }
 
@@ -80,4 +100,21 @@ public class OpenDocumentBookFactory extends Book.Factory {
         result.getSheet(0).detach();
         return result;
     }
+
+    @Nonnull
+    private static File checkFile(@Nonnull File file) throws IOException {
+        if (!file.exists()) {
+            throw new NoSuchFileException(file.getPath());
+        }
+        if (!file.canRead() || file.isDirectory()) {
+            throw new AccessDeniedException(file.getPath());
+        }
+        if (file.length() == 0) {
+            throw new EOFException(file.getPath());
+        }
+        return file;
+    }
+
+    // https://en.wikipedia.org/wiki/List_of_file_signatures
+    private static final byte[] ZIP_HEADER = {(byte) 0x50, (byte) 0x4B};
 }

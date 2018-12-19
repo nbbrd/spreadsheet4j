@@ -16,12 +16,11 @@
  */
 package ec.util.spreadsheet.xmlss;
 
-import static ec.util.spreadsheet.Assertions.assertThat;
+import _test.Top5;
+import ec.util.spreadsheet.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -37,15 +36,34 @@ public class XmlssBookFactoryTest {
 
     @Test
     public void testCompliance() throws IOException {
-        File valid = createContent(temp.newFile("valid.xml"));
-        File invalid = temp.newFile("invalid.xml");
-        assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
+        File valid = Top5.VALID.file(temp);
+        File invalid = Top5.INVALID_FORMAT.file(temp);
+        BookFactoryAssert.assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
     }
 
-    private static File createContent(File file) throws IOException {
-        try (InputStream stream = XmlssBookFactoryTest.class.getResource("/Top5Browsers.xml").openStream()) {
-            Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        }
-        return file;
+    @Test
+    public void testAcceptFile() throws IOException {
+        XmlssBookFactory x = new XmlssBookFactory();
+
+        assertThat(x.accept(Top5.VALID.file(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.file(temp))).isTrue();
+        assertThat(x.accept(Top5.MISSING.file(temp))).isTrue();
+        assertThat(x.accept(Top5.INVALID_CONTENT.file(temp))).isFalse();
+        assertThat(x.accept(Top5.EMPTY.file(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.file(temp))).isFalse();
+        assertThat(x.accept(Top5.BAD_EXTENSION.file(temp))).isFalse();
+    }
+
+    @Test
+    public void testAcceptPath() throws IOException {
+        XmlssBookFactory x = new XmlssBookFactory();
+
+        assertThat(x.accept(Top5.VALID.path(temp))).isTrue();
+        assertThat(x.accept(Top5.VALID_WITH_TAIL.path(temp))).isTrue();
+        assertThat(x.accept(Top5.MISSING.path(temp))).isTrue();
+        assertThat(x.accept(Top5.INVALID_CONTENT.path(temp))).isFalse();
+        assertThat(x.accept(Top5.EMPTY.path(temp))).isFalse();
+        assertThat(x.accept(Top5.INVALID_FORMAT.path(temp))).isFalse();
+        assertThat(x.accept(Top5.BAD_EXTENSION.path(temp))).isFalse();
     }
 }

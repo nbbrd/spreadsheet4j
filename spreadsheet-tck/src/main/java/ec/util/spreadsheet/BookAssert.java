@@ -20,8 +20,11 @@ import static ec.util.spreadsheet.Assertions.msg;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.Condition;
 import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.data.Index;
 import org.assertj.core.groups.Tuple;
 
 /**
@@ -76,6 +79,18 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
         SoftAssertions soft = new SoftAssertions();
         assertContentEquals(soft, actual, other, strict);
         soft.assertAll();
+        return this;
+    }
+
+    public BookAssert has(Condition<? super Sheet> condition, Index index) throws IOException {
+        isNotNull();
+        SheetAssert.assertThat(actual.getSheet(index.value)).has(condition);
+        return this;
+    }
+
+    public BookAssert satisfies(Consumer<? super Sheet> requirements, Index index) throws IOException {
+        isNotNull();
+        requirements.accept(actual.getSheet(index.value));
         return this;
     }
 
