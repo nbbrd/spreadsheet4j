@@ -11,7 +11,7 @@
     <artifactId>spreadsheet-poi</artifactId>
 
     <properties>
-        <poi.version>4.0.0</poi.version>
+        <poi.version>4.0.1</poi.version>
         <disruptor.version>3.4.2</disruptor.version>
     </properties>
 
