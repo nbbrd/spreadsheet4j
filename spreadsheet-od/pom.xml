@@ -11,7 +11,7 @@
     <artifactId>spreadsheet-od</artifactId>
 
     <properties>
-        <jopendocument.version>1.2</jopendocument.version>
+        <jopendocument.version>1.3</jopendocument.version>
     </properties>
 
     <dependencyManagement>
