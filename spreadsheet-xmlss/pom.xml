@@ -31,6 +31,7 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.nbb.rd</groupId>
@@ -45,6 +46,7 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
