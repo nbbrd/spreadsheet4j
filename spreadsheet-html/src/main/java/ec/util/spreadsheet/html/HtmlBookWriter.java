@@ -19,6 +19,8 @@ package ec.util.spreadsheet.html;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
+import ioutil.Stax;
+import ioutil.Xml;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -76,37 +78,28 @@ final class HtmlBookWriter {
     }
 
     public void write(@Nonnull Book book, @Nonnull OutputStream stream) throws IOException {
-        try {
-            XmlStreamWriterUtil.of(o -> writeHtml(o, book))
-                    .factory(xof)
-                    .writeTo(stream, charset);
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        getFormatter().formatStream(book, stream);
     }
 
     public void write(@Nonnull Book book, @Nonnull Writer writer) throws IOException {
-        try {
-            XmlStreamWriterUtil.of(o -> writeHtml(o, book))
-                    .factory(xof)
-                    .writeTo(writer);
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        getFormatter().formatWriter(book, writer);
     }
 
     @Nonnull
     public String writeToString(@Nonnull Book book) throws IOException {
-        try {
-            return XmlStreamWriterUtil.of(o -> writeHtml(o, book))
-                    .factory(xof)
-                    .writeToString();
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+        return getFormatter().formatToString(book);
     }
 
-    private void writeHtml(XMLStreamWriter w, Book book) throws IOException, XMLStreamException {
+    private Xml.Formatter<Book> getFormatter() {
+        return Stax.StreamFormatter
+                .<Book>builder()
+                .factory(() -> xof)
+                .encoding(charset)
+                .handler(this::writeHtml)
+                .build();
+    }
+
+    private void writeHtml(Book book, XMLStreamWriter w) throws XMLStreamException, IOException {
         BasicHtmlWriter f = new BasicHtmlWriter(w);
         f.beginHtml();
         f.beginHead();
