@@ -27,8 +27,8 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.NoSuchFileException;
 import java.util.Arrays;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -51,23 +51,23 @@ final class HtmlBookReader {
         this.charset = charset;
     }
 
-    public void setBaseUri(@Nonnull String baseUri) {
+    public void setBaseUri(@NonNull String baseUri) {
         this.baseUri = Objects.requireNonNull(baseUri);
     }
 
-    @Nonnull
-    public ArrayBook read(@Nonnull String html) {
+    @NonNull
+    public ArrayBook read(@NonNull String html) {
         return readHtml(Jsoup.parse(html, baseUri));
     }
 
-    @Nonnull
-    public ArrayBook read(@Nonnull File file) throws IOException {
+    @NonNull
+    public ArrayBook read(@NonNull File file) throws IOException {
         checkFile(file);
         return readHtml(Jsoup.parse(file, getCharsetNameOrNull(), baseUri));
     }
 
-    @Nonnull
-    public ArrayBook read(@Nonnull InputStream stream) throws IOException {
+    @NonNull
+    public ArrayBook read(@NonNull InputStream stream) throws IOException {
         Objects.requireNonNull(stream);
         if (stream.available() == 0) {
             throw new EOFException();
@@ -76,8 +76,8 @@ final class HtmlBookReader {
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws IOException {
+    @NonNull
+    private static File checkFile(@NonNull File file) throws IOException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

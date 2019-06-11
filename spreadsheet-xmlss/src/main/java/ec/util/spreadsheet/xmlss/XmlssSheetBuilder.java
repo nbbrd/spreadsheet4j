@@ -22,8 +22,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -31,19 +31,19 @@ import javax.annotation.Nullable;
  */
 abstract class XmlssSheetBuilder {
 
-    @Nonnull
+    @NonNull
     abstract public XmlssSheetBuilder put(@Nullable String rawValue, @Nullable String rawDataType, int row, int col);
 
-    @Nonnull
-    abstract public XmlssSheetBuilder name(@Nonnull String name);
+    @NonNull
+    abstract public XmlssSheetBuilder name(@NonNull String name);
 
-    @Nonnull
+    @NonNull
     abstract public XmlssSheetBuilder clear();
 
-    @Nonnull
+    @NonNull
     abstract public ArraySheet build();
 
-    @Nonnull
+    @NonNull
     public static XmlssSheetBuilder create() {
         return new Builder();
     }

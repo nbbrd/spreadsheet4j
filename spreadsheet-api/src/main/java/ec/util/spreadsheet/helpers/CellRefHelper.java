@@ -16,9 +16,10 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 
 /**
  *
@@ -52,7 +53,7 @@ public final class CellRefHelper {
                 : withMatch(false);
     }
 
-    private boolean parse(@Nonnull CharSequence ref, int begIdx, int endIdx) {
+    private boolean parse(@NonNull CharSequence ref, int begIdx, int endIdx) {
         if (endIdx <= begIdx) {
             return withMatch(false);
         }
@@ -89,7 +90,7 @@ public final class CellRefHelper {
      *
      * @return
      */
-    @Nonnegative
+    @NonNegative
     public int getColumnIndex() throws IllegalStateException {
         checkMatch();
         return col;
@@ -100,7 +101,7 @@ public final class CellRefHelper {
      *
      * @return
      */
-    @Nonnegative
+    @NonNegative
     public int getRowIndex() throws IllegalStateException {
         checkMatch();
         return row;
@@ -112,14 +113,14 @@ public final class CellRefHelper {
         }
     }
 
-    @Nonnull
-    public static String getRowLabel(@Nonnegative int rowIndex) throws IndexOutOfBoundsException {
+    @NonNull
+    public static String getRowLabel(@NonNegative int rowIndex) throws IndexOutOfBoundsException {
         checkNonNegative(rowIndex);
         return Integer.toString(rowIndex + 1);
     }
 
-    @Nonnull
-    public static String getColumnLabel(@Nonnegative int columnIndex) throws IndexOutOfBoundsException {
+    @NonNull
+    public static String getColumnLabel(@NonNegative int columnIndex) throws IndexOutOfBoundsException {
         checkNonNegative(columnIndex);
         int dividend = columnIndex + 1;
         String result = "";
@@ -134,8 +135,8 @@ public final class CellRefHelper {
         return result;
     }
 
-    @Nonnull
-    public static String getCellRef(@Nonnegative int rowIndex, @Nonnegative int columnIndex) throws IndexOutOfBoundsException {
+    @NonNull
+    public static String getCellRef(@NonNegative int rowIndex, @NonNegative int columnIndex) throws IndexOutOfBoundsException {
         return getColumnLabel(columnIndex) + getRowLabel(rowIndex);
     }
 

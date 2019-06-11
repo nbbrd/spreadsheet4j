@@ -19,12 +19,12 @@ package ec.util.spreadsheet.xmlss;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
 
 import ioutil.IO;
 import ioutil.Sax;
 import ioutil.Xml;
 import java.io.File;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -41,13 +41,13 @@ final class XmlssBookReader {
         // static class
     }
 
-    @Nonnull
-    public static ArrayBook parseFile(@Nonnull File file) throws IOException {
+    @NonNull
+    public static ArrayBook parseFile(@NonNull File file) throws IOException {
         return parse(o -> o.parseFile(file));
     }
 
-    @Nonnull
-    public static ArrayBook parseStream(@Nonnull InputStream stream) throws IOException {
+    @NonNull
+    public static ArrayBook parseStream(@NonNull InputStream stream) throws IOException {
         return parse(o -> o.parseStream(stream));
     }
 

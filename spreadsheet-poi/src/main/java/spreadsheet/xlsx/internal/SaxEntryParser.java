@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -187,7 +187,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
         private static final String SHEET_DATA_TAG = "sheetData";
         private static final String INLINE_STRING_TAG = "is";
 
-        @Nonnull
+        @NonNull
         private static XlsxDataType parseDataType(@Nullable String rawDataType) {
             if (rawDataType == null) {
                 return XlsxDataType.UNDEFINED;

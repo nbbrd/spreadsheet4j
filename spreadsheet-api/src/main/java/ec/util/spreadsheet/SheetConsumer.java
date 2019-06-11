@@ -17,7 +17,7 @@
 package ec.util.spreadsheet;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Represents an operation that accepts a row index, a column index and an input
@@ -55,8 +55,8 @@ public interface SheetConsumer<T> {
      * operation followed by the {@code after} operation
      * @throws NullPointerException if {@code after} is null
      */
-    @Nonnull
-    default SheetConsumer<T> andThen(@Nonnull SheetConsumer<? super T> after) {
+    @NonNull
+    default SheetConsumer<T> andThen(@NonNull SheetConsumer<? super T> after) {
         Objects.requireNonNull(after);
         return (int i, int j, T t) -> {
             accept(i, j, t);

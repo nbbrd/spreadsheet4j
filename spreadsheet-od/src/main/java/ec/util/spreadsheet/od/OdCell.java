@@ -18,8 +18,8 @@ package ec.util.spreadsheet.od;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jopendocument.dom.ODValueType;
 import static org.jopendocument.dom.ODValueType.DATE;
 import static org.jopendocument.dom.ODValueType.FLOAT;
@@ -39,7 +39,7 @@ final class OdCell extends ec.util.spreadsheet.Cell {
     private String textValue = null;
 
     @Nullable
-    OdCell withCell(@Nonnull Cell<SpreadSheet> cell) {
+    OdCell withCell(@NonNull Cell<SpreadSheet> cell) {
         this.cell = cell;
         ODValueType valueType = cell.getValueType();
         this.textValue = null;

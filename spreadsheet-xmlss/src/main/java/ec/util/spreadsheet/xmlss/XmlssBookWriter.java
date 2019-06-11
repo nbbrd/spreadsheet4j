@@ -23,10 +23,10 @@ import ioutil.Stax;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -37,12 +37,12 @@ final class XmlssBookWriter {
     private final XMLOutputFactory xof;
     private final Charset charset;
 
-    public XmlssBookWriter(@Nonnull XMLOutputFactory xof, @Nonnull Charset charset) {
+    public XmlssBookWriter(@NonNull XMLOutputFactory xof, @NonNull Charset charset) {
         this.xof = xof;
         this.charset = charset;
     }
 
-    public void write(@Nonnull OutputStream stream, @Nonnull Book book) throws IOException {
+    public void write(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         Stax.StreamFormatter
                 .<Book>builder()
                 .factory(() -> xof)

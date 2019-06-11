@@ -22,8 +22,6 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.UnsupportedFileFormatException;
@@ -36,6 +34,8 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -44,8 +44,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class PoiBook extends Book {
 
-    @Nonnull
-    public static PoiBook create(@Nonnull File file) throws IOException {
+    @NonNull
+    public static PoiBook create(@NonNull File file) throws IOException {
         try {
             return new PoiBook(new XSSFWorkbook(OPCPackage.open(file.getPath(), PackageAccess.READ)));
         } catch (OpenXML4JException | OpenXML4JRuntimeException | UnsupportedFileFormatException ex) {
@@ -55,8 +55,8 @@ final class PoiBook extends Book {
         }
     }
 
-    @Nonnull
-    public static PoiBook create(@Nonnull InputStream stream) throws IOException {
+    @NonNull
+    public static PoiBook create(@NonNull InputStream stream) throws IOException {
         try {
             return new PoiBook(new XSSFWorkbook(OPCPackage.open(stream)));
         } catch (OpenXML4JException | OpenXML4JRuntimeException | UnsupportedFileFormatException ex) {
@@ -66,8 +66,8 @@ final class PoiBook extends Book {
         }
     }
 
-    @Nonnull
-    public static PoiBook createClassic(@Nonnull File file) throws IOException {
+    @NonNull
+    public static PoiBook createClassic(@NonNull File file) throws IOException {
         try {
             return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(file)));
         } catch (NotOLE2FileException | UnsupportedFileFormatException ex) {
@@ -77,8 +77,8 @@ final class PoiBook extends Book {
         }
     }
 
-    @Nonnull
-    public static PoiBook createClassic(@Nonnull InputStream stream) throws IOException {
+    @NonNull
+    public static PoiBook createClassic(@NonNull InputStream stream) throws IOException {
         try {
             return new PoiBook(new HSSFWorkbook(new POIFSFileSystem(stream)));
         } catch (NotOLE2FileException | UnsupportedFileFormatException ex) {
@@ -105,7 +105,7 @@ final class PoiBook extends Book {
     }
 
     @Override
-    public String getSheetName(@Nonnegative int index) {
+    public String getSheetName(@NonNegative int index) {
         try {
             return workbook.getSheetName(index);
         } catch (IllegalArgumentException ex) {

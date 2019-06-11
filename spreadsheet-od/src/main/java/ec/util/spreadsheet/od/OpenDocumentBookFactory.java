@@ -27,8 +27,8 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 import javax.swing.table.DefaultTableModel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.openide.util.lookup.ServiceProvider;
@@ -101,8 +101,8 @@ public class OpenDocumentBookFactory extends Book.Factory {
         return result;
     }
 
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws IOException {
+    @NonNull
+    private static File checkFile(@NonNull File file) throws IOException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

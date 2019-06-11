@@ -28,8 +28,8 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -80,8 +80,8 @@ public class ExcelClassicBookFactory extends Book.Factory {
         target.write(stream);
     }
 
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws FileSystemException {
+    @NonNull
+    private static File checkFile(@NonNull File file) throws FileSystemException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

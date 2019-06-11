@@ -22,7 +22,7 @@ import ec.util.spreadsheet.helpers.ArraySheet;
 import ec.util.spreadsheet.helpers.CellRefHelper;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 
@@ -84,10 +84,10 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
 
     private interface ExtCallback extends XlsxValueFactory.Callback {
 
-        @Nonnull
-        ExtCallback moveTo(@Nonnull String ref);
+        @NonNull
+        ExtCallback moveTo(@NonNull String ref);
 
-        @Nonnull
+        @NonNull
         Sheet build();
     }
 

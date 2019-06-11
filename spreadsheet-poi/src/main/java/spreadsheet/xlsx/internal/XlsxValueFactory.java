@@ -22,8 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.function.IntPredicate;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import spreadsheet.xlsx.XlsxDateSystem;
 
 /**
@@ -84,12 +84,12 @@ final class XlsxValueFactory {
 
     interface Parser {
 
-        void parse(@Nonnull Callback callback, @Nonnull CharSequence rawValue);
+        void parse(@NonNull Callback callback, @NonNull CharSequence rawValue);
     }
 
     interface ParserWithStyle {
 
-        void parse(@Nonnull Callback callback, @Nonnull CharSequence rawValue, int styleIndex);
+        void parse(@NonNull Callback callback, @NonNull CharSequence rawValue, int styleIndex);
     }
 
     @lombok.AllArgsConstructor
@@ -178,7 +178,7 @@ final class XlsxValueFactory {
         return NULL_STYLE_INDEX;
     }
 
-    public static boolean isStyleRequired(@Nonnull XlsxDataType dataType) {
+    public static boolean isStyleRequired(@NonNull XlsxDataType dataType) {
         switch (dataType) {
             case UNDEFINED:
             case NUMBER:

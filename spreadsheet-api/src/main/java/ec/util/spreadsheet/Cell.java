@@ -17,7 +17,7 @@
 package ec.util.spreadsheet;
 
 import java.util.Date;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Facade that represents <b>a cell in a spreadsheet</b>.
@@ -45,7 +45,7 @@ public abstract class Cell {
      * @throws UnsupportedOperationException if this cell does not contain a
      * string
      */
-    @Nonnull
+    @NonNull
     public String getString() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -57,7 +57,7 @@ public abstract class Cell {
      * @throws UnsupportedOperationException if this cell does not contain a
      * date
      */
-    @Nonnull
+    @NonNull
     public Date getDate() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -69,7 +69,7 @@ public abstract class Cell {
      * @throws UnsupportedOperationException if this cell does not contain a
      * number
      */
-    @Nonnull
+    @NonNull
     public Number getNumber() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -107,7 +107,7 @@ public abstract class Cell {
      * @return a non-null type
      * @since 2.2.0
      */
-    @Nonnull
+    @NonNull
     public Type getType() {
         if (isDate()) {
             return Type.DATE;
@@ -127,7 +127,7 @@ public abstract class Cell {
      * @return a value if available, null otherwise
      * @since 2.2.0
      */
-    @Nonnull
+    @NonNull
     public Object getValue() {
         switch (getType()) {
             case DATE:

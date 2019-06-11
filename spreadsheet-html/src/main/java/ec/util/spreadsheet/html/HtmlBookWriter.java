@@ -34,10 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -54,7 +54,7 @@ final class HtmlBookWriter {
     private NumberFormat numberFormat;
     private Charset charset;
 
-    HtmlBookWriter(@Nonnull XMLOutputFactory xof) {
+    HtmlBookWriter(@NonNull XMLOutputFactory xof) {
         this.xof = Objects.requireNonNull(xof);
         this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         this.numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
@@ -64,29 +64,29 @@ final class HtmlBookWriter {
     }
 
     @Deprecated
-    public void setDateFormat(@Nonnull DateFormat dateFormat) {
+    public void setDateFormat(@NonNull DateFormat dateFormat) {
         this.dateFormat = Objects.requireNonNull(dateFormat);
     }
 
     @Deprecated
-    public void setNumberFormat(@Nonnull NumberFormat numberFormat) {
+    public void setNumberFormat(@NonNull NumberFormat numberFormat) {
         this.numberFormat = Objects.requireNonNull(numberFormat);
     }
 
-    public void setCharset(@Nonnull Charset charset) {
+    public void setCharset(@NonNull Charset charset) {
         this.charset = Objects.requireNonNull(charset);
     }
 
-    public void write(@Nonnull Book book, @Nonnull OutputStream stream) throws IOException {
+    public void write(@NonNull Book book, @NonNull OutputStream stream) throws IOException {
         getFormatter().formatStream(book, stream);
     }
 
-    public void write(@Nonnull Book book, @Nonnull Writer writer) throws IOException {
+    public void write(@NonNull Book book, @NonNull Writer writer) throws IOException {
         getFormatter().formatWriter(book, writer);
     }
 
-    @Nonnull
-    public String writeToString(@Nonnull Book book) throws IOException {
+    @NonNull
+    public String writeToString(@NonNull Book book) throws IOException {
         return getFormatter().formatToString(book);
     }
 
