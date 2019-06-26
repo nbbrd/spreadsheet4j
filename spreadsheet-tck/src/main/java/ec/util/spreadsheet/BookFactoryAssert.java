@@ -60,9 +60,12 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
+    private static final File INVALID_PATH = new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml");
+
     private static void assertCompliance(SoftAssertions s, Book.Factory factory, File valid, Optional<File> invalid) throws IOException {
         s.assertThat(factory.getName()).isNotNull();
         s.assertThat(factory.accept(valid)).isTrue();
+        s.assertThat(factory.accept(INVALID_PATH)).isFalse();
         if (invalid.isPresent()) {
             // FIXME: must add better invalid definition
 //            s.assertThat(factory.accept(invalid.get())).isTrue();
@@ -81,8 +84,17 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
             assertLoadEmpty(s, factory);
             assertLoadMissing(s, factory);
             assertLoadDir(s, factory);
+            s.assertThatThrownBy(() -> factory.load(INVALID_PATH))
+                    .as(msg(factory, "load(invalidPath)", IOException.class))
+                    .isInstanceOf(IOException.class);
         } else {
             assertLoadUnsupported(s, factory, valid);
+        }
+
+        if (factory.canStore()) {
+            s.assertThatThrownBy(() -> factory.store(INVALID_PATH, ArrayBook.builder().build()))
+                    .as(msg(factory, "store(invalidPath, book)", IOException.class))
+                    .isInstanceOf(IOException.class);
         }
 
         if (factory.canLoad() && factory.canStore()) {
