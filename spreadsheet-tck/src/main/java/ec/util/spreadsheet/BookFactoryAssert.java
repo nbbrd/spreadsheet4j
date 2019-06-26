@@ -60,7 +60,7 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
-    private static final File INVALID_PATH = new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml");
+    private static final File INVALID_PATH = new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml\0");
 
     private static void assertCompliance(SoftAssertions s, Book.Factory factory, File valid, Optional<File> invalid) throws IOException {
         s.assertThat(factory.getName()).isNotNull();

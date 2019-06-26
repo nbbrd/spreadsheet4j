@@ -145,6 +145,6 @@ public class FileHelperTest {
             throw new IOException();
         })).isFalse();
 
-        assertThat(FileHelper.accept(new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml"), path -> true)).isFalse();
+        assertThat(FileHelper.accept(new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml\0"), path -> true)).isFalse();
     }
 }
