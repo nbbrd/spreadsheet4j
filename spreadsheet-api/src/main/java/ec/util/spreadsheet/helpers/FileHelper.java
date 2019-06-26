@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
@@ -78,6 +80,14 @@ public class FileHelper {
                 return hasMagicNumber(stream, header);
             }
         } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    public boolean accept(@NonNull File file, DirectoryStream.@NonNull Filter<Path> delegate) {
+        try {
+            return delegate.accept(file.toPath());
+        } catch (IOException | InvalidPathException ex) {
             return false;
         }
     }

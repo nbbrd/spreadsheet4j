@@ -131,4 +131,20 @@ public class FileHelperTest {
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber((Path) null, magic));
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber(file, null));
     }
+
+    @Test
+    public void testAccept() {
+        assertThatNullPointerException().isThrownBy(() -> FileHelper.accept(null, path -> false));
+        assertThatNullPointerException().isThrownBy(() -> FileHelper.accept(new File(""), null));
+
+        assertThat(FileHelper.accept(new File("hello.txt"), path -> true)).isTrue();
+
+        assertThat(FileHelper.accept(new File("hello.txt"), path -> false)).isFalse();
+
+        assertThat(FileHelper.accept(new File("hello.txt"), path -> {
+            throw new IOException();
+        })).isFalse();
+
+        assertThat(FileHelper.accept(new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml\0"), path -> true)).isFalse();
+    }
 }

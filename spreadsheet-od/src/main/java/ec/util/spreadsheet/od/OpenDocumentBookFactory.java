@@ -47,11 +47,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        try {
-            return accept(file.toPath());
-        } catch (IOException ex) {
-            return false;
-        }
+        return FileHelper.accept(file, this::accept);
     }
 
     @Override
