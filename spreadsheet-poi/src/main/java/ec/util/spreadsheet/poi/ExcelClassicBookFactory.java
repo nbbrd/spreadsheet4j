@@ -28,15 +28,15 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import nbbrd.service.ServiceProvider;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override

@@ -28,16 +28,16 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
+import nbbrd.service.ServiceProvider;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.openide.util.lookup.ServiceProvider;
 import spreadsheet.xlsx.XlsxReader;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class ExcelBookFactory extends Book.Factory {
 
     private static final boolean USE_SHARED_STRINGS = true;

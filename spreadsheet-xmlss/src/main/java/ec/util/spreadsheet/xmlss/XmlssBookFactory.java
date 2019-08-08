@@ -30,13 +30,13 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class XmlssBookFactory extends Book.Factory {
 
     private final XMLOutputFactory xof;
