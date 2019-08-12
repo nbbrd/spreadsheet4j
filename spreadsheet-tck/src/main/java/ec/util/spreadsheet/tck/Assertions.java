@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package ec.util.spreadsheet;
+package ec.util.spreadsheet.tck;
 
 /**
  * Entry point for assertions of different data types. Each method in this class
@@ -24,46 +24,46 @@ public class Assertions {
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.BookAssert}</code>.
+     * <code>{@link ec.util.spreadsheet.tck.BookAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.BookAssert assertThat(ec.util.spreadsheet.Book actual) {
-        return new ec.util.spreadsheet.BookAssert(actual);
+    public static ec.util.spreadsheet.tck.BookAssert assertThat(ec.util.spreadsheet.Book actual) {
+        return new ec.util.spreadsheet.tck.BookAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.BookFactoryAssert}</code>.
+     * <code>{@link ec.util.spreadsheet.tck.BookFactoryAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.BookFactoryAssert assertThat(ec.util.spreadsheet.Book.Factory actual) {
-        return new ec.util.spreadsheet.BookFactoryAssert(actual);
+    public static ec.util.spreadsheet.tck.BookFactoryAssert assertThat(ec.util.spreadsheet.Book.Factory actual) {
+        return new ec.util.spreadsheet.tck.BookFactoryAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.CellAssert}</code>.
+     * <code>{@link ec.util.spreadsheet.tck.CellAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.CellAssert assertThat(ec.util.spreadsheet.Cell actual) {
-        return new ec.util.spreadsheet.CellAssert(actual);
+    public static ec.util.spreadsheet.tck.CellAssert assertThat(ec.util.spreadsheet.Cell actual) {
+        return new ec.util.spreadsheet.tck.CellAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.SheetAssert}</code>.
+     * <code>{@link ec.util.spreadsheet.tck.SheetAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.SheetAssert assertThat(ec.util.spreadsheet.Sheet actual) {
-        return new ec.util.spreadsheet.SheetAssert(actual);
+    public static ec.util.spreadsheet.tck.SheetAssert assertThat(ec.util.spreadsheet.Sheet actual) {
+        return new ec.util.spreadsheet.tck.SheetAssert(actual);
     }
 
     /**

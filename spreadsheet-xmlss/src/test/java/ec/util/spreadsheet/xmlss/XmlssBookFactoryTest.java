@@ -17,7 +17,7 @@
 package ec.util.spreadsheet.xmlss;
 
 import _test.Top5;
-import ec.util.spreadsheet.BookFactoryAssert;
+import ec.util.spreadsheet.tck.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;

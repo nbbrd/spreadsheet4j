@@ -11,7 +11,7 @@ matrix:
 
 env:
   global:
-    - DEPLOY_JDK=openjdk8
+    - DEPLOY_JDK=openjdk11
     - DEPLOY_REPO=nbbrd/spreadsheet4j
 
 deploy:

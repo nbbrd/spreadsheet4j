@@ -17,7 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import spreadsheet.xlsx.XlsxDataType;
-import ec.util.spreadsheet.SheetAssert;
+import ec.util.spreadsheet.tck.SheetAssert;
 import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;

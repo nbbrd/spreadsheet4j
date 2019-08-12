@@ -14,8 +14,9 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package ec.util.spreadsheet;
+package ec.util.spreadsheet.tck;
 
+import ec.util.spreadsheet.Book;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;

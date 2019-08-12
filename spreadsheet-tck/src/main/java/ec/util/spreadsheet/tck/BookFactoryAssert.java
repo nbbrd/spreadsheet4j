@@ -14,9 +14,10 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package ec.util.spreadsheet;
+package ec.util.spreadsheet.tck;
 
-import static ec.util.spreadsheet.Assertions.msg;
+import ec.util.spreadsheet.Book;
+import static ec.util.spreadsheet.tck.Assertions.msg;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

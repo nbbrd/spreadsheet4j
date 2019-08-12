@@ -16,7 +16,7 @@
  */
 package ec.util.spreadsheet.html;
 
-import static ec.util.spreadsheet.Assertions.assertThat;
+import static ec.util.spreadsheet.tck.Assertions.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

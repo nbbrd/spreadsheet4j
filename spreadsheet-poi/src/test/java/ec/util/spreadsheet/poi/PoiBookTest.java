@@ -17,7 +17,7 @@
 package ec.util.spreadsheet.poi;
 
 import ec.util.spreadsheet.Book;
-import static ec.util.spreadsheet.SheetAssert.assertThat;
+import static ec.util.spreadsheet.tck.SheetAssert.assertThat;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 import org.assertj.core.util.DateUtil;

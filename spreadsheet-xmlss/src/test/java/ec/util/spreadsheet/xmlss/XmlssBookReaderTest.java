@@ -17,7 +17,7 @@
 package ec.util.spreadsheet.xmlss;
 
 import _test.Top5;
-import ec.util.spreadsheet.BookAssert;
+import ec.util.spreadsheet.tck.BookAssert;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ioutil.IO;

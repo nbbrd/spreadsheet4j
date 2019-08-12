@@ -16,7 +16,7 @@
  */
 package spreadsheet.xlsx.internal;
 
-import ec.util.spreadsheet.SheetAssert;
+import ec.util.spreadsheet.tck.SheetAssert;
 import ioutil.IO;
 import ioutil.Sax;
 import java.io.EOFException;
