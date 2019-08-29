@@ -33,6 +33,9 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
+import nbbrd.service.Mutability;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -138,6 +141,12 @@ public abstract class Book implements Closeable {
     /**
      * Factory used to store/load books in/from spreadsheets.
      */
+    @ServiceDefinition(
+            singleton = true,
+            quantifier = Quantifier.MULTIPLE,
+            mutability = Mutability.CONCURRENT,
+            loaderName = "ec.util.spreadsheet.BookFactoryLoader"
+    )
     public abstract static class Factory implements FileFilter, DirectoryStream.Filter<Path> {
 
         /**

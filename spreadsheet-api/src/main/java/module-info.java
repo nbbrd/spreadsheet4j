@@ -20,7 +20,10 @@ module nbbrd.spreadsheet.api {
     requires static org.checkerframework.checker.qual;
     requires static jcip.annotations;
     requires static lombok;
-    
+    requires static nbbrd.service;
+
     exports ec.util.spreadsheet;
     exports ec.util.spreadsheet.helpers;
+
+    uses ec.util.spreadsheet.Book.Factory;
 }
