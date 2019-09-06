@@ -16,16 +16,8 @@
  */
 package ec.util.spreadsheet.od;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.jopendocument.dom.ODValueType;
-import static org.jopendocument.dom.ODValueType.DATE;
-import static org.jopendocument.dom.ODValueType.FLOAT;
-import static org.jopendocument.dom.ODValueType.STRING;
-import org.jopendocument.dom.spreadsheet.Cell;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 /**
  *
@@ -34,78 +26,58 @@ import org.jopendocument.dom.spreadsheet.SpreadSheet;
 //@FlyweightPattern
 final class OdCell extends ec.util.spreadsheet.Cell {
 
-    private Cell<SpreadSheet> cell = null;
-    private Type type = null;
-    private String textValue = null;
+    private transient Object value = null;
 
-    @Nullable
-    OdCell withCell(@NonNull Cell<SpreadSheet> cell) {
-        this.cell = cell;
-        ODValueType valueType = cell.getValueType();
-        this.textValue = null;
-        if (valueType != null) {
-            switch (valueType) {
-                case DATE:
-                    type = Type.DATE;
-                    return this;
-                case FLOAT:
-                    type = Type.NUMBER;
-                    return this;
-                case STRING:
-                    type = Type.STRING;
-                    return this;
-                default:
-                    return null;
-            }
-        } else {
-            // a null valueType might still contains a string !
-            textValue = cell.getTextValue();
-            type = Type.STRING;
-            return textValue.isEmpty() ? null : this;
+    @NonNull
+    public OdCell withValue(@NonNull Object value) {
+        this.value = value;
+        return this;
+    }
+
+    @Override
+    public boolean isDate() {
+        return value instanceof Date;
+    }
+
+    @Override
+    public boolean isNumber() {
+        return value instanceof Number;
+    }
+
+    @Override
+    public boolean isString() {
+        return value instanceof String;
+    }
+
+    @Override
+    public Date getDate() {
+        try {
+            return (Date) value;
+        } catch (ClassCastException ex) {
+            throw new UnsupportedOperationException(ex);
+        }
+    }
+
+    @Override
+    public Number getNumber() {
+        try {
+            return (Number) value;
+        } catch (ClassCastException ex) {
+            throw new UnsupportedOperationException(ex);
         }
     }
 
     @Override
     public String getString() {
-        if (!isString()) {
-            throw new UnsupportedOperationException();
+        try {
+            return (String) value;
+        } catch (ClassCastException ex) {
+            throw new UnsupportedOperationException(ex);
         }
-        return textValue != null ? textValue : (String) cell.getValue();
     }
 
     @Override
-    public Date getDate() {
-        if (!isDate()) {
-            throw new UnsupportedOperationException();
-        }
-        return (Date) cell.getValue();
-    }
-
-    @Override
-    public Number getNumber() {
-        return getDouble();
-    }
-
-    @Override
-    public boolean isNumber() {
-        return type == Type.NUMBER;
-    }
-
-    @Override
-    public boolean isString() {
-        return type == Type.STRING;
-    }
-
-    @Override
-    public boolean isDate() {
-        return type == Type.DATE;
-    }
-
-    @Override
-    public double getDouble() throws UnsupportedOperationException {
-        if (!isNumber()) {
-            throw new UnsupportedOperationException();
-        }
-        return ((BigDecimal) cell.getValue()).doubleValue();
+    public String toString() {
+        return value != null ? value.toString() : "Null";
     }
 }

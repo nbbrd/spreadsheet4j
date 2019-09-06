@@ -10,20 +10,6 @@
 
     <artifactId>spreadsheet-od</artifactId>
 
-    <properties>
-        <jopendocument.version>1.2</jopendocument.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jopendocument</groupId>
-                <artifactId>jOpenDocument</artifactId>
-                <version>${jopendocument.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -41,6 +27,7 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        
         <!-- compile and runtime -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
@@ -48,9 +35,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jopendocument</groupId>
-            <artifactId>jOpenDocument</artifactId>
+            <groupId>com.github.miachm.sods</groupId>
+            <artifactId>SODS</artifactId>
+            <version>1.1.1</version>
         </dependency>
+
         <!-- test only -->
         <dependency>
             <groupId>junit</groupId>

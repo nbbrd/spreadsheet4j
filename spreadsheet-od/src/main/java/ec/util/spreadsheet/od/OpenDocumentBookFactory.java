@@ -16,6 +16,9 @@
  */
 package ec.util.spreadsheet.od;
 
+import com.github.miachm.sods.Range;
+import com.github.miachm.sods.Sheet;
+import com.github.miachm.sods.SpreadSheet;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
 import java.io.EOFException;
@@ -27,11 +30,8 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.swing.table.DefaultTableModel;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 /**
  *
@@ -59,7 +59,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
     @Override
     public Book load(File file) throws IOException {
         checkFile(file);
-        return new OdBook(SpreadSheet.create(new ODPackage(file)));
+        return new OdBook(new SpreadSheet(file));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
         if (stream.available() == 0) {
             throw new EOFException();
         }
-        return new OdBook(SpreadSheet.create(new ODPackage(stream)));
+        return new OdBook(new SpreadSheet(stream));
     }
 
     @Override
@@ -76,24 +76,40 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
-        toOdSpreadSheet(book).getPackage().save(stream);
+    public void store(File file, Book book) throws IOException {
+        toSpreadSheet(book).save(file);
     }
 
     @Override
-    public void store(File file, Book book) throws IOException {
-        toOdSpreadSheet(book).saveAs(file);
+    public void store(OutputStream stream, Book book) throws IOException {
+        toSpreadSheet(book).save(stream);
     }
 
-    private static SpreadSheet toOdSpreadSheet(Book book) throws IOException {
-        SpreadSheet result = SpreadSheet.createEmpty(new DefaultTableModel());
-        book.forEach((sheet, index) -> {
-            org.jopendocument.dom.spreadsheet.Sheet odSheet = result.addSheet(sheet.getName());
-            odSheet.setRowCount(sheet.getRowCount());
-            odSheet.setColumnCount(sheet.getColumnCount());
-            sheet.forEachValue((i, j, v) -> odSheet.setValueAt(v, j, i));
-        });
-        result.getSheet(0).detach();
+    @Override
+    public boolean isSupportedDataType(Class<?> type) {
+        return Number.class.isAssignableFrom(type)
+                || String.class.isAssignableFrom(type);
+    }
+
+    private static SpreadSheet toSpreadSheet(Book book) throws IOException {
+        SpreadSheet result = new SpreadSheet();
+        for (int s = 0; s < book.getSheetCount(); s++) {
+            result.appendSheet(toSheet(book.getSheet(s)));
+        }
+        return result;
+    }
+
+    private static Sheet toSheet(ec.util.spreadsheet.Sheet sheet) {
+        Sheet result = new Sheet(sheet.getName());
+        result.deleteRow(0);
+        result.deleteColumn(0);
+
+        result.appendRows(sheet.getRowCount());
+        result.appendColumns(sheet.getColumnCount());
+
+        Range data = result.getDataRange();
+        sheet.forEachValue((i, j, value) -> data.getCell(i, j).setValue(value));
+
         return result;
     }
 

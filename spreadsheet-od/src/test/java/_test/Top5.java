@@ -56,7 +56,8 @@ public class Top5 {
                 .hasColumnCount(7)
                 .hasCellValue(0, 0, null)
                 .hasCellValue(0, 1, "IE")
-                .hasCellValue(1, 0, DateUtil.parse("2008-07-01"))
+//                .hasCellValue(1, 0, DateUtil.parse("2008-07-01"))
+                .hasCellValue(1, 0, "01/07/2008")
                 .hasCellValue(41, 6, 0.93);
     }
 }
