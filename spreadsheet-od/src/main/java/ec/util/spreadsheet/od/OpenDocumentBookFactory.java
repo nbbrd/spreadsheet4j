@@ -16,6 +16,7 @@
  */
 package ec.util.spreadsheet.od;
 
+import com.github.miachm.sods.NotAnOdsException;
 import com.github.miachm.sods.Range;
 import com.github.miachm.sods.Sheet;
 import com.github.miachm.sods.SpreadSheet;
@@ -61,7 +62,11 @@ public class OpenDocumentBookFactory extends Book.Factory {
     @Override
     public Book load(File file) throws IOException {
         checkFile(file);
-        return new OdBook(new SpreadSheet(file));
+        try {
+            return new OdBook(new SpreadSheet(file));
+        } catch (NotAnOdsException ex) {
+            throw new IOException(file.getPath(), ex);
+        }
     }
 
     @Override
@@ -69,7 +74,11 @@ public class OpenDocumentBookFactory extends Book.Factory {
         if (stream.available() == 0) {
             throw new EOFException();
         }
-        return new OdBook(new SpreadSheet(stream));
+        try {
+            return new OdBook(new SpreadSheet(stream));
+        } catch (NotAnOdsException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override

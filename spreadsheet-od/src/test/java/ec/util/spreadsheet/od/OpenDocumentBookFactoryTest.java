@@ -55,10 +55,7 @@ public class OpenDocumentBookFactoryTest {
 
     @Test
     public void testCompliance() throws IOException {
-        // FIXME: find a way to detect invalid files
-//        File invalid = temp.newFile("invalid.ods");
-//        Files.write(invalid.toPath(), Arrays.asList("..."));
-        BookFactoryAssert.assertThat(new OpenDocumentBookFactory()).isCompliant(VALID);
+        BookFactoryAssert.assertThat(new OpenDocumentBookFactory()).isCompliant(VALID, INVALID_FORMAT);
     }
 
     @Test
@@ -74,7 +71,7 @@ public class OpenDocumentBookFactoryTest {
         try (Book book = x.load(VALID_WITH_TAIL)) {
             Top5.assertTop5Book(book);
         }
-//        assertThatIOException().isThrownBy(() -> x.load(NOT_ODS));
+        assertThatIOException().isThrownBy(() -> x.load(INVALID_FORMAT));
         assertThatIOException().isThrownBy(() -> x.load(EMPTY));
         assertThatIOException().isThrownBy(() -> x.load(MISSING));
     }
@@ -92,7 +89,7 @@ public class OpenDocumentBookFactoryTest {
         try (Book book = Top5.VALID_WITH_TAIL.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
-//        assertThatIOException().isThrownBy(() -> doLoad(x, Top5.NOT_ODS::stream));
+        assertThatIOException().isThrownBy(() -> Top5.INVALID_FORMAT.loadStream(x));
         assertThatIOException().isThrownBy(() -> Top5.EMPTY.loadStream(x));
     }
 
