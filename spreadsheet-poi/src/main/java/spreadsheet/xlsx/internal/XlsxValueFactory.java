@@ -17,8 +17,11 @@
 package spreadsheet.xlsx.internal;
 
 import spreadsheet.xlsx.XlsxDataType;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.function.IntPredicate;
@@ -52,7 +55,7 @@ final class XlsxValueFactory {
     XlsxValueFactory(XlsxDateSystem dateSystem, IntPredicate dateFormats) {
         this.numberOrDate = new NumberOrDateParser(dateSystem, dateFormats, new GregorianCalendar());
         this.sharedString = new SharedStringParser();
-        this.date = new DateParser(new SimpleDateFormat());
+        this.date = new DateParser();
     }
 
     public void parse(Callback callback, CharSequence value, XlsxDataType dataType, int styleIndex) {
@@ -145,22 +148,35 @@ final class XlsxValueFactory {
     static final class DateParser implements Parser {
 
         // http://openxmldeveloper.org/blog/b/openxmldeveloper/archive/2012/03/08/dates-in-strict-spreadsheetml-files.aspx
-        private static final String ISO_DATE_FORMAT = "yyyy-MM-dd";
-
-        private final SimpleDateFormat isoDateFormat;
-
-        public DateParser(SimpleDateFormat isoDateFormat) {
-            this.isoDateFormat = isoDateFormat;
-            isoDateFormat.applyPattern(ISO_DATE_FORMAT);
-        }
+        private final ZoneId zoneId = ZoneId.systemDefault();
 
         @Override
         public void parse(Callback callback, CharSequence rawValue) {
             try {
-                callback.onDate(isoDateFormat.parse(rawValue.toString()).getTime());
-            } catch (ParseException ex) {
-                callback.onNull();
+                callback.onDate(parseLocalDateTime(rawValue));
+            } catch (DateTimeParseException dateTimeEx) {
+                try {
+                    callback.onDate(parseLocalDate(rawValue));
+                } catch (DateTimeParseException dateEx) {
+                    callback.onNull();
+                }
             }
+        }
+
+        private long parseLocalDateTime(CharSequence rawValue) {
+            return DateTimeFormatter.ISO_LOCAL_DATE_TIME
+                    .parse(rawValue, LocalDateTime::from)
+                    .atZone(zoneId)
+                    .toInstant()
+                    .toEpochMilli();
+        }
+
+        private long parseLocalDate(CharSequence rawValue) {
+            return DateTimeFormatter.ISO_LOCAL_DATE
+                    .parse(rawValue, LocalDate::from)
+                    .atStartOfDay(zoneId)
+                    .toInstant()
+                    .toEpochMilli();
         }
     }
 
