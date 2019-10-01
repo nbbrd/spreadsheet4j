@@ -30,6 +30,8 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.time.ZoneId;
+import java.util.Date;
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -85,12 +87,6 @@ public class OpenDocumentBookFactory extends Book.Factory {
         toSpreadSheet(book).save(stream);
     }
 
-    @Override
-    public boolean isSupportedDataType(Class<?> type) {
-        return Number.class.isAssignableFrom(type)
-                || String.class.isAssignableFrom(type);
-    }
-
     private static SpreadSheet toSpreadSheet(Book book) throws IOException {
         SpreadSheet result = new SpreadSheet();
         for (int s = 0; s < book.getSheetCount(); s++) {
@@ -108,9 +104,16 @@ public class OpenDocumentBookFactory extends Book.Factory {
         result.appendColumns(sheet.getColumnCount());
 
         Range data = result.getDataRange();
-        sheet.forEachValue((i, j, value) -> data.getCell(i, j).setValue(value));
+        sheet.forEachValue((i, j, value) -> data.getCell(i, j).setValue(toCellValue(value)));
 
         return result;
+    }
+
+    private static Object toCellValue(Object obj) {
+        if (obj instanceof Date) {
+            return ((Date) obj).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        return obj;
     }
 
     @NonNull

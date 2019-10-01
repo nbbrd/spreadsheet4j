@@ -16,8 +16,11 @@
  */
 package ec.util.spreadsheet.od;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -26,17 +29,24 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 //@FlyweightPattern
 final class OdCell extends ec.util.spreadsheet.Cell {
 
+    private final ZoneId zoneId = ZoneId.systemDefault();
     private transient Object value = null;
 
-    @NonNull
-    public OdCell withValue(@NonNull Object value) {
+    private boolean isValid(Object value) {
+        return value instanceof LocalDateTime
+                || value instanceof Number
+                || value instanceof String;
+    }
+
+    @Nullable
+    OdCell withValue(@NonNull Object value) {
         this.value = value;
-        return this;
+        return isValid(value) ? this : null;
     }
 
     @Override
     public boolean isDate() {
-        return value instanceof Date;
+        return value instanceof LocalDateTime;
     }
 
     @Override
@@ -52,7 +62,7 @@ final class OdCell extends ec.util.spreadsheet.Cell {
     @Override
     public Date getDate() {
         try {
-            return (Date) value;
+            return Date.from(((LocalDateTime) value).atZone(zoneId).toInstant());
         } catch (ClassCastException ex) {
             throw new UnsupportedOperationException(ex);
         }
