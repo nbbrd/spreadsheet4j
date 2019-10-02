@@ -283,7 +283,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
                     stringBuilder.disable();
                     break;
                 case SHARED_STRING_ITEM_TAG:
-                    visitor.onSharedString(stringBuilder.build().toString());
+                    visitor.onSharedString(stringBuilder.build());
                     break;
             }
         }
@@ -353,10 +353,11 @@ public final class SaxEntryParser implements XlsxEntryParser {
     private static final class SaxStringBuilder {
 
         private boolean enabled = false;
-        private char[] content;
+        private char[] buffer = new char[64];
+        private int bufferLength = 0;
 
         public SaxStringBuilder clear() {
-            content = null;
+            bufferLength = 0;
             return this;
         }
 
@@ -374,48 +375,20 @@ public final class SaxEntryParser implements XlsxEntryParser {
             return this;
         }
 
-        public CharSequence build() {
-            return content != null ? new CharWrapper(content) : "";
+        public String build() {
+            return new String(buffer, 0, bufferLength);
         }
 
         public SaxStringBuilder appendIfNeeded(char[] ch, int start, int length) {
             if (isEnabled()) {
-                if (content == null) {
-                    content = Arrays.copyOfRange(ch, start, start + length);
-                } else {
-                    int oldLength = content.length;
-                    content = Arrays.copyOf(content, oldLength + length);
-                    System.arraycopy(ch, start, content, oldLength, length);
+                int expectedLength = bufferLength + length;
+                if (expectedLength > buffer.length) {
+                    buffer = Arrays.copyOf(buffer, expectedLength);
                 }
+                System.arraycopy(ch, start, buffer, bufferLength, length);
+                bufferLength = expectedLength;
             }
             return this;
-        }
-    }
-
-    @lombok.AllArgsConstructor
-    private static final class CharWrapper implements CharSequence {
-
-        @lombok.NonNull
-        private final char[] chars;
-
-        @Override
-        public int length() {
-            return chars.length;
-        }
-
-        @Override
-        public char charAt(int index) {
-            return chars[index];
-        }
-
-        @Override
-        public CharSequence subSequence(int start, int end) {
-            throw new RuntimeException();
-        }
-
-        @Override
-        public String toString() {
-            return new String(chars);
         }
     }
 
