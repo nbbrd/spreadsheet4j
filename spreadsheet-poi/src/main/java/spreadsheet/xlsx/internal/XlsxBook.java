@@ -18,8 +18,8 @@ package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
-import ioutil.IO;
-import ioutil.Sax;
+import internal.spreadsheet.ioutil.IO;
+import internal.spreadsheet.ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;

@@ -17,7 +17,7 @@
 package spreadsheet.xlsx;
 
 import ec.util.spreadsheet.Book;
-import ioutil.IO;
+import internal.spreadsheet.ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;

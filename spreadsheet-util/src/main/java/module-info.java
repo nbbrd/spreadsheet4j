@@ -15,15 +15,13 @@
  * limitations under the Licence.
  */
 
-module nbbrd.spreadsheet.xmlss {
+module nbbrd.spreadsheet.util {
 
-    requires static org.checkerframework.checker.qual;
-    requires static nbbrd.service;
-    requires static lombok;
+    requires java.logging;
+    requires transitive java.xml;
 
-    requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
-    
-    provides ec.util.spreadsheet.Book.Factory with
-            ec.util.spreadsheet.xmlss.XmlssBookFactory;
+    exports internal.spreadsheet.ioutil to
+            nbbrd.spreadsheet.html,
+            nbbrd.spreadsheet.poi,
+            nbbrd.spreadsheet.xmlss;
 }

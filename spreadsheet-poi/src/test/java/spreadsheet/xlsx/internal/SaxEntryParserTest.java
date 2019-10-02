@@ -16,9 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
+import _test.EmptyInputStream;
 import ec.util.spreadsheet.tck.SheetAssert;
-import ioutil.IO;
-import ioutil.Sax;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +30,8 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import _test.EmptyInputStream;
+import internal.spreadsheet.ioutil.IO;
+import internal.spreadsheet.ioutil.Sax;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**

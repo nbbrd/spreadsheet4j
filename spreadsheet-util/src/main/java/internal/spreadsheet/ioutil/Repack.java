@@ -14,16 +14,11 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
+package internal.spreadsheet.ioutil;
 
-module nbbrd.spreadsheet.xmlss {
-
-    requires static org.checkerframework.checker.qual;
-    requires static nbbrd.service;
-    requires static lombok;
-
-    requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
-    
-    provides ec.util.spreadsheet.Book.Factory with
-            ec.util.spreadsheet.xmlss.XmlssBookFactory;
+/**
+ *
+ * @author Philippe Charles
+ */
+class Repack {
 }

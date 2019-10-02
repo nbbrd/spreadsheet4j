@@ -25,6 +25,7 @@
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
         <module>spreadsheet-xmlss</module>
+        <module>spreadsheet-util</module>
     </modules>
     
     <dependencyManagement>
@@ -64,13 +65,6 @@
                 <artifactId>jmh-generator-annprocess</artifactId>
                 <version>1.21</version>
             </dependency>
-            
-            <!-- dependencies -->
-            <dependency>
-                <groupId>be.nbb.rd</groupId>
-                <artifactId>java-io-util</artifactId>
-                <version>0.0.4</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -99,6 +93,21 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>3.1.2</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <!--fix file encoding warning-->
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                            <!--fix lombok issue 'java.lang.module.ResolutionException: Module lombok does not read a module that exports org.mapstruct.ap.spi'-->
+                            <useModulePath>false</useModulePath>
+                            <!--fix shaded jar issue-->
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>spreadsheet-util/target/spreadsheet-util-${project.version}.jar</additionalClasspathElement>
+                            </additionalClasspathElements>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

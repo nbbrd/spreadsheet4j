@@ -17,12 +17,11 @@
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.helpers.ArrayBook;
+import internal.spreadsheet.ioutil.IO;
+import internal.spreadsheet.ioutil.Sax;
+import internal.spreadsheet.ioutil.Xml;
 import java.io.IOException;
 import java.io.InputStream;
-
-import ioutil.IO;
-import ioutil.Sax;
-import ioutil.Xml;
 import java.io.File;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.xml.sax.Attributes;

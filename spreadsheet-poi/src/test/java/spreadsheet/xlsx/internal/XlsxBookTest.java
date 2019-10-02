@@ -16,9 +16,9 @@
  */
 package spreadsheet.xlsx.internal;
 
+import _test.EmptyInputStream;
 import spreadsheet.xlsx.XlsxDataType;
 import ec.util.spreadsheet.tck.SheetAssert;
-import ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import _test.EmptyInputStream;
+import internal.spreadsheet.ioutil.IO;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**

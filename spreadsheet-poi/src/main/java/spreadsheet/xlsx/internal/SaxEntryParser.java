@@ -16,8 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
-import ioutil.IO;
-import ioutil.Sax;
+import internal.spreadsheet.ioutil.IO;
+import internal.spreadsheet.ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;

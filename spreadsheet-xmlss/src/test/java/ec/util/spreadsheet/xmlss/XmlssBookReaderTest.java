@@ -20,7 +20,7 @@ import _test.Top5;
 import ec.util.spreadsheet.tck.BookAssert;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
-import ioutil.IO;
+import internal.spreadsheet.ioutil.IO;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
