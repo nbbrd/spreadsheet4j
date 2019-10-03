@@ -17,10 +17,10 @@
 package _test;
 
 import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.BookAssert;
-import ec.util.spreadsheet.Sample;
+import ec.util.spreadsheet.tck.BookAssert;
+import ec.util.spreadsheet.tck.Sample;
 import ec.util.spreadsheet.Sheet;
-import ec.util.spreadsheet.SheetAssert;
+import ec.util.spreadsheet.tck.SheetAssert;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.atIndex;

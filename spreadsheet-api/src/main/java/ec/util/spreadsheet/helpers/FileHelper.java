@@ -20,11 +20,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Locale;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -47,12 +49,12 @@ public class FileHelper {
         }
     }
 
-    public boolean hasExtension(@Nonnull Path file, @Nonnull String... exts) {
+    public boolean hasExtension(@NonNull Path file, @NonNull String... exts) {
         String filename = file.getName(file.getNameCount() - 1).toString().toLowerCase(Locale.ROOT);
         return hasExtension(filename, exts);
     }
 
-    public boolean hasExtension(@Nonnull File file, @Nonnull String... exts) {
+    public boolean hasExtension(@NonNull File file, @NonNull String... exts) {
         String filename = file.getName().toLowerCase(Locale.ROOT);
         return hasExtension(filename, exts);
     }
@@ -62,7 +64,7 @@ public class FileHelper {
         return header.length == stream.read(actual) && Arrays.equals(actual, header);
     }
 
-    public boolean hasMagicNumber(@Nonnull Path file, @Nonnull byte... header) {
+    public boolean hasMagicNumber(@NonNull Path file, @NonNull byte... header) {
         try {
             try (InputStream stream = Files.newInputStream(file)) {
                 return hasMagicNumber(stream, header);
@@ -72,12 +74,20 @@ public class FileHelper {
         }
     }
 
-    public boolean hasMagicNumber(@Nonnull File file, @Nonnull byte... header) {
+    public boolean hasMagicNumber(@NonNull File file, @NonNull byte... header) {
         try {
             try (InputStream stream = new FileInputStream(file)) {
                 return hasMagicNumber(stream, header);
             }
         } catch (IOException ex) {
+            return false;
+        }
+    }
+
+    public boolean accept(@NonNull File file, DirectoryStream.@NonNull Filter<Path> delegate) {
+        try {
+            return delegate.accept(file.toPath());
+        } catch (IOException | InvalidPathException ex) {
             return false;
         }
     }

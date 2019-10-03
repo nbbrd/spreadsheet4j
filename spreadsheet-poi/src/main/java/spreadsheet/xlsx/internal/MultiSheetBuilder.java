@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -141,7 +141,7 @@ public final class MultiSheetBuilder implements XlsxSheetBuilder {
             this.size = 0;
         }
 
-        void put(@Nonnull String ref, @Nonnull CharSequence value, @Nonnull XlsxDataType dataType, int styleIndex) {
+        void put(@NonNull String ref, @NonNull CharSequence value, @NonNull XlsxDataType dataType, int styleIndex) {
             Object[] row = values[size];
             row[0] = ref;
             row[1] = value;

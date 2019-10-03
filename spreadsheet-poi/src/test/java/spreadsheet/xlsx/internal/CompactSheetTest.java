@@ -16,9 +16,9 @@
  */
 package spreadsheet.xlsx.internal;
 
-import ec.util.spreadsheet.CellAssert;
+import ec.util.spreadsheet.tck.CellAssert;
 import ec.util.spreadsheet.Sheet;
-import ec.util.spreadsheet.SheetAssert;
+import ec.util.spreadsheet.tck.SheetAssert;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;

@@ -17,12 +17,12 @@
 package spreadsheet.xlsx;
 
 import ec.util.spreadsheet.Book;
-import ioutil.IO;
+import internal.spreadsheet.ioutil.IO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.internal.DefaultNumberingFormat;
 import spreadsheet.xlsx.internal.SaxEntryParser;
 import spreadsheet.xlsx.internal.XlsxBook;
@@ -57,13 +57,13 @@ public final class XlsxReader {
         );
     }
 
-    @Nonnull
-    public Book read(@Nonnull Path file) throws IOException {
+    @NonNull
+    public Book read(@NonNull Path file) throws IOException {
         return createBookOrClose(packager.open(file));
     }
 
-    @Nonnull
-    public Book read(@Nonnull InputStream stream) throws IOException {
+    @NonNull
+    public Book read(@NonNull InputStream stream) throws IOException {
         return createBookOrClose(packager.open(stream));
     }
 

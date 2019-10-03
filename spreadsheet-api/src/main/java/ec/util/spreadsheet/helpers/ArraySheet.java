@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -46,7 +46,7 @@ public final class ArraySheet extends Sheet implements Serializable {
     private final boolean inv;
 
     // @VisibleForTesting
-    ArraySheet(@Nonnull String name, int rowCount, int columnCount, @Nonnull Serializable[] values, boolean inv) {
+    ArraySheet(@NonNull String name, int rowCount, int columnCount, @NonNull Serializable[] values, boolean inv) {
         this.name = Objects.requireNonNull(name);
         this.rowCount = rowCount;
         this.columnCount = columnCount;
@@ -114,18 +114,18 @@ public final class ArraySheet extends Sheet implements Serializable {
         return new ArraySheet(name, columnCount, rowCount, values, !inv);
     }
 
-    @Nonnull
-    public ArraySheet rename(@Nonnull String name) {
+    @NonNull
+    public ArraySheet rename(@NonNull String name) {
         return this.name.equals(name) ? this : new ArraySheet(name, rowCount, columnCount, values, inv);
     }
 
-    @Nonnull
+    @NonNull
     public ArraySheet copy() {
         // we need a cell by instance of sheet
         return new ArraySheet(name, rowCount, columnCount, values, inv);
     }
 
-    @Nonnull
+    @NonNull
     public ArrayBook toBook() {
         return new ArrayBook(new ArraySheet[]{copy()});
     }
@@ -174,15 +174,15 @@ public final class ArraySheet extends Sheet implements Serializable {
         return "ArraySheet{" + name + "}[" + rowCount + "x" + columnCount + "]";
     }
 
-    @Nonnull
-    public static ArraySheet copyOf(@Nonnull Sheet sheet) {
+    @NonNull
+    public static ArraySheet copyOf(@NonNull Sheet sheet) {
         return sheet instanceof ArraySheet
                 ? ((ArraySheet) sheet).copy()
                 : new ArraySheet(sheet.getName(), sheet.getRowCount(), sheet.getColumnCount(), copyValuesOf(sheet), false);
     }
 
-    @Nonnull
-    public static ArraySheet copyOf(@Nonnull String name, @Nonnull Object[][] table) {
+    @NonNull
+    public static ArraySheet copyOf(@NonNull String name, @NonNull Object[][] table) {
         int rowCount = table.length;
         int columnCount = 0;
         for (Object[] row : table) {
@@ -201,17 +201,17 @@ public final class ArraySheet extends Sheet implements Serializable {
         return new ArraySheet(name, rowCount, columnCount, values, false);
     }
 
-    @Nonnull
+    @NonNull
     public static Builder builder() {
         return new UnboundedBuilder();
     }
 
-    @Nonnull
+    @NonNull
     public static Builder builder(int rowCount, int columnCount) {
         return new BoundedBuilder(rowCount, columnCount);
     }
 
-    @Nonnull
+    @NonNull
     public static Builder builder(@Nullable String sheetBounds) {
         CellRefHelper helper = new CellRefHelper();
         return helper.parseEnd(sheetBounds)
@@ -221,83 +221,83 @@ public final class ArraySheet extends Sheet implements Serializable {
 
     public abstract static class Builder {
 
-        @Nonnull
-        abstract public Builder name(@Nonnull String name);
+        @NonNull
+        abstract public Builder name(@NonNull String name);
 
-        @Nonnull
+        @NonNull
         abstract public Builder clear();
 
-        @Nonnull
+        @NonNull
         abstract public Builder value(int row, int column, @Nullable Object value) throws IndexOutOfBoundsException;
 
-        @Nonnull
+        @NonNull
         public Builder value(int row, int column, @Nullable Cell value) throws IndexOutOfBoundsException {
             Object tmp = value == null ? null : value.getValue();
             return value(row, column, tmp);
         }
 
-        @Nonnull
-        public Builder row(int row, int column, @Nonnull Object first, @Nonnull Object... rest) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder row(int row, int column, @NonNull Object first, @NonNull Object... rest) throws IndexOutOfBoundsException {
             return value(row, column, first).row(row, column + 1, rest);
         }
 
-        @Nonnull
-        public Builder row(int row, int column, @Nonnull Object[] values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder row(int row, int column, @NonNull Object[] values) throws IndexOutOfBoundsException {
             return row(row, column, Arrays.asList(values));
         }
 
-        @Nonnull
-        public Builder row(int row, int column, @Nonnull Iterable<?> values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder row(int row, int column, @NonNull Iterable<?> values) throws IndexOutOfBoundsException {
             return row(row, column, values.iterator());
         }
 
-        @Nonnull
-        public Builder row(int row, int column, @Nonnull Iterator<?> values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder row(int row, int column, @NonNull Iterator<?> values) throws IndexOutOfBoundsException {
             return rowByValue(this, row, column, values);
         }
 
-        @Nonnull
-        public Builder column(int row, int column, @Nonnull Object first, @Nonnull Object... rest) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder column(int row, int column, @NonNull Object first, @NonNull Object... rest) throws IndexOutOfBoundsException {
             return value(row, column, first).column(row + 1, column, rest);
         }
 
-        @Nonnull
-        public Builder column(int row, int column, @Nonnull Object[] values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder column(int row, int column, @NonNull Object[] values) throws IndexOutOfBoundsException {
             return column(row, column, Arrays.asList(values));
         }
 
-        @Nonnull
-        public Builder column(int row, int column, @Nonnull Iterable<?> values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder column(int row, int column, @NonNull Iterable<?> values) throws IndexOutOfBoundsException {
             return column(row, column, values.iterator());
         }
 
-        @Nonnull
-        public Builder column(int row, int column, @Nonnull Iterator<?> values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder column(int row, int column, @NonNull Iterator<?> values) throws IndexOutOfBoundsException {
             return columnByValue(this, row, column, values);
         }
 
-        @Nonnull
-        public Builder table(int row, int column, @Nonnull Object[][] values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder table(int row, int column, @NonNull Object[][] values) throws IndexOutOfBoundsException {
             return tableByRow(this, row, column, values);
         }
 
-        @Nonnull
-        public Builder table(int row, int column, @Nonnull Sheet values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder table(int row, int column, @NonNull Sheet values) throws IndexOutOfBoundsException {
             return tableByValue(this, row, column, values);
         }
 
-        @Nonnull
-        public Builder map(int row, int column, @Nonnull Map<?, ?> values) throws IndexOutOfBoundsException {
+        @NonNull
+        public Builder map(int row, int column, @NonNull Map<?, ?> values) throws IndexOutOfBoundsException {
             return mapByRow(this, row, column, values);
         }
 
-        @Nonnull
+        @NonNull
         abstract public ArraySheet build();
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation">
-    @Nonnull
-    private static Serializable[] copyValuesOf(@Nonnull Sheet sheet) {
+    @NonNull
+    private static Serializable[] copyValuesOf(@NonNull Sheet sheet) {
         int rowCount = sheet.getRowCount();
         int columnCount = sheet.getColumnCount();
         Serializable[] result = new Serializable[rowCount * columnCount];
@@ -310,8 +310,8 @@ public final class ArraySheet extends Sheet implements Serializable {
 
         private transient Object value = null;
 
-        @Nonnull
-        public FlyweightCell withValue(@Nonnull Object value) {
+        @NonNull
+        public FlyweightCell withValue(@NonNull Object value) {
             this.value = value;
             return this;
         }
@@ -403,8 +403,8 @@ public final class ArraySheet extends Sheet implements Serializable {
         return b;
     }
 
-    @Nonnull
-    private static Builder mapByRow(Builder b, int rowIndex, int columnIndex, @Nonnull Map<?, ?> map) {
+    @NonNull
+    private static Builder mapByRow(Builder b, int rowIndex, int columnIndex, @NonNull Map<?, ?> map) {
         int i = 0;
         for (Map.Entry o : map.entrySet()) {
             b.row(rowIndex + i++, columnIndex, o.getKey(), o.getValue());

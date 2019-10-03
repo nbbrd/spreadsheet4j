@@ -19,13 +19,14 @@ package ec.util.spreadsheet.xmlss;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
+import internal.spreadsheet.ioutil.Stax;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -36,25 +37,26 @@ final class XmlssBookWriter {
     private final XMLOutputFactory xof;
     private final Charset charset;
 
-    public XmlssBookWriter(@Nonnull XMLOutputFactory xof, @Nonnull Charset charset) {
+    public XmlssBookWriter(@NonNull XMLOutputFactory xof, @NonNull Charset charset) {
         this.xof = xof;
         this.charset = charset;
     }
 
-    public void write(@Nonnull OutputStream stream, @Nonnull Book book) throws IOException {
-        try {
-            XMLStreamWriter w = xof.createXMLStreamWriter(stream, charset.name());
-            try {
-                write(new BasicXmlssWriter(w), book);
-            } finally {
-                w.close();
-            }
-        } catch (XMLStreamException ex) {
-            throw new IOException(ex);
-        }
+    public void write(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
+        Stax.StreamFormatter
+                .<Book>builder()
+                .factory(() -> xof)
+                .encoding(charset)
+                .handler(XmlssBookWriter::write)
+                .build()
+                .formatStream(book, stream);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation details">
+    private static void write(Book book, XMLStreamWriter w) throws IOException, XMLStreamException {
+        write(new BasicXmlssWriter(w), book);
+    }
+
     private static void write(BasicXmlssWriter f, Book book) throws IOException, XMLStreamException {
         f.beginWorkbook();
         int sheetCount = book.getSheetCount();

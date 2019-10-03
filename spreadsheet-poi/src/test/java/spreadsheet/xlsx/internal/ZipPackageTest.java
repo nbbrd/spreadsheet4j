@@ -16,8 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
-import ec.util.spreadsheet.SheetAssert;
-import ioutil.Sax;
+import ec.util.spreadsheet.tck.SheetAssert;
+import internal.spreadsheet.ioutil.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;

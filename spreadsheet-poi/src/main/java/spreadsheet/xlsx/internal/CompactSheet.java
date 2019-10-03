@@ -25,9 +25,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -134,10 +134,10 @@ public final class CompactSheet extends Sheet {
         }
     }
 
-    @Nonnull
+    @NonNull
     public static Builder builder(
-            @Nonnegative int rowCount, @Nonnegative int columnCount,
-            @Nonnull String name, @Nonnull List<String> sharedStrings) {
+            @NonNegative int rowCount, @NonNegative int columnCount,
+            @NonNull String name, @NonNull List<String> sharedStrings) {
         return new Builder(rowCount, columnCount, name, sharedStrings);
     }
 
@@ -146,7 +146,7 @@ public final class CompactSheet extends Sheet {
         private int index = -1;
         private CompactSheet.Type type = CompactSheet.Type.NULL;
 
-        @Nonnull
+        @NonNull
         FlyweightCell withValue(int index) {
             this.index = index;
             this.type = getTypeAt(index);

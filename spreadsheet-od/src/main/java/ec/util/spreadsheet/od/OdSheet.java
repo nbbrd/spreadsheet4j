@@ -16,31 +16,34 @@
  */
 package ec.util.spreadsheet.od;
 
+import com.github.miachm.sods.Range;
+import com.github.miachm.sods.Sheet;
 import ec.util.spreadsheet.Cell;
-import org.jopendocument.dom.spreadsheet.Sheet;
 
 /**
  *
  * @author Philippe Charles
  */
-class OdSheet extends ec.util.spreadsheet.Sheet {
+final class OdSheet extends ec.util.spreadsheet.Sheet {
 
-    final static int BUGGED_COLUMN_COUNT = 16384;
-    final Sheet sheet;
-    final OdCell flyweightCell;
-    final int columnCount;
+    private final static int BUGGED_COLUMN_COUNT = 16384;
+    private final String name;
+    private final Range sheet;
+    private final int columnCount;
+    private final OdCell flyweightCell;
 
     public OdSheet(Sheet sheet) {
-        this.sheet = sheet;
+        this.name = sheet.getName();
+        this.sheet = sheet.getDataRange();
+        this.columnCount = computeColumnCount(this.sheet);
         this.flyweightCell = new OdCell();
-        this.columnCount = computeColumnCount(sheet);
     }
 
-    static int computeColumnCount(Sheet sheet) {
-        if (sheet.getRowCount() == 0) {
+    static int computeColumnCount(Range sheet) {
+        if (sheet.getNumRows() == 0) {
             return 0;
         }
-        int result = sheet.getColumnCount();
+        int result = sheet.getNumColumns();
         if (result != BUGGED_COLUMN_COUNT) {
             return result;
         }
@@ -58,13 +61,13 @@ class OdSheet extends ec.util.spreadsheet.Sheet {
         return result + 1;
     }
 
-    static boolean isNullOrEmpty(Sheet sheet, int rowIdx, int columnIdx) throws IndexOutOfBoundsException {
-        return sheet.getCellAt(columnIdx, rowIdx).getValueType() == null;
+    static boolean isNullOrEmpty(Range sheet, int rowIdx, int columnIdx) throws IndexOutOfBoundsException {
+        return sheet.getCell(rowIdx, columnIdx).getValue() == null;
     }
 
     @Override
     public int getRowCount() {
-        return sheet.getRowCount();
+        return sheet.getNumRows();
     }
 
     @Override
@@ -74,11 +77,12 @@ class OdSheet extends ec.util.spreadsheet.Sheet {
 
     @Override
     public Cell getCell(int rowIdx, int columnIdx) {
-        return flyweightCell.withCell(sheet.getCellAt(columnIdx, rowIdx));
+        Object value = sheet.getCell(rowIdx, columnIdx).getValue();
+        return value != null ? flyweightCell.withValue(value) : null;
     }
 
     @Override
     public String getName() {
-        return sheet.getName().replace("_", " ");
+        return name.replace("_", " ");
     }
 }

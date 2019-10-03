@@ -21,9 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Container for Office Open XML files.
@@ -40,7 +40,7 @@ public interface XlsxPackage extends Closeable {
      * @return a non-null stream
      * @throws IOException if the stream is missing or something went wrong
      */
-    @Nonnull
+    @NonNull
     InputStream getWorkbook() throws IOException;
 
     /**
@@ -49,7 +49,7 @@ public interface XlsxPackage extends Closeable {
      * @return a non-null stream
      * @throws IOException if the stream is missing or something went wrong
      */
-    @Nonnull
+    @NonNull
     InputStream getSharedStrings() throws IOException;
 
     /**
@@ -58,7 +58,7 @@ public interface XlsxPackage extends Closeable {
      * @return a non-null stream
      * @throws IOException if the stream is missing or something went wrong
      */
-    @Nonnull
+    @NonNull
     InputStream getStyles() throws IOException;
 
     /**
@@ -68,8 +68,8 @@ public interface XlsxPackage extends Closeable {
      * @return a non-null stream
      * @throws IOException if the stream is missing or something went wrong
      */
-    @Nonnull
-    InputStream getSheet(@Nonnull String relationId) throws IOException;
+    @NonNull
+    InputStream getSheet(@NonNull String relationId) throws IOException;
 
     /**
      * Factory for an XlsxPackage.
@@ -77,13 +77,13 @@ public interface XlsxPackage extends Closeable {
     @ThreadSafe
     interface Factory {
 
-        @Nonnull
-        XlsxPackage open(@Nonnull InputStream stream) throws IOException;
+        @NonNull
+        XlsxPackage open(@NonNull InputStream stream) throws IOException;
 
-        @Nonnull
-        XlsxPackage open(@Nonnull Path path) throws IOException;
+        @NonNull
+        XlsxPackage open(@NonNull Path path) throws IOException;
 
-        @Nonnull
-        XlsxPackage open(@Nonnull File file) throws IOException;
+        @NonNull
+        XlsxPackage open(@NonNull File file) throws IOException;
     }
 }

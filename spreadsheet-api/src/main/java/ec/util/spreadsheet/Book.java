@@ -33,8 +33,11 @@ import java.nio.file.Path;
 import java.util.Date;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import nbbrd.service.Mutability;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Facade that represents <b>a book in a spreadsheet</b>. It is created by a
@@ -57,7 +60,7 @@ public abstract class Book implements Closeable {
      *
      * @return a sheet count
      */
-    @Nonnegative
+    @NonNegative
     abstract public int getSheetCount();
 
     /**
@@ -69,8 +72,8 @@ public abstract class Book implements Closeable {
      * @throws IndexOutOfBoundsException if the index is out of bounds
      * (0<=index<sheetCount)
      */
-    @Nonnull
-    abstract public Sheet getSheet(@Nonnegative int index) throws IOException, IndexOutOfBoundsException;
+    @NonNull
+    abstract public Sheet getSheet(@NonNegative int index) throws IOException, IndexOutOfBoundsException;
 
     /**
      * Returns the name of a sheet based on its index in this book.
@@ -80,8 +83,8 @@ public abstract class Book implements Closeable {
      * @throws IOException if something goes wrong during loading
      * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    @Nonnull
-    public String getSheetName(@Nonnegative int index) throws IOException, IndexOutOfBoundsException {
+    @NonNull
+    public String getSheetName(@NonNegative int index) throws IOException, IndexOutOfBoundsException {
         return getSheet(index).getName();
     }
 
@@ -102,7 +105,7 @@ public abstract class Book implements Closeable {
      * @throws IOException if something goes wrong during loading
      * @since 2.2.0
      */
-    public void forEach(@Nonnull ObjIntConsumer<? super Sheet> action) throws IOException {
+    public void forEach(@NonNull ObjIntConsumer<? super Sheet> action) throws IOException {
         Objects.requireNonNull(action);
         for (int index = 0; index < getSheetCount(); index++) {
             action.accept(getSheet(index), index);
@@ -122,7 +125,7 @@ public abstract class Book implements Closeable {
      * @throws IOException if something goes wrong during loading
      * @since 2.2.2
      */
-    public void parallelForEach(@Nonnull ObjIntConsumer<? super Sheet> action) throws IOException {
+    public void parallelForEach(@NonNull ObjIntConsumer<? super Sheet> action) throws IOException {
         forEach(action);
     }
 
@@ -138,6 +141,12 @@ public abstract class Book implements Closeable {
     /**
      * Factory used to store/load books in/from spreadsheets.
      */
+    @ServiceDefinition(
+            singleton = true,
+            quantifier = Quantifier.MULTIPLE,
+            mutability = Mutability.CONCURRENT,
+            loaderName = "ec.util.spreadsheet.BookFactoryLoader"
+    )
     public abstract static class Factory implements FileFilter, DirectoryStream.Filter<Path> {
 
         /**
@@ -145,7 +154,7 @@ public abstract class Book implements Closeable {
          *
          * @return a non-null identifier
          */
-        @Nonnull
+        @NonNull
         abstract public String getName();
 
         //<editor-fold defaultstate="collapsed" desc="Loading methods">
@@ -165,8 +174,8 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
-        @Nonnull
-        public Book load(@Nonnull Path file) throws IOException {
+        @NonNull
+        public Book load(@NonNull Path file) throws IOException {
             try {
                 return load(file.toFile());
             } catch (UnsupportedOperationException ex) {
@@ -184,8 +193,8 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
-        @Nonnull
-        public Book load(@Nonnull File file) throws IOException {
+        @NonNull
+        public Book load(@NonNull File file) throws IOException {
             try (InputStream stream = new FileInputStream(file)) {
                 return load(stream);
             } catch (FileNotFoundException ex) {
@@ -200,8 +209,8 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
-        @Nonnull
-        public Book load(@Nonnull URL url) throws IOException {
+        @NonNull
+        public Book load(@NonNull URL url) throws IOException {
             try (InputStream stream = url.openStream()) {
                 return load(stream);
             } catch (FileNotFoundException ex) {
@@ -217,8 +226,8 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
-        @Nonnull
-        abstract public Book load(@Nonnull InputStream stream) throws IOException;
+        @NonNull
+        abstract public Book load(@NonNull InputStream stream) throws IOException;
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Storing methods">
@@ -238,7 +247,7 @@ public abstract class Book implements Closeable {
          * @param book the data to be stored
          * @throws IOException if something goes wrong during the storing.
          */
-        public void store(@Nonnull Path file, @Nonnull Book book) throws IOException {
+        public void store(@NonNull Path file, @NonNull Book book) throws IOException {
             try {
                 store(file.toFile(), book);
             } catch (UnsupportedOperationException ex) {
@@ -256,7 +265,7 @@ public abstract class Book implements Closeable {
          * @param book the data to be stored
          * @throws IOException if something goes wrong during the storing.
          */
-        public void store(@Nonnull File file, @Nonnull Book book) throws IOException {
+        public void store(@NonNull File file, @NonNull Book book) throws IOException {
             try (OutputStream stream = new FileOutputStream(file, false)) {
                 store(stream, book);
             }
@@ -270,7 +279,7 @@ public abstract class Book implements Closeable {
          * @param book the data to be stored
          * @throws IOException if something goes wrong during the storing.
          */
-        abstract public void store(@Nonnull OutputStream stream, @Nonnull Book book) throws IOException;
+        abstract public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException;
         //</editor-fold>
 
         @Override
@@ -283,7 +292,7 @@ public abstract class Book implements Closeable {
             }
         }
 
-        public boolean isSupportedDataType(@Nonnull Class<?> type) {
+        public boolean isSupportedDataType(@NonNull Class<?> type) {
             return Date.class.isAssignableFrom(type)
                     || Number.class.isAssignableFrom(type)
                     || String.class.isAssignableFrom(type);

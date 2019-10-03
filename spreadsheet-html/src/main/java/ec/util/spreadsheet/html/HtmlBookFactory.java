@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import javax.xml.stream.XMLOutputFactory;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class HtmlBookFactory extends Book.Factory {
 
     private final XMLOutputFactory xof;

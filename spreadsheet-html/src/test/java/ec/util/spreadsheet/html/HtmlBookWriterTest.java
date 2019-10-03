@@ -16,7 +16,7 @@
  */
 package ec.util.spreadsheet.html;
 
-import static ec.util.spreadsheet.Assertions.*;
+import static ec.util.spreadsheet.tck.Assertions.*;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import java.io.IOException;

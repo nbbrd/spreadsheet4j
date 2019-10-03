@@ -28,15 +28,15 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
+import nbbrd.service.ServiceProvider;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.openide.util.lookup.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
@@ -46,11 +46,7 @@ public class ExcelClassicBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        try {
-            return accept(file.toPath());
-        } catch (IOException ex) {
-            return false;
-        }
+        return FileHelper.accept(file, this::accept);
     }
 
     @Override
@@ -80,8 +76,8 @@ public class ExcelClassicBookFactory extends Book.Factory {
         target.write(stream);
     }
 
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws FileSystemException {
+    @NonNull
+    private static File checkFile(@NonNull File file) throws FileSystemException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

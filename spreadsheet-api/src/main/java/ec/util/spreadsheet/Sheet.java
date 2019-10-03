@@ -17,9 +17,9 @@
 package ec.util.spreadsheet;
 
 import java.util.Objects;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Facade that represents <b>a sheet in a spreadsheet</b>.
@@ -38,7 +38,7 @@ public abstract class Sheet {
      *
      * @return a row count
      */
-    @Nonnegative
+    @NonNegative
     abstract public int getRowCount();
 
     /**
@@ -46,7 +46,7 @@ public abstract class Sheet {
      *
      * @return a column count
      */
-    @Nonnegative
+    @NonNegative
     abstract public int getColumnCount();
 
     /**
@@ -58,7 +58,7 @@ public abstract class Sheet {
      * @throws IndexOutOfBoundsException if the position is out of bounds
      */
     @Nullable
-    abstract public Cell getCell(@Nonnegative int rowIdx, @Nonnegative int columnIdx) throws IndexOutOfBoundsException;
+    abstract public Cell getCell(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException;
 
     /**
      * Returns the cell value located at the specified position.
@@ -69,7 +69,7 @@ public abstract class Sheet {
      * @throws IndexOutOfBoundsException if the position is out of bounds
      */
     @Nullable
-    public Object getCellValue(@Nonnegative int rowIdx, @Nonnegative int columnIdx) throws IndexOutOfBoundsException {
+    public Object getCellValue(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException {
         return getCellValueFromCell(this, rowIdx, columnIdx);
     }
 
@@ -85,7 +85,7 @@ public abstract class Sheet {
      * @throws NullPointerException if the specified action is null
      * @since 2.2.0
      */
-    public void forEach(@Nonnull SheetConsumer<? super Cell> action) {
+    public void forEach(@NonNull SheetConsumer<? super Cell> action) {
         forEachByRow(this, action);
     }
 
@@ -101,7 +101,7 @@ public abstract class Sheet {
      * @throws NullPointerException if the specified action is null
      * @since 2.2.0
      */
-    public void forEachValue(@Nonnull SheetConsumer<? super Object> action) {
+    public void forEachValue(@NonNull SheetConsumer<? super Object> action) {
         forEachValueByRow(this, action);
     }
 
@@ -110,16 +110,16 @@ public abstract class Sheet {
      *
      * @return a non-null name
      */
-    @Nonnull
+    @NonNull
     abstract public String getName();
 
-    @Nonnull
+    @NonNull
     public Sheet inv() {
         return invUsingDelegate(this);
     }
 
     //<editor-fold defaultstate="collapsed" desc="Implementation">
-    private static void forEachByRow(@Nonnull Sheet sheet, @Nonnull SheetConsumer<? super Cell> action) {
+    private static void forEachByRow(@NonNull Sheet sheet, @NonNull SheetConsumer<? super Cell> action) {
         Objects.requireNonNull(action);
         int rowCount = sheet.getRowCount();
         int columnCount = sheet.getColumnCount();
@@ -133,7 +133,7 @@ public abstract class Sheet {
         }
     }
 
-    private static void forEachValueByRow(@Nonnull Sheet sheet, @Nonnull SheetConsumer<? super Object> action) {
+    private static void forEachValueByRow(@NonNull Sheet sheet, @NonNull SheetConsumer<? super Object> action) {
         Objects.requireNonNull(action);
         int rowCount = sheet.getRowCount();
         int columnCount = sheet.getColumnCount();
@@ -148,13 +148,13 @@ public abstract class Sheet {
     }
 
     @Nullable
-    private static Object getCellValueFromCell(@Nonnull Sheet sheet, int rowIdx, int columnIdx) {
+    private static Object getCellValueFromCell(@NonNull Sheet sheet, int rowIdx, int columnIdx) {
         Cell cell = sheet.getCell(rowIdx, columnIdx);
         return cell != null ? cell.getValue() : null;
     }
 
-    @Nonnull
-    private static Sheet invUsingDelegate(@Nonnull Sheet sheet) {
+    @NonNull
+    private static Sheet invUsingDelegate(@NonNull Sheet sheet) {
         return sheet instanceof InvSheet ? ((InvSheet) sheet).sheet : new InvSheet(sheet);
     }
 

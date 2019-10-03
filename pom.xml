@@ -4,7 +4,7 @@
 
     <groupId>eu.europa.ec.joinup.sat</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.2.3</version>
+    <version>2.2.4</version>
     <packaging>pom</packaging>
     
     <name>spreadsheet4j</name>
@@ -25,160 +25,223 @@
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
         <module>spreadsheet-xmlss</module>
+        <module>spreadsheet-util</module>
     </modules>
     
-    <properties>
-        <!-- build -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version> 
-
-        <!-- dev support -->
-        <junit.version>4.12</junit.version>
-        <jsr305.version>3.0.2</jsr305.version>
-        <assertj.version>3.11.1</assertj.version>
-        <netbeans.version>RELEASE82</netbeans.version>
-        <lombok.version>1.18.4</lombok.version>
-        <jmh.version>1.21</jmh.version>
-
-        <!-- dependencies -->
-	<java-io-util.version>0.0.2</java-io-util.version>
-    </properties>
-        
     <dependencyManagement>
         <dependencies>
-            <!-- dev support -->
-            <dependency>     
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>${jsr305.version}</version>
+            <!-- annotations -->
+            <dependency>
+                <groupId>org.checkerframework</groupId>
+                <artifactId>checker-qual</artifactId>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
+                <groupId>com.github.stephenc.jcip</groupId>
+                <artifactId>jcip-annotations</artifactId>            
+                <version>1.0-1</version>
             </dependency>
+            
+            <!-- test libraries -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <version>4.12</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>${assertj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.netbeans.api</groupId>
-                <artifactId>org-openide-util-lookup</artifactId>
-                <version>${netbeans.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-core</artifactId>
-                <version>${jmh.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.openjdk.jmh</groupId>
-                <artifactId>jmh-generator-annprocess</artifactId>
-                <version>${jmh.version}</version>
-            </dependency>
-            
-            <!-- dependencies -->
-            <dependency>
-                <groupId>be.nbb.rd</groupId>
-                <artifactId>java-io-util</artifactId>
-                <version>${java-io-util.version}</version>
-            </dependency>
-            
-            <!-- modules -->
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-tck</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-html</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-od</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-poi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sat</groupId>
-                <artifactId>spreadsheet-xmlss</artifactId>
-                <version>${project.version}</version>
+                <version>3.13.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven-compiler-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco-maven-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>report</id>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId> 
-            </plugin>
-        </plugins>
-    </build>  
-    
     <profiles>
+        <!-- Base build java8 -->
+        <profile>
+            <id>base-java8</id>
+            <activation>
+                <property>
+                    <name>!skipBaseJava8</name>
+                </property>
+            </activation>
+            <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+                <maven.compiler.target>1.8</maven.compiler.target>
+                <maven.compiler.source>1.8</maven.compiler.source>                
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.8.1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.1.2</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M3</version>
+                        <configuration>
+                            <!--fix file encoding warning-->
+                            <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                            <!--fix lombok issue 'java.lang.module.ResolutionException: Module lombok does not read a module that exports org.mapstruct.ap.spi'-->
+                            <useModulePath>false</useModulePath>
+                            <!--fix shaded jar issue-->
+                            <additionalClasspathElements>
+                                <additionalClasspathElement>spreadsheet-util/target/spreadsheet-util-${project.version}.jar</additionalClasspathElement>
+                            </additionalClasspathElements>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Base processors -->
+        <profile>
+            <id>base-processors</id>
+            <activation>
+                <property>
+                    <name>!skipBaseProcessors</name>
+                </property>
+            </activation>
+            <properties>
+                <lombok.version>1.18.10</lombok.version>
+                <java-service.version>1.1.0</java-service.version>
+                <jmh.version>1.21</jmh.version>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.projectlombok</groupId>
+                        <artifactId>lombok</artifactId>
+                        <version>${lombok.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>be.nbb.rd</groupId>
+                        <artifactId>java-service-annotation</artifactId>
+                        <version>${java-service.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>be.nbb.rd</groupId>
+                        <artifactId>java-service-processor</artifactId>
+                        <version>${java-service.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openjdk.jmh</groupId>
+                        <artifactId>jmh-core</artifactId>
+                        <version>${jmh.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.openjdk.jmh</groupId>
+                        <artifactId>jmh-generator-annprocess</artifactId>
+                        <version>${jmh.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.projectlombok</groupId>
+                                    <artifactId>lombok</artifactId>
+                                    <version>${lombok.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>be.nbb.rd</groupId>
+                                    <artifactId>java-service-processor</artifactId>
+                                    <version>${java-service.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>org.openjdk.jmh</groupId>
+                                    <artifactId>jmh-generator-annprocess</artifactId>
+                                    <version>${jmh.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Run Java8 build with JPMS on JDK9+ -->
+        <profile>
+            <id>java8-with-jpms</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <!-- Fix NetBeans bug with test packages -->
+                <maven.compiler.target>9</maven.compiler.target>
+                <maven.compiler.source>9</maven.compiler.source>                
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <!-- First: compile all as Java9 -->
+                            <execution>
+                                <id>default-compile</id>
+                                <configuration>
+                                    <release>9</release>
+                                </configuration>
+                            </execution>
+                            <!-- Second: recompile all but module-info as Java8 -->
+                            <execution>
+                                <id>base-compile</id>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <source>8</source>
+                                    <target>8</target>
+                                    <excludes>
+                                        <exclude>module-info.java</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Run Java8 build without JPMS on JDK8 -->
+        <profile>
+            <id>java8-without-jpms</id>
+            <activation>
+                <jdk>1.8</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-compile</id>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>module-info.java</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>        
+                </plugins>
+            </build>
+        </profile>
+        
         <!-- Deploy SNAPSHOTS to jfrog with sources -->
         <profile>
             <id>deploy-snapshots</id>
@@ -192,7 +255,21 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -211,7 +288,67 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        <!-- Optional checks -->
+        <profile>
+            <id>optional-checks</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.gaul</groupId>
+                        <artifactId>modernizer-maven-plugin</artifactId>
+                        <version>1.9.0</version>
+                        <configuration>
+                            <javaVersion>1.8</javaVersion>
+                            <!--<failOnViolations>false</failOnViolations>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>modernizer</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>modernizer</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId> 
+                        <version>0.8.4</version> 
+                        <executions> 
+                            <execution> 
+                                <goals> 
+                                    <goal>prepare-agent</goal> 
+                                </goals>
+                            </execution>
+                            <execution> 
+                                <id>report</id> 
+                                <phase>prepare-package</phase> 
+                                <goals> 
+                                    <goal>report</goal> 
+                                </goals> 
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -220,23 +357,22 @@
     
     <repositories>
         <repository>
-            <id>netbeans</id>
-            <url>http://bits.netbeans.org/nexus/content/groups/netbeans/</url>
-        </repository>
-        <repository>
             <id>oss-jfrog-artifactory-releases</id>
             <url>https://oss.jfrog.org/artifactory/oss-release-local</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>oss-jfrog-artifactory-snapshots</id>
             <url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
-        </repository>
-        <repository>
-            <id>projectlombok.org</id>
-            <url>https://projectlombok.org/edge-releases</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 </project>

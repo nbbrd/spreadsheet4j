@@ -5,13 +5,13 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.2.3</version>
+        <version>2.2.4</version>
     </parent>
 
     <artifactId>spreadsheet-poi</artifactId>
 
     <properties>
-        <poi.version>4.0.0</poi.version>
+        <poi.version>4.1.0</poi.version>
         <disruptor.version>3.4.2</disruptor.version>
     </properties>
 
@@ -41,13 +41,18 @@
     <dependencies>
         <!-- compile only -->
         <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.netbeans.api</groupId>
-            <artifactId>org-openide-util-lookup</artifactId>
+            <groupId>com.github.stephenc.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>            
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.nbb.rd</groupId>
+            <artifactId>java-service-annotation</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -55,14 +60,17 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        
         <!-- compile and runtime -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
-            <artifactId>java-io-util</artifactId>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>spreadsheet-util</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -77,6 +85,7 @@
             <artifactId>disruptor</artifactId>
             <optional>true</optional>
         </dependency>
+        
         <!-- test only -->
         <dependency>
             <groupId>junit</groupId>
@@ -86,6 +95,7 @@
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>spreadsheet-tck</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

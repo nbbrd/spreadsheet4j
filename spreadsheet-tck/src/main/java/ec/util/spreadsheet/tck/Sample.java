@@ -14,8 +14,9 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package ec.util.spreadsheet;
+package ec.util.spreadsheet.tck;
 
+import ec.util.spreadsheet.Book;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,8 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
 import lombok.AccessLevel;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -39,46 +40,46 @@ import org.junit.rules.TemporaryFolder;
 @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Sample {
 
-    @Nonnull
-    public static Sample of(@Nonnull String fileName, @Nonnull String content) {
+    @NonNull
+    public static Sample of(@NonNull String fileName, @NonNull String content) {
         return new Sample(fileName, () -> content.getBytes(StandardCharsets.UTF_8));
     }
 
-    @Nonnull
-    public static Sample of(@Nonnull String fileName, @Nonnull byte[] content) {
+    @NonNull
+    public static Sample of(@NonNull String fileName, @NonNull byte[] content) {
         return new Sample(fileName, () -> content);
     }
 
-    @Nonnull
-    public static Sample of(@Nonnull String fileName) {
+    @NonNull
+    public static Sample of(@NonNull String fileName) {
         return new Sample(fileName, () -> null);
     }
 
     private final String fileName;
     private final Supplier<byte[]> data;
 
-    @Nonnull
+    @NonNull
     public String getFileName() {
         return fileName;
     }
 
-    @Nonnull
-    public File file(@Nonnull TemporaryFolder temp) {
+    @NonNull
+    public File file(@NonNull TemporaryFolder temp) {
         return newFile(temp);
     }
 
-    @Nonnull
-    public Path path(@Nonnull TemporaryFolder temp) {
+    @NonNull
+    public Path path(@NonNull TemporaryFolder temp) {
         return newFile(temp).toPath();
     }
 
-    @Nonnull
+    @NonNull
     public InputStream stream() {
         return new ByteArrayInputStream(data.get());
     }
 
-    @Nonnull
-    public Book loadStream(@Nonnull Book.Factory x) throws IOException {
+    @NonNull
+    public Book loadStream(Book.@NonNull Factory x) throws IOException {
         try (InputStream stream = stream()) {
             return x.load(stream);
         }
@@ -99,8 +100,8 @@ public final class Sample {
         }
     }
 
-    @Nonnull
-    public static byte[] toByteArray(@Nonnull InputStream input) throws IOException {
+    @NonNull
+    public static byte[] toByteArray(@NonNull InputStream input) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         byte[] buffer = new byte[8024];
         int n = 0;
@@ -110,15 +111,15 @@ public final class Sample {
         return output.toByteArray();
     }
 
-    @Nonnull
-    public static byte[] concat(@Nonnull byte[] l, @Nonnull byte... r) {
+    @NonNull
+    public static byte[] concat(@NonNull byte[] l, @NonNull byte... r) {
         byte[] result = Arrays.copyOf(l, l.length + r.length);
         System.arraycopy(r, 0, result, l.length, r.length);
         return result;
     }
 
-    @Nonnull
-    public static byte[] bytesOf(@Nonnull URL url) {
+    @NonNull
+    public static byte[] bytesOf(@NonNull URL url) {
         try (InputStream stream = url.openStream()) {
             return Sample.toByteArray(stream);
         } catch (IOException ex) {

@@ -18,7 +18,7 @@ package spreadsheet.xlsx;
 
 import java.util.Calendar;
 import java.util.Date;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Class that deals with the internal representation of dates in Excel.
@@ -45,8 +45,8 @@ public interface XlsxDateSystem {
      * @param date an Excel date
      * @return a non-null java date
      */
-    @Nonnull
-    Date getJavaDate(@Nonnull Calendar calendar, double date);
+    @NonNull
+    Date getJavaDate(@NonNull Calendar calendar, double date);
 
     /**
      * Convert an Excel date to java date.
@@ -55,7 +55,7 @@ public interface XlsxDateSystem {
      * @param date an Excel date
      * @return a java date in millis
      */
-    long getJavaDateInMillis(@Nonnull Calendar calendar, double date);
+    long getJavaDateInMillis(@NonNull Calendar calendar, double date);
 
     /**
      * Factory for an XlsxDateSystem.
@@ -68,7 +68,7 @@ public interface XlsxDateSystem {
          * @param date1904
          * @return a non-null implementation
          */
-        @Nonnull
+        @NonNull
         XlsxDateSystem of(boolean date1904);
     }
 }

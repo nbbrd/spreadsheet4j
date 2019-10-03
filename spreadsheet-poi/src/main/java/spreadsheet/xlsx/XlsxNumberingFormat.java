@@ -16,8 +16,9 @@
  */
 package spreadsheet.xlsx;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 
 /**
  * Class that deals with the formatting of numbers in Excel.
@@ -48,7 +49,7 @@ public interface XlsxNumberingFormat {
          *
          * @return a non-null implementation
          */
-        @Nonnull
+        @NonNull
         XlsxNumberingFormat of();
     }
 }

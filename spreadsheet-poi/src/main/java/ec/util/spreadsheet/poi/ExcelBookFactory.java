@@ -28,16 +28,16 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nonnull;
+import nbbrd.service.ServiceProvider;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.openide.util.lookup.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxReader;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class ExcelBookFactory extends Book.Factory {
 
     private static final boolean USE_SHARED_STRINGS = true;
@@ -65,11 +65,7 @@ public class ExcelBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        try {
-            return accept(file.toPath());
-        } catch (IOException ex) {
-            return false;
-        }
+        return FileHelper.accept(file, this::accept);
     }
 
     @Override
@@ -108,8 +104,8 @@ public class ExcelBookFactory extends Book.Factory {
         }
     }
 
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws IOException {
+    @NonNull
+    private static File checkFile(@NonNull File file) throws IOException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

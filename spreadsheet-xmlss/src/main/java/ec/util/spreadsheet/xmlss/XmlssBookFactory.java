@@ -18,7 +18,7 @@ package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
-import ioutil.Stax;
+import internal.spreadsheet.ioutil.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,13 +30,13 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.openide.util.lookup.ServiceProvider;
+import nbbrd.service.ServiceProvider;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class XmlssBookFactory extends Book.Factory {
 
     private final XMLOutputFactory xof;
@@ -52,11 +52,7 @@ public class XmlssBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        try {
-            return accept(file.toPath());
-        } catch (IOException ex) {
-            return false;
-        }
+        return FileHelper.accept(file, this::accept);
     }
 
     @Override

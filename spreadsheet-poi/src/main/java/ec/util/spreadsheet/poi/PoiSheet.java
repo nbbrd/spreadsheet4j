@@ -19,10 +19,10 @@ package ec.util.spreadsheet.poi;
 import ec.util.spreadsheet.SheetConsumer;
 import java.util.Iterator;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -35,7 +35,7 @@ final class PoiSheet extends ec.util.spreadsheet.Sheet {
     private final int rowCount;
     private final int columnCount;
 
-    public PoiSheet(@Nonnull Sheet sheet) {
+    public PoiSheet(@NonNull Sheet sheet) {
         this.sheet = sheet;
         this.flyweightCell = new PoiCell();
         int maxRow = 0;

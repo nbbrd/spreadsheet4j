@@ -25,8 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
-import javax.annotation.Nonnull;
-import javax.annotation.concurrent.NotThreadSafe;
+import net.jcip.annotations.NotThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
@@ -38,7 +38,7 @@ public final class ArrayBook extends Book implements Serializable {
     private final ArraySheet[] sheets;
 
     // @VisibleForTesting
-    ArrayBook(@Nonnull ArraySheet[] sheets) {
+    ArrayBook(@NonNull ArraySheet[] sheets) {
         this.sheets = sheets;
     }
 
@@ -70,7 +70,7 @@ public final class ArrayBook extends Book implements Serializable {
         // no resource to close
     }
 
-    @Nonnull
+    @NonNull
     public ArrayBook copy() {
         ArraySheet[] result = new ArraySheet[getSheetCount()];
         for (int s = 0; s < result.length; s++) {
@@ -98,8 +98,8 @@ public final class ArrayBook extends Book implements Serializable {
         return "ArrayBook[" + sheets.length + "]";
     }
 
-    @Nonnull
-    public static ArrayBook copyOf(@Nonnull Book book) throws IOException {
+    @NonNull
+    public static ArrayBook copyOf(@NonNull Book book) throws IOException {
         if (book instanceof ArrayBook) {
             return ((ArrayBook) book).copy();
         }
@@ -110,23 +110,23 @@ public final class ArrayBook extends Book implements Serializable {
         return new ArrayBook(sheets);
     }
 
-    @Nonnull
+    @NonNull
     public static Builder builder() {
         return new ListBuilder();
     }
 
     public abstract static class Builder {
 
-        @Nonnull
+        @NonNull
         abstract public Builder clear();
 
-        @Nonnull
-        abstract public Builder book(@Nonnull Book book) throws IOException;
+        @NonNull
+        abstract public Builder book(@NonNull Book book) throws IOException;
 
-        @Nonnull
-        abstract public Builder sheet(@Nonnull Sheet sheet);
+        @NonNull
+        abstract public Builder sheet(@NonNull Sheet sheet);
 
-        @Nonnull
+        @NonNull
         abstract public ArrayBook build();
     }
 

@@ -20,8 +20,8 @@ import ec.util.spreadsheet.Sheet;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -30,22 +30,22 @@ import javax.annotation.Nullable;
  */
 public interface XlsxSheetBuilder extends Closeable {
 
-    @Nonnull
-    XlsxSheetBuilder reset(@Nonnull String sheetName, @Nullable String sheetBounds);
+    @NonNull
+    XlsxSheetBuilder reset(@NonNull String sheetName, @Nullable String sheetBounds);
 
-    @Nonnull
-    XlsxSheetBuilder put(@Nonnull String ref, @Nonnull CharSequence value, @Nonnull XlsxDataType dataType, int styleIndex);
+    @NonNull
+    XlsxSheetBuilder put(@NonNull String ref, @NonNull CharSequence value, @NonNull XlsxDataType dataType, int styleIndex);
 
-    @Nonnull
+    @NonNull
     Sheet build();
 
     interface Factory {
 
-        @Nonnull
+        @NonNull
         XlsxSheetBuilder create(
-                @Nonnull XlsxDateSystem dateSystem,
-                @Nonnull List<String> sharedStrings,
-                @Nonnull boolean[] dateFormats
+                @NonNull XlsxDateSystem dateSystem,
+                @NonNull List<String> sharedStrings,
+                @NonNull boolean[] dateFormats
         ) throws IOException;
     }
 }

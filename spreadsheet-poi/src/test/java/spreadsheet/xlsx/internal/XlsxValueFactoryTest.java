@@ -38,10 +38,6 @@ public class XlsxValueFactoryTest {
     private static final IntFunction<String> SHARED_STRINGS = Arrays.asList("hello", "world")::get;
     private static final IntPredicate DATE_FORMATS = Arrays.asList(false, true)::get;
 
-    private Date toDate(int year, int month, int day) {
-        return new Date(year - 1900, month - 1, day);
-    }
-
     @Test
     public void testGetNumberOrDate() {
         XlsxValueFactory.ParserWithStyle f = new XlsxValueFactory.NumberOrDateParser(DefaultDateSystem.X1904, DATE_FORMATS, new GregorianCalendar());
@@ -87,17 +83,26 @@ public class XlsxValueFactoryTest {
         f.parse(c, "3.14", 1);
         assertThat(c.result).isInstanceOf(Date.class);
 
-        f.parse(c, "3.99", 1);
-        assertThat(c.result).isInstanceOf(Date.class);
+        f.parse(c, "31149.427430555555", 1);
+        assertThat((Date) c.result).isEqualTo("1989-04-13T10:15:30");
     }
 
     @Test
     public void testGetDate() {
-        XlsxValueFactory.Parser f = new XlsxValueFactory.DateParser(new SimpleDateFormat());
+        XlsxValueFactory.Parser f = new XlsxValueFactory.DateParser();
         CustomCallback c = new CustomCallback();
 
         f.parse(c, "2010-02-01");
-        assertThat(c.result).isEqualTo(toDate(2010, 2, 1));
+        assertThat((Date) c.result).isEqualTo("2010-02-01");
+
+        f.parse(c, "2010-02-01T10");
+        assertThat(c.result).isNull();
+
+        f.parse(c, "1989-04-13T10:15:30");
+        assertThat((Date) c.result).isEqualTo("1989-04-13T10:15:30");
+
+        f.parse(c, "1989-04-13T10:15:30:15");
+        assertThat(c.result).isNull();
 
         f.parse(c, "1");
         assertThat(c.result).isNull();

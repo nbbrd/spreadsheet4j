@@ -17,10 +17,10 @@
 package _test;
 
 import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.BookAssert;
-import ec.util.spreadsheet.Sample;
+import ec.util.spreadsheet.tck.BookAssert;
+import ec.util.spreadsheet.tck.Sample;
 import ec.util.spreadsheet.Sheet;
-import ec.util.spreadsheet.SheetAssert;
+import ec.util.spreadsheet.tck.SheetAssert;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.atIndex;
 import org.assertj.core.util.DateUtil;
@@ -32,14 +32,14 @@ import org.assertj.core.util.DateUtil;
 @lombok.experimental.UtilityClass
 public class Top5 {
 
-    private final byte[] CONTENT = Sample.bytesOf(Top5.class.getResource("/Top5Browsers.ods"));
+    private static final byte[] CONTENT = Sample.bytesOf(Top5.class.getResource("/Top5Browsers.ods"));
 
-    public final Sample VALID = Sample.of("valid.ods", CONTENT);
-    public final Sample VALID_WITH_TAIL = Sample.of("validWithTail.ods", Sample.concat(CONTENT, (byte) '\0'));
-    public final Sample INVALID_FORMAT = Sample.of("invalidFormat.ods", "...");
-    public final Sample EMPTY = Sample.of("empty.ods", new byte[0]);
-    public final Sample MISSING = Sample.of("missing.ods");
-    public final Sample BAD_EXTENSION = Sample.of("badExtension.xml", CONTENT);
+    public static final Sample VALID = Sample.of("valid.ods", CONTENT);
+    public static final Sample VALID_WITH_TAIL = Sample.of("validWithTail.ods", Sample.concat(CONTENT, (byte) '\0'));
+    public static final Sample INVALID_FORMAT = Sample.of("invalidFormat.ods", "...");
+    public static final Sample EMPTY = Sample.of("empty.ods", new byte[0]);
+    public static final Sample MISSING = Sample.of("missing.ods");
+    public static final Sample BAD_EXTENSION = Sample.of("badExtension.xml", CONTENT);
 
     public static void assertTop5Book(Book book) throws IOException {
         BookAssert

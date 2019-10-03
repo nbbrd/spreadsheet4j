@@ -17,11 +17,11 @@
 package ec.util.spreadsheet.poi;
 
 import java.util.Date;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  *
@@ -34,7 +34,7 @@ final class PoiCell extends ec.util.spreadsheet.Cell {
     private Type type;
 
     @Nullable
-    PoiCell withCell(@Nonnull Cell cell) {
+    PoiCell withCell(@NonNull Cell cell) {
         this.cell = cell;
         this.type = getType(cell);
         return type != null ? this : null;

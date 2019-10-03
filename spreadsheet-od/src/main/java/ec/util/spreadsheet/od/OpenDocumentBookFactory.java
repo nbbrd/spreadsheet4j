@@ -16,6 +16,10 @@
  */
 package ec.util.spreadsheet.od;
 
+import com.github.miachm.sods.NotAnOdsException;
+import com.github.miachm.sods.Range;
+import com.github.miachm.sods.Sheet;
+import com.github.miachm.sods.SpreadSheet;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
 import java.io.EOFException;
@@ -27,17 +31,16 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.swing.table.DefaultTableModel;
-import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
-import org.openide.util.lookup.ServiceProvider;
+import java.time.ZoneId;
+import java.util.Date;
+import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  *
  * @author Philippe Charles
  */
-@ServiceProvider(service = Book.Factory.class)
+@ServiceProvider(Book.Factory.class)
 public class OpenDocumentBookFactory extends Book.Factory {
 
     @Override
@@ -47,11 +50,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        try {
-            return accept(file.toPath());
-        } catch (IOException ex) {
-            return false;
-        }
+        return FileHelper.accept(file, this::accept);
     }
 
     @Override
@@ -63,7 +62,11 @@ public class OpenDocumentBookFactory extends Book.Factory {
     @Override
     public Book load(File file) throws IOException {
         checkFile(file);
-        return new OdBook(SpreadSheet.create(new ODPackage(file)));
+        try {
+            return new OdBook(new SpreadSheet(file));
+        } catch (NotAnOdsException ex) {
+            throw new IOException(file.getPath(), ex);
+        }
     }
 
     @Override
@@ -71,7 +74,11 @@ public class OpenDocumentBookFactory extends Book.Factory {
         if (stream.available() == 0) {
             throw new EOFException();
         }
-        return new OdBook(SpreadSheet.create(new ODPackage(stream)));
+        try {
+            return new OdBook(new SpreadSheet(stream));
+        } catch (NotAnOdsException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override
@@ -80,29 +87,46 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
-        toOdSpreadSheet(book).getPackage().save(stream);
+    public void store(File file, Book book) throws IOException {
+        toSpreadSheet(book).save(file);
     }
 
     @Override
-    public void store(File file, Book book) throws IOException {
-        toOdSpreadSheet(book).saveAs(file);
+    public void store(OutputStream stream, Book book) throws IOException {
+        toSpreadSheet(book).save(stream);
     }
 
-    private static SpreadSheet toOdSpreadSheet(Book book) throws IOException {
-        SpreadSheet result = SpreadSheet.createEmpty(new DefaultTableModel());
-        book.forEach((sheet, index) -> {
-            org.jopendocument.dom.spreadsheet.Sheet odSheet = result.addSheet(sheet.getName());
-            odSheet.setRowCount(sheet.getRowCount());
-            odSheet.setColumnCount(sheet.getColumnCount());
-            sheet.forEachValue((i, j, v) -> odSheet.setValueAt(v, j, i));
-        });
-        result.getSheet(0).detach();
+    private static SpreadSheet toSpreadSheet(Book book) throws IOException {
+        SpreadSheet result = new SpreadSheet();
+        for (int s = 0; s < book.getSheetCount(); s++) {
+            result.appendSheet(toSheet(book.getSheet(s)));
+        }
         return result;
     }
 
-    @Nonnull
-    private static File checkFile(@Nonnull File file) throws IOException {
+    private static Sheet toSheet(ec.util.spreadsheet.Sheet sheet) {
+        Sheet result = new Sheet(sheet.getName());
+        result.deleteRow(0);
+        result.deleteColumn(0);
+
+        result.appendRows(sheet.getRowCount());
+        result.appendColumns(sheet.getColumnCount());
+
+        Range data = result.getDataRange();
+        sheet.forEachValue((i, j, value) -> data.getCell(i, j).setValue(toCellValue(value)));
+
+        return result;
+    }
+
+    private static Object toCellValue(Object obj) {
+        if (obj instanceof Date) {
+            return ((Date) obj).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        }
+        return obj;
+    }
+
+    @NonNull
+    private static File checkFile(@NonNull File file) throws IOException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }

@@ -16,9 +16,9 @@
  */
 package ec.util.spreadsheet.od;
 
+import com.github.miachm.sods.SpreadSheet;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
 /**
  *
@@ -34,7 +34,7 @@ final class OdBook extends Book {
 
     @Override
     public int getSheetCount() {
-        return book.getSheetCount();
+        return book.getNumSheets();
     }
 
     @Override

@@ -18,7 +18,7 @@ package ec.util.spreadsheet.poi;
 
 import _test.Top5x;
 import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.BookFactoryAssert;
+import ec.util.spreadsheet.tck.BookFactoryAssert;
 import java.io.File;
 import java.io.IOException;
 import static org.assertj.core.api.Assertions.*;

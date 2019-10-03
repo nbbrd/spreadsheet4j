@@ -18,8 +18,8 @@ package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
-import ioutil.IO;
-import ioutil.Sax;
+import internal.spreadsheet.ioutil.IO;
+import internal.spreadsheet.ioutil.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,8 +32,8 @@ import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxNumberingFormat;
@@ -49,8 +49,8 @@ import spreadsheet.xlsx.XlsxEntryParser;
 @lombok.RequiredArgsConstructor
 public final class XlsxBook extends Book {
 
-    @Nonnull
-    public static XlsxBook create(@Nonnull XlsxPackage pkg, @Nonnull XlsxReader reader) throws IOException {
+    @NonNull
+    public static XlsxBook create(@NonNull XlsxPackage pkg, @NonNull XlsxReader reader) throws IOException {
         XlsxEntryParser mainEntryParser = null;
 
         try {
@@ -110,7 +110,7 @@ public final class XlsxBook extends Book {
     }
 
     @Override
-    public String getSheetName(@Nonnegative int index) {
+    public String getSheetName(@NonNegative int index) {
         return sheets.get(index).getName();
     }
 
@@ -166,9 +166,9 @@ public final class XlsxBook extends Book {
     @lombok.Value
     static class SheetMeta {
 
-        @Nonnull
+        @NonNull
         String relationId;
-        @Nonnull
+        @NonNull
         String name;
     }
 

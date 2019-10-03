@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,20 +14,16 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package ec.util.spreadsheet.html;
 
-import javax.xml.stream.XMLStreamException;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import org.junit.Test;
+module nbbrd.spreadsheet.xmlss {
 
-/**
- *
- * @author Philippe Charles
- */
-public class XmlStreamWriterUtilTest {
+    requires static org.checkerframework.checker.qual;
+    requires static nbbrd.service;
+    requires static lombok;
 
-    @Test
-    public void test() throws XMLStreamException {
-        assertThat(XmlStreamWriterUtil.of(o -> o.writeComment("my comment")).writeToString()).contains("my comment");
-    }
+    requires nbbrd.spreadsheet.api;
+    requires nbbrd.spreadsheet.util;
+    
+    provides ec.util.spreadsheet.Book.Factory with
+            ec.util.spreadsheet.xmlss.XmlssBookFactory;
 }

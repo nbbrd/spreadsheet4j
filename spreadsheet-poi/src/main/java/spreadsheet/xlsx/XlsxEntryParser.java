@@ -19,9 +19,9 @@ package spreadsheet.xlsx;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
  * Parser for Office Open XML files.
@@ -41,14 +41,14 @@ public interface XlsxEntryParser extends Closeable {
 
     interface WorkbookVisitor {
 
-        void onSheet(@Nonnull String relationId, @Nonnull String name);
+        void onSheet(@NonNull String relationId, @NonNull String name);
 
         void onDate1904(boolean date1904);
     }
 
     interface SharedStringsVisitor {
 
-        void onSharedString(@Nonnull String str);
+        void onSharedString(@NonNull String str);
     }
 
     interface StylesVisitor {
@@ -63,16 +63,16 @@ public interface XlsxEntryParser extends Closeable {
         void onSheetData(@Nullable String sheetBounds) throws IllegalStateException;
 
         void onCell(
-                @Nonnull String ref,
-                @Nonnull CharSequence value,
-                @Nonnull XlsxDataType dataType,
+                @NonNull String ref,
+                @NonNull CharSequence value,
+                @NonNull XlsxDataType dataType,
                 int styleIndex) throws IllegalStateException;
     }
 
     @ThreadSafe
     interface Factory {
 
-        @Nonnull
+        @NonNull
         XlsxEntryParser create() throws IOException;
     }
 }
