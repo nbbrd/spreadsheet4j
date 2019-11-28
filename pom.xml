@@ -277,6 +277,37 @@
             </build>
         </profile>
         
+        <!-- Enforce modern API -->
+        <profile>
+            <id>enforce-modern-api</id>
+            <activation>
+                <property>
+                    <name>!skipEnforceModernAPI</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.gaul</groupId>
+                        <artifactId>modernizer-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <configuration>
+                            <javaVersion>1.8</javaVersion>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>modernizer</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>modernizer</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
         <!-- Deploy SNAPSHOTS to jfrog with sources -->
         <profile>
             <id>deploy-snapshots</id>
@@ -348,24 +379,6 @@
             <id>optional-checks</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.gaul</groupId>
-                        <artifactId>modernizer-maven-plugin</artifactId>
-                        <version>2.0.0</version>
-                        <configuration>
-                            <javaVersion>1.8</javaVersion>
-                            <!--<failOnViolations>false</failOnViolations>-->
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>modernizer</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>modernizer</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId> 
