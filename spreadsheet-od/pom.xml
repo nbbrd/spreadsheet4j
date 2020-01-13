@@ -35,9 +35,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.miachm</groupId>
+            <groupId>com.github.miachm.sods</groupId>
             <artifactId>SODS</artifactId>
-            <version>4b351d4aa7</version>
+            <version>1.2.1</version>
         </dependency>
 
         <!-- test only -->
