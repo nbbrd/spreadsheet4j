@@ -20,7 +20,22 @@ module nbbrd.spreadsheet.util {
     requires java.logging;
     requires transitive java.xml;
 
-    exports internal.spreadsheet.ioutil to
+    exports shaded.spreadsheet.nbbrd.io to
+            nbbrd.spreadsheet.html,
+            nbbrd.spreadsheet.poi,
+            nbbrd.spreadsheet.xmlss;
+
+    exports shaded.spreadsheet.nbbrd.io.function to
+            nbbrd.spreadsheet.html,
+            nbbrd.spreadsheet.poi,
+            nbbrd.spreadsheet.xmlss;
+
+    exports shaded.spreadsheet.nbbrd.io.xml to
+            nbbrd.spreadsheet.html,
+            nbbrd.spreadsheet.poi,
+            nbbrd.spreadsheet.xmlss;
+
+    exports shaded.spreadsheet.nbbrd.io.zip to
             nbbrd.spreadsheet.html,
             nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss;

@@ -16,9 +16,10 @@
  */
 package spreadsheet.xlsx.internal;
 
-import internal.spreadsheet.ioutil.IO;
-import internal.spreadsheet.ioutil.Sax;
-import internal.spreadsheet.ioutil.Zip;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
+import shaded.spreadsheet.nbbrd.io.Resource;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
+import shaded.spreadsheet.nbbrd.io.zip.Zip;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +44,7 @@ import spreadsheet.xlsx.XlsxPackage;
 public final class ZipPackage implements XlsxPackage {
 
     @lombok.NonNull
-    private final IO.ResourceLoader<String> resource;
+    private final Resource.Loader<String> resource;
     private Map<String, String> relationships = null;
 
     @Override
@@ -87,12 +88,12 @@ public final class ZipPackage implements XlsxPackage {
     private static final String SHARED_STRINGS_ENTRY_NAME = "xl/sharedStrings.xml";
     private static final String STYLES_ENTRY_NAME = "xl/styles.xml";
 
-    private static Map<String, String> parseRelationships(IO.Supplier<? extends InputStream> byteSource) throws IOException {
+    private static Map<String, String> parseRelationships(IOSupplier<? extends InputStream> byteSource) throws IOException {
         Map<String, String> result = new HashMap<>();
         return Sax.Parser.<Map<String, String>>builder()
                 .factory(() -> SaxEntryParser.disableNamespaces(Sax.createReader()))
                 .contentHandler(new RelationshipsSaxEventHandler(result::put))
-                .after(IO.Supplier.of(result))
+                .after(IOSupplier.of(result))
                 .build()
                 .parseStream(byteSource);
     }
@@ -141,7 +142,7 @@ public final class ZipPackage implements XlsxPackage {
 
         @Override
         public XlsxPackage open(Path path) throws IOException {
-            Optional<File> file = IO.getFile(path);
+            Optional<File> file = Resource.getFile(path);
             return file.isPresent()
                     ? open(file.get())
                     : open(Files.newInputStream(path));
@@ -161,7 +162,7 @@ public final class ZipPackage implements XlsxPackage {
             }
         }
 
-        private XlsxPackage open(IO.Supplier<IO.ResourceLoader<String>> source) throws IOException {
+        private XlsxPackage open(IOSupplier<Resource.Loader<String>> source) throws IOException {
             return new ZipPackage(source.getWithIO());
         }
 

@@ -20,7 +20,6 @@ import _test.Top5;
 import ec.util.spreadsheet.tck.BookAssert;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
-import internal.spreadsheet.ioutil.IO;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -33,6 +32,7 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
 
 /**
  *
@@ -43,7 +43,7 @@ public class XmlssBookReaderTest {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
 
-    private ArrayBook doParseStream(IO.Supplier<InputStream> byteSource) throws IOException {
+    private ArrayBook doParseStream(IOSupplier<InputStream> byteSource) throws IOException {
         try (InputStream stream = byteSource.getWithIO()) {
             return XmlssBookReader.parseStream(stream);
         }
