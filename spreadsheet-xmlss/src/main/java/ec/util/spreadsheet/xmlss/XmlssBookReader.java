@@ -17,9 +17,6 @@
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.helpers.ArrayBook;
-import internal.spreadsheet.ioutil.IO;
-import internal.spreadsheet.ioutil.Sax;
-import internal.spreadsheet.ioutil.Xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
@@ -29,6 +26,9 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+import shaded.spreadsheet.nbbrd.io.function.IOFunction;
+import shaded.spreadsheet.nbbrd.io.WrappedIOException;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
 
 /**
  *
@@ -50,14 +50,14 @@ final class XmlssBookReader {
         return parse(o -> o.parseStream(stream));
     }
 
-    private interface Loader extends IO.Function<Sax.Parser<ArrayBook>, ArrayBook> {
+    private interface Loader extends IOFunction<Sax.Parser<ArrayBook>, ArrayBook> {
     }
 
     private static ArrayBook parse(Loader loader) throws IOException {
         BookSax2EventHandler handler = new BookSax2EventHandler();
         try {
             return loader.applyWithIO(Sax.Parser.of(handler, handler::build));
-        } catch (Xml.WrappedException ex) {
+        } catch (WrappedIOException ex) {
             Throwable cause = ex.getCause();
             if (isTrailingSectionContentNotAllowed(cause, handler.isEndWorkbookNotified())) {
                 return handler.build();

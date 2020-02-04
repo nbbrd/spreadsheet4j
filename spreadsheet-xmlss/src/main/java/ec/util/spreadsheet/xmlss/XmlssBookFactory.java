@@ -18,7 +18,7 @@ package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
-import internal.spreadsheet.ioutil.Stax;
+import shaded.spreadsheet.nbbrd.io.xml.Stax;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

@@ -17,7 +17,7 @@
 package spreadsheet.xlsx;
 
 import ec.util.spreadsheet.Book;
-import internal.spreadsheet.ioutil.IO;
+import shaded.spreadsheet.nbbrd.io.Resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -71,7 +71,7 @@ public final class XlsxReader {
         try {
             return XlsxBook.create(pkg, this);
         } catch (Error | RuntimeException | IOException ex) {
-            IO.ensureClosed(ex, pkg);
+            Resource.ensureClosed(ex, pkg);
             throw ex;
         }
     }

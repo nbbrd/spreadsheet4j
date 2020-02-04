@@ -18,8 +18,8 @@ package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
-import internal.spreadsheet.ioutil.IO;
-import internal.spreadsheet.ioutil.Sax;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -74,19 +74,19 @@ public final class XlsxBook extends Book {
         return () -> dateSystem.of(date1904);
     }
 
-    private static IO.Supplier<List<String>> sharedStringsOf(XlsxPackage pkg, XlsxEntryParser entryParser) {
+    private static IOSupplier<List<String>> sharedStringsOf(XlsxPackage pkg, XlsxEntryParser entryParser) {
         return () -> parseSharedStrings(pkg::getSharedStrings, entryParser);
     }
 
-    private static IO.Supplier<boolean[]> dateFormatsOf(XlsxPackage pkg, XlsxEntryParser entryParser, XlsxNumberingFormat.Factory numberingFormat) {
+    private static IOSupplier<boolean[]> dateFormatsOf(XlsxPackage pkg, XlsxEntryParser entryParser, XlsxNumberingFormat.Factory numberingFormat) {
         return () -> parseStyles(numberingFormat.of(), pkg::getStyles, entryParser);
     }
 
     private final XlsxPackage pkg;
     private final List<SheetMeta> sheets;
     private final Supplier<XlsxDateSystem> dateSystem;
-    private final IO.Supplier<List<String>> sharedStrings;
-    private final IO.Supplier<boolean[]> dateFormats;
+    private final IOSupplier<List<String>> sharedStrings;
+    private final IOSupplier<boolean[]> dateFormats;
     private final XlsxEntryParser mainEntryParser;
     private final XlsxSheetBuilder.Factory mainSheetBuilderFactory;
     private XlsxSheetBuilder mainSheetBuilder = null;
@@ -172,7 +172,7 @@ public final class XlsxBook extends Book {
         String name;
     }
 
-    static WorkbookData parseWorkbook(IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
+    static WorkbookData parseWorkbook(IOSupplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         WorkbookVisitorImpl result = new WorkbookVisitorImpl();
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitWorkbook(stream, result);
@@ -200,7 +200,7 @@ public final class XlsxBook extends Book {
         }
     }
 
-    static List<String> parseSharedStrings(IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
+    static List<String> parseSharedStrings(IOSupplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         List<String> result = new ArrayList<>();
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSharedStrings(stream, o -> result.add(Objects.requireNonNull(o)));
@@ -208,7 +208,7 @@ public final class XlsxBook extends Book {
         return result;
     }
 
-    static boolean[] parseStyles(XlsxNumberingFormat dateFormat, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
+    static boolean[] parseStyles(XlsxNumberingFormat dateFormat, IOSupplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         StylesVisitorImpl result = new StylesVisitorImpl(dateFormat);
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitStyles(stream, result);
@@ -247,7 +247,7 @@ public final class XlsxBook extends Book {
         }
     }
 
-    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IO.Supplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
+    static Sheet parseSheet(String name, XlsxSheetBuilder sheetBuilder, IOSupplier<? extends InputStream> byteSource, XlsxEntryParser parser) throws IOException {
         SheetVisitorImpl result = new SheetVisitorImpl(name, sheetBuilder);
         try (InputStream stream = byteSource.getWithIO()) {
             parser.visitSheet(stream, result);

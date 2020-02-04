@@ -12,8 +12,8 @@
     <dependencies>
         <dependency>
             <groupId>be.nbb.rd</groupId>
-            <artifactId>java-io-util</artifactId>
-            <version>0.0.4</version>
+            <artifactId>java-io-xml</artifactId>
+            <version>0.0.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
     
@@ -35,9 +35,16 @@
                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                     <relocations>
                         <relocation>
-                            <pattern>ioutil</pattern>
-                            <shadedPattern>internal.spreadsheet.ioutil</shadedPattern>
+                            <pattern>nbbrd.io.</pattern>
+                            <shadedPattern>shaded.spreadsheet.nbbrd.io.</shadedPattern>
+                            <excludes>
+                                <!--<exclude>nbbrd.io.xml.bind.*</exclude>-->
+                            </excludes>
                         </relocation>
+                        <relocation>
+                            <pattern>internal.io.</pattern>
+                            <shadedPattern>shaded.spreadsheet.internal.io.</shadedPattern>
+                        </relocation>                        
                     </relocations>
                     <excludes>
                         <exclude>module-info.java</exclude>
