@@ -110,7 +110,7 @@
                 </property>
             </activation>
             <properties>
-                <lombok.version>1.18.10</lombok.version>
+                <lombok.version>1.18.12</lombok.version>
                 <java-service.version>1.2.1</java-service.version>
                 <jmh.version>1.23</jmh.version>
             </properties>
