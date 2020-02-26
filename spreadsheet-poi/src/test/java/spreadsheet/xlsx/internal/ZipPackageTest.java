@@ -17,7 +17,7 @@
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.tck.SheetAssert;
-import internal.spreadsheet.ioutil.Sax;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;

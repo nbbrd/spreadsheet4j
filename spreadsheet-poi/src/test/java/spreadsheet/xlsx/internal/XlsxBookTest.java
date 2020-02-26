@@ -28,7 +28,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import internal.spreadsheet.ioutil.IO;
+import shaded.spreadsheet.nbbrd.io.function.IOConsumer;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
@@ -37,8 +38,10 @@ import spreadsheet.xlsx.XlsxEntryParser;
  */
 public class XlsxBookTest {
 
-    private final IO.Supplier<? extends InputStream> empty = EmptyInputStream::new;
-    private final IO.Supplier<? extends InputStream> boom = IO.Supplier.throwing(CustomIOException::new);
+    private final IOSupplier<? extends InputStream> empty = EmptyInputStream::new;
+    private final IOSupplier<? extends InputStream> boom = () -> {
+        throw new CustomIOException();
+    };
     private final XlsxEntryParser emptyParser = new NoOpParser();
 
     @Test
@@ -138,7 +141,7 @@ public class XlsxBookTest {
         }))).isEqualTo(new XlsxBook.WorkbookData(new ArrayList<>(Arrays.asList(new XlsxBook.SheetMeta("rId1", "hello"))), true));
     }
 
-    private static XlsxEntryParser parserOnSharedStrings(IO.Consumer<? super XlsxEntryParser.SharedStringsVisitor> consumer) {
+    private static XlsxEntryParser parserOnSharedStrings(IOConsumer<? super XlsxEntryParser.SharedStringsVisitor> consumer) {
         return new NoOpParser() {
             @Override
             public void visitSharedStrings(InputStream s, XlsxEntryParser.SharedStringsVisitor v) throws IOException {
@@ -147,7 +150,7 @@ public class XlsxBookTest {
         };
     }
 
-    private static XlsxEntryParser parserOnSheet(IO.Consumer<? super XlsxEntryParser.SheetVisitor> consumer) {
+    private static XlsxEntryParser parserOnSheet(IOConsumer<? super XlsxEntryParser.SheetVisitor> consumer) {
         return new NoOpParser() {
             @Override
             public void visitSheet(InputStream s, XlsxEntryParser.SheetVisitor v) throws IOException {
@@ -156,7 +159,7 @@ public class XlsxBookTest {
         };
     }
 
-    private static XlsxEntryParser parserOnStyles(IO.Consumer<? super XlsxEntryParser.StylesVisitor> consumer) {
+    private static XlsxEntryParser parserOnStyles(IOConsumer<? super XlsxEntryParser.StylesVisitor> consumer) {
         return new NoOpParser() {
             @Override
             public void visitStyles(InputStream s, XlsxEntryParser.StylesVisitor v) throws IOException {
@@ -165,7 +168,7 @@ public class XlsxBookTest {
         };
     }
 
-    private static XlsxEntryParser parserOnWorkbook(IO.Consumer<? super XlsxEntryParser.WorkbookVisitor> consumer) {
+    private static XlsxEntryParser parserOnWorkbook(IOConsumer<? super XlsxEntryParser.WorkbookVisitor> consumer) {
         return new NoOpParser() {
             @Override
             public void visitWorkbook(InputStream s, XlsxEntryParser.WorkbookVisitor v) throws IOException {

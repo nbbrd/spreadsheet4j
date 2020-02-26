@@ -30,8 +30,10 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
-import internal.spreadsheet.ioutil.IO;
-import internal.spreadsheet.ioutil.Sax;
+import shaded.spreadsheet.nbbrd.io.Resource;
+import shaded.spreadsheet.nbbrd.io.function.IOFunction;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
@@ -40,9 +42,11 @@ import spreadsheet.xlsx.XlsxEntryParser;
  */
 public class SaxEntryParserTest {
 
-    private final IO.Function<String, InputStream> files = o -> IO.getResourceAsStream(SaxEntryParserTest.class, o).orElseThrow(IOException::new);
-    private final IO.Supplier<InputStream> empty = EmptyInputStream::new;
-    private final IO.Supplier<InputStream> throwing = IO.Supplier.throwing(CustomIOException::new);
+    private final IOFunction<String, InputStream> files = o -> Resource.getResourceAsStream(SaxEntryParserTest.class, o).orElseThrow(IOException::new);
+    private final IOSupplier<InputStream> empty = EmptyInputStream::new;
+    private final IOSupplier<InputStream> throwing = () -> {
+        throw new CustomIOException();
+    };
 
     @Test
     public void testWorkbookSax2EventHandler() throws IOException {

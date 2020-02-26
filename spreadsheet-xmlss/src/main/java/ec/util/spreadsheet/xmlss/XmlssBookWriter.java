@@ -19,7 +19,7 @@ package ec.util.spreadsheet.xmlss;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
-import internal.spreadsheet.ioutil.Stax;
+import shaded.spreadsheet.nbbrd.io.xml.Stax;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;

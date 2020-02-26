@@ -16,8 +16,8 @@
  */
 package spreadsheet.xlsx.internal;
 
-import internal.spreadsheet.ioutil.IO;
-import internal.spreadsheet.ioutil.Sax;
+import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
+import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -73,10 +73,10 @@ public final class SaxEntryParser implements XlsxEntryParser {
     }
 
     private void visit(ContentHandler handler, InputStream stream) throws IOException {
-        Sax.Parser.builder().factory(() -> reader).handler(handler).after(VOID).build().parseStream(stream);
+        Sax.Parser.builder().factory(() -> reader).contentHandler(handler).after(VOID).build().parseStream(stream);
     }
 
-    private static final IO.Supplier VOID = IO.Supplier.of(null);
+    private static final IOSupplier VOID = IOSupplier.of(null);
 
     @lombok.RequiredArgsConstructor
     private static final class SheetSaxEventHandler extends DefaultHandler {
