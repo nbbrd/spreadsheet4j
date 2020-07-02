@@ -55,6 +55,8 @@ jobs:
       
   allow_failures:
     - jdk: openjdk-ea
+    - os: windows
+    - arch: arm64
     
 deploy:
   # Maven snapshots from develop branch
