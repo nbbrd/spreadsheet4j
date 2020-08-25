@@ -120,7 +120,7 @@ public class CompactSheetTest {
         CompactSheet sample = getSample().build();
         Object[][] values = new Object[2][3];
         sample.forEach((i, j, t) -> values[i][j] = t.getValue());
-        assertThat(values).containsExactly(EXPECTED_VALUES);
+        assertDeepEqualTo(values, EXPECTED_VALUES);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class CompactSheetTest {
         CompactSheet sample = getSample().build();
         Object[][] values = new Object[2][3];
         sample.forEachValue((i, j, t) -> values[i][j] = t);
-        assertThat(values).containsExactly(EXPECTED_VALUES);
+        assertDeepEqualTo(values, EXPECTED_VALUES);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class CompactSheetTest {
         Sheet sample = getSample().build().inv();
         Object[][] values = new Object[3][2];
         sample.forEachValue((i, j, t) -> values[i][j] = t);
-        assertThat(values).containsExactly(new Object[][]{
+        assertDeepEqualTo(values, new Object[][]{
             {NOW, null},
             {3.14, null},
             {SHARED_STRINGS.get(1), "other"}
@@ -177,6 +177,12 @@ public class CompactSheetTest {
                 assertThat(sheet.getCellValue(i, j)).isEqualTo(data[i][j]);
             }
         }
+    }
+
+    private void assertDeepEqualTo(Object[][] actual, Object[][] expected) {
+        // workaround of bug in assertj 3.17.0
+//        assertThat(actual).isDeepEqualTo(expected);
+        assertThat(Arrays.deepEquals(actual, expected));
     }
 
     private static final List<String> SHARED_STRINGS = Arrays.asList("hello", "world");
