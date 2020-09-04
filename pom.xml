@@ -112,7 +112,7 @@
             <properties>
                 <lombok.version>1.18.12</lombok.version>
                 <java-service.version>1.3.0</java-service.version>
-                <jmh.version>1.25.1</jmh.version>
+                <jmh.version>1.25.2</jmh.version>
             </properties>
             <dependencyManagement>
                 <dependencies>
