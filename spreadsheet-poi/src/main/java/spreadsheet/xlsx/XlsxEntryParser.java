@@ -19,7 +19,8 @@ package spreadsheet.xlsx;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import net.jcip.annotations.ThreadSafe;
+
+import nbbrd.design.ThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

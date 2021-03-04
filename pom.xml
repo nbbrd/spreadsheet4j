@@ -52,11 +52,6 @@
                 <artifactId>checker-qual</artifactId>
                 <version>3.11.0</version>
             </dependency>
-            <dependency>
-                <groupId>com.github.stephenc.jcip</groupId>
-                <artifactId>jcip-annotations</artifactId>
-                <version>1.0-1</version>
-            </dependency>
 
             <!-- test libraries -->
             <dependency>
@@ -130,6 +125,7 @@
             <properties>
                 <lombok.version>1.18.18</lombok.version>
                 <java-service.version>1.3.0</java-service.version>
+                <java-design.version>1.1.2</java-design.version>
                 <jmh.version>1.28</jmh.version>
             </properties>
             <dependencyManagement>
@@ -148,6 +144,16 @@
                         <groupId>be.nbb.rd</groupId>
                         <artifactId>java-service-processor</artifactId>
                         <version>${java-service.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>be.nbb.rd</groupId>
+                        <artifactId>java-design-annotation</artifactId>
+                        <version>${java-design.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>be.nbb.rd</groupId>
+                        <artifactId>java-design-processor</artifactId>
+                        <version>${java-design.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>org.openjdk.jmh</groupId>
@@ -177,6 +183,11 @@
                                     <groupId>be.nbb.rd</groupId>
                                     <artifactId>java-service-processor</artifactId>
                                     <version>${java-service.version}</version>
+                                </path>
+                                <path>
+                                    <groupId>be.nbb.rd</groupId>
+                                    <artifactId>java-design-processor</artifactId>
+                                    <version>${java-design.version}</version>
                                 </path>
                                 <path>
                                     <groupId>org.openjdk.jmh</groupId>
