@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>spreadsheet-parent</artifactId>
         <version>2.2.6-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>spreadsheet-util</artifactId>
-    
+
     <dependencies>
         <dependency>
             <groupId>be.nbb.rd</groupId>
@@ -16,7 +17,7 @@
             <version>0.0.11</version>
         </dependency>
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
@@ -32,7 +33,17 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml
+                    </dependencyReducedPomLocation>
                     <relocations>
                         <relocation>
                             <pattern>nbbrd.io.</pattern>
@@ -44,14 +55,11 @@
                         <relocation>
                             <pattern>internal.io.</pattern>
                             <shadedPattern>shaded.spreadsheet.internal.io.</shadedPattern>
-                        </relocation>                        
+                        </relocation>
                     </relocations>
-                    <excludes>
-                        <exclude>module-info.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.moditect</groupId>
                 <artifactId>moditect-maven-plugin</artifactId>
@@ -71,7 +79,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>        
+            </plugin>
         </plugins>
     </build>
 </project>
