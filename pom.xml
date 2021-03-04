@@ -1,22 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.europa.ec.joinup.sat</groupId>
     <artifactId>spreadsheet-parent</artifactId>
     <version>2.2.6-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <name>spreadsheet4j</name>
     <description>Spreadsheet facade for Java</description>
-    
     <url>https://github.com/nbbrd/spreadsheet4j</url>
+
     <licenses>
         <license>
             <name>European Union Public Licence (EUPL)</name>
             <url>https://joinup.ec.europa.eu/page/eupl-text-11-12</url>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>Philippe Charles</name>
+            <email>philippe.charles@nbb.be</email>
+            <organization>National Bank of Belgium</organization>
+            <organizationUrl>https://www.nbb.be</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/nbbrd/spreadsheet4j.git</connection>
+        <developerConnection>scm:git:ssh://github.com:nbbrd/spreadsheet4j.git</developerConnection>
+        <url>http://github.com/nbbrd/spreadsheet4j/tree/master</url>
+    </scm>
 
     <modules>
         <module>spreadsheet-api</module>
@@ -27,7 +43,7 @@
         <module>spreadsheet-xmlss</module>
         <module>spreadsheet-util</module>
     </modules>
-    
+
     <dependencyManagement>
         <dependencies>
             <!-- annotations -->
@@ -38,10 +54,10 @@
             </dependency>
             <dependency>
                 <groupId>com.github.stephenc.jcip</groupId>
-                <artifactId>jcip-annotations</artifactId>            
+                <artifactId>jcip-annotations</artifactId>
                 <version>1.0-1</version>
             </dependency>
-            
+
             <!-- test libraries -->
             <dependency>
                 <groupId>junit</groupId>
@@ -68,7 +84,7 @@
             <properties>
                 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
                 <maven.compiler.target>1.8</maven.compiler.target>
-                <maven.compiler.source>1.8</maven.compiler.source>                
+                <maven.compiler.source>1.8</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -93,14 +109,16 @@
                             <useModulePath>false</useModulePath>
                             <!--fix shaded jar issue-->
                             <additionalClasspathElements>
-                                <additionalClasspathElement>spreadsheet-util/target/spreadsheet-util-${project.version}.jar</additionalClasspathElement>
+                                <additionalClasspathElement>
+                                    spreadsheet-util/target/spreadsheet-util-${project.version}.jar
+                                </additionalClasspathElement>
                             </additionalClasspathElements>
                         </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Base processors -->
         <profile>
             <id>base-processors</id>
@@ -171,7 +189,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Run Java8 build with JPMS on JDK9+ -->
         <profile>
             <id>java8-with-jpms</id>
@@ -181,7 +199,7 @@
             <properties>
                 <!-- Fix NetBeans bug with test packages -->
                 <maven.compiler.target>9</maven.compiler.target>
-                <maven.compiler.source>9</maven.compiler.source>                
+                <maven.compiler.source>9</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -237,12 +255,12 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>        
+                    </plugin>
                 </plugins>
             </build>
         </profile>
-        
-        <!-- Enforce dependency rules -->
+
+        <!-- Enforce dependency & Maven-central rules -->
         <profile>
             <id>enforce-dependency-rules</id>
             <activation>
@@ -256,9 +274,19 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
                         <version>3.0.0-M3</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.kordamp.maven</groupId>
+                                <artifactId>pomchecker-enforcer-rules</artifactId>
+                                <version>1.1.0</version>
+                            </dependency>
+                        </dependencies>
                         <executions>
                             <execution>
                                 <id>enforce</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
                                 <configuration>
                                     <rules>
                                         <requireMavenVersion>
@@ -268,18 +296,20 @@
                                         <requireReleaseDeps>
                                             <onlyWhenRelease>true</onlyWhenRelease>
                                         </requireReleaseDeps>
+                                        <CheckMavenCentral
+                                                implementation="org.kordamp.maven.enforcer.checker.CheckMavenCentral">
+                                            <release>false</release>
+                                            <strict>false</strict>
+                                        </CheckMavenCentral>
                                     </rules>
                                 </configuration>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Enforce modern API -->
         <profile>
             <id>enforce-modern-api</id>
@@ -310,7 +340,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Deploy SNAPSHOTS to jfrog with sources -->
         <profile>
             <id>deploy-snapshots</id>
@@ -376,7 +406,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- Enforce code coverage -->
         <profile>
             <id>enforce-code-coverage</id>
@@ -390,20 +420,20 @@
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId> 
-                        <version>0.8.6</version> 
-                        <executions> 
-                            <execution> 
-                                <goals> 
-                                    <goal>prepare-agent</goal> 
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.6</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
                                 </goals>
                             </execution>
-                            <execution> 
-                                <id>report</id> 
-                                <phase>prepare-package</phase> 
-                                <goals> 
-                                    <goal>report</goal> 
-                                </goals> 
+                            <execution>
+                                <id>report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -411,7 +441,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <repositories>
         <repository>
             <id>oss-jfrog-artifactory-releases</id>
