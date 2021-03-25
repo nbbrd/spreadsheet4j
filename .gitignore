@@ -1,7 +1,1 @@
-/spreadsheet-api/target/
-/spreadsheet-html/target/
-/spreadsheet-tck/target/
-/spreadsheet-poi/target/
-/spreadsheet-xmlss/target/
-/spreadsheet-od/target/
-/spreadsheet-util/target/
+target/
