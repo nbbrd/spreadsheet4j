@@ -18,9 +18,9 @@
 module nbbrd.spreadsheet.api {
 
     requires static org.checkerframework.checker.qual;
-    requires static jcip.annotations;
     requires static lombok;
     requires static nbbrd.service;
+    requires static nbbrd.design;
 
     exports ec.util.spreadsheet;
     exports ec.util.spreadsheet.helpers;

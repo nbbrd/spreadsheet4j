@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.ObjIntConsumer;
-import net.jcip.annotations.NotThreadSafe;
+
+import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
