@@ -3,12 +3,16 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>eu.europa.ec.joinup.sat</groupId>
+        <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
         <version>2.2.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>spreadsheet-poi</artifactId>
+
+    <name>spreadsheet4j-poi</name>
+    <description>Spreadsheet facade for Java - POI</description>
+    <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <properties>
         <poi.version>4.1.2</poi.version>
@@ -46,12 +50,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-design-util</groupId>
             <artifactId>java-design-processor</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>be.nbb.rd</groupId>
+            <groupId>com.github.nbbrd.java-service-util</groupId>
             <artifactId>java-service-annotation</artifactId>
             <scope>provided</scope>
         </dependency>
@@ -63,12 +67,12 @@
         
         <!-- compile and runtime -->
         <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>spreadsheet-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>spreadsheet-util</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -93,7 +97,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>spreadsheet-tck</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
