@@ -101,7 +101,7 @@ final class PoiCell extends ec.util.spreadsheet.Cell {
     }
 
     private static CellType getFinalType(Cell cell) {
-        CellType result = cell.getCellTypeEnum();
-        return result != CellType.FORMULA ? result : cell.getCachedFormulaResultTypeEnum();
+        CellType result = cell.getCellType();
+        return result != CellType.FORMULA ? result : cell.getCachedFormulaResultType();
     }
 }

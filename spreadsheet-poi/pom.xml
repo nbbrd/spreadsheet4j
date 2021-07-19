@@ -15,7 +15,7 @@
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <properties>
-        <poi.version>4.1.2</poi.version>
+        <poi.version>5.0.0</poi.version>
         <disruptor.version>3.4.4</disruptor.version>
     </properties>
 
@@ -83,6 +83,17 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
         </dependency>
         <dependency>
             <groupId>com.lmax</groupId>
