@@ -15,7 +15,7 @@
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <properties>
-        <jsoup.version>1.14.1</jsoup.version>
+        <jsoup.version>1.14.2</jsoup.version>
     </properties>
 
     <dependencies>
