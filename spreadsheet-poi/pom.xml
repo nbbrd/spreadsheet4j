@@ -78,10 +78,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <exclusions>
                 <exclusion>
@@ -96,12 +92,27 @@
                     <groupId>org.osgi</groupId>
                     <artifactId>org.osgi.core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
+            <!-- fix dependency convergence -->
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
-            <version>2.0.2</version>
+            <version>1.0.b2</version>
+        </dependency>
+        <dependency>
+            <!-- force latest version of log4j -->
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.1</version>
         </dependency>
         <dependency>
             <groupId>com.lmax</groupId>
