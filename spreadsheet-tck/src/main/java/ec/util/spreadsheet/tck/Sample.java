@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
@@ -64,12 +63,12 @@ public final class Sample {
     }
 
     @NonNull
-    public File file(@NonNull TemporaryFolder temp) {
+    public File file(@NonNull Path temp) {
         return newFile(temp);
     }
 
     @NonNull
-    public Path path(@NonNull TemporaryFolder temp) {
+    public Path path(@NonNull Path temp) {
         return newFile(temp).toPath();
     }
 
@@ -85,9 +84,9 @@ public final class Sample {
         }
     }
 
-    private File newFile(TemporaryFolder temp) {
+    private File newFile(Path temp) {
         try {
-            File result = temp.newFile(fileName);
+            File result = Files.createFile(temp.resolve(fileName)).toFile();
             byte[] content = data.get();
             if (content != null) {
                 Files.write(result.toPath(), content);

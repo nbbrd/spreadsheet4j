@@ -16,8 +16,8 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -40,12 +40,12 @@ public class ArrayBookTest {
         ArrayBook book;
 
         book = newBook();
-        Assert.assertEquals(book, book.copy());
-        Assert.assertNotSame(book, book.copy());
+        Assertions.assertEquals(book, book.copy());
+        Assertions.assertNotSame(book, book.copy());
 
         book = newBook(s1, s2);
-        Assert.assertEquals(book, book.copy());
-        Assert.assertNotSame(book, book.copy());
+        Assertions.assertEquals(book, book.copy());
+        Assertions.assertNotSame(book, book.copy());
     }
 
     @Test
@@ -53,13 +53,13 @@ public class ArrayBookTest {
         ArrayBook book;
 
         book = newBook();
-        Assert.assertEquals(book, newBook());
-        Assert.assertNotEquals(book, newBook(s1));
+        Assertions.assertEquals(book, newBook());
+        Assertions.assertNotEquals(book, newBook(s1));
 
         book = newBook(s1, s2);
-        Assert.assertEquals(book, newBook(s1, s2));
-        Assert.assertNotEquals(book, newBook(s1));
-        Assert.assertNotEquals(book, newBook(s2, s1));
+        Assertions.assertEquals(book, newBook(s1, s2));
+        Assertions.assertNotEquals(book, newBook(s1));
+        Assertions.assertNotEquals(book, newBook(s2, s1));
     }
 
     @Test

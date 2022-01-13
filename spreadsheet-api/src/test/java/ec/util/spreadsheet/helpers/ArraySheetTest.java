@@ -28,11 +28,8 @@ import java.io.Serializable;
 import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -54,14 +51,14 @@ public class ArraySheetTest {
 
     @Test
     public void testGetRowCount() {
-        assertEquals(0, new ArraySheet("", 0, 0, empty(), false).getRowCount());
-        assertEquals(2, new ArraySheet("", 2, 4, empty(), false).getRowCount());
+        Assertions.assertEquals(0, new ArraySheet("", 0, 0, empty(), false).getRowCount());
+        Assertions.assertEquals(2, new ArraySheet("", 2, 4, empty(), false).getRowCount());
     }
 
     @Test
     public void testGetColumnCount() {
-        assertEquals(0, new ArraySheet("", 0, 0, empty(), false).getColumnCount());
-        assertEquals(4, new ArraySheet("", 2, 4, empty(), false).getColumnCount());
+        Assertions.assertEquals(0, new ArraySheet("", 0, 0, empty(), false).getColumnCount());
+        Assertions.assertEquals(4, new ArraySheet("", 2, 4, empty(), false).getColumnCount());
     }
 
     @Test
@@ -97,7 +94,7 @@ public class ArraySheetTest {
     public void testRename() {
         ArraySheet sheet = new ArraySheet("hello", 2, 2, sample(), false);
         // same name
-        assertSame(sheet, sheet.rename("hello"));
+        Assertions.assertSame(sheet, sheet.rename("hello"));
         // new name
         ArraySheet other = sheet.rename("world");
         assertThat(sheet.getName()).isEqualTo("hello");
@@ -123,11 +120,11 @@ public class ArraySheetTest {
     public void testDeepCopy() {
         // 1. copy of ArraySheet
         ArraySheet s1 = new ArraySheet("hello", 2, 2, sample(), false);
-        assertNotSame(s1, ArraySheet.copyOf(s1));
+        Assertions.assertNotSame(s1, ArraySheet.copyOf(s1));
         assertSheetEquals(s1, ArraySheet.copyOf(s1));
         // 2. copy of some other impl
         Sheet s2 = new FakeSheet();
-        assertNotSame(s2, ArraySheet.copyOf(s2));
+        Assertions.assertNotSame(s2, ArraySheet.copyOf(s2));
         assertSheetEquals(s2, ArraySheet.copyOf(s2));
     }
 
@@ -135,7 +132,7 @@ public class ArraySheetTest {
     public void testSerialization() throws IOException, ClassNotFoundException {
         ArraySheet sheet = new ArraySheet("hello", 2, 2, sample(), false);
         ArraySheet other = writeRead(sheet);
-        assertNotSame(sheet, other);
+        Assertions.assertNotSame(sheet, other);
         assertSheetEquals(sheet, other);
     }
 
@@ -173,23 +170,23 @@ public class ArraySheetTest {
         ArraySheet s;
 
         s = b.clear().build();
-        assertEquals(s.hashCode(), s.copy().hashCode());
-        assertEquals(s.hashCode(), b.clear().build().hashCode());
-        assertNotEquals(s.hashCode(), b.clear().row(0, 0, "world").build().hashCode());
-        assertNotEquals(s.hashCode(), s.rename("new name").hashCode());
+        Assertions.assertEquals(s.hashCode(), s.copy().hashCode());
+        Assertions.assertEquals(s.hashCode(), b.clear().build().hashCode());
+        Assertions.assertNotEquals(s.hashCode(), b.clear().row(0, 0, "world").build().hashCode());
+        Assertions.assertNotEquals(s.hashCode(), s.rename("new name").hashCode());
 
         s = b.clear().row(1, 2, STRING, 3.14, DATE).build();
-        assertEquals(s.hashCode(), s.copy().hashCode());
-        assertEquals(s.hashCode(), b.clear().row(1, 2, STRING, 3.14, DATE).build().hashCode());
-        assertNotEquals(s.hashCode(), b.clear().row(0, 0, "other").build().hashCode());
-        assertNotEquals(s.hashCode(), b.clear().row(1, 2, STRING, 123, DATE).build().hashCode());
-        assertNotEquals(s.hashCode(), s.rename("new name").hashCode());
-        assertEquals(s.hashCode(), b.clear().column(2, 1, STRING, 3.14, DATE).build().inv().hashCode());
+        Assertions.assertEquals(s.hashCode(), s.copy().hashCode());
+        Assertions.assertEquals(s.hashCode(), b.clear().row(1, 2, STRING, 3.14, DATE).build().hashCode());
+        Assertions.assertNotEquals(s.hashCode(), b.clear().row(0, 0, "other").build().hashCode());
+        Assertions.assertNotEquals(s.hashCode(), b.clear().row(1, 2, STRING, 123, DATE).build().hashCode());
+        Assertions.assertNotEquals(s.hashCode(), s.rename("new name").hashCode());
+        Assertions.assertEquals(s.hashCode(), b.clear().column(2, 1, STRING, 3.14, DATE).build().inv().hashCode());
     }
 
     private static void assertCellValueEquals(Sheet expected, Sheet actual) {
-        expected.forEachValue((i, j, v) -> assertEquals(CellRefHelper.getCellRef(i, j), v, actual.getCellValue(i, j)));
-        actual.forEachValue((i, j, v) -> assertEquals(CellRefHelper.getCellRef(i, j), v, expected.getCellValue(i, j)));
+        expected.forEachValue((i, j, v) -> Assertions.assertEquals(v, actual.getCellValue(i, j), CellRefHelper.getCellRef(i, j)));
+        actual.forEachValue((i, j, v) -> Assertions.assertEquals(v, expected.getCellValue(i, j), CellRefHelper.getCellRef(i, j)));
     }
 
     private static void assertSheetEquals(Sheet expected, Sheet actual) {

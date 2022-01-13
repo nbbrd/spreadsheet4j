@@ -19,7 +19,7 @@ package spreadsheet.xlsx.internal;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import spreadsheet.xlsx.XlsxDateSystem;
 
 /**

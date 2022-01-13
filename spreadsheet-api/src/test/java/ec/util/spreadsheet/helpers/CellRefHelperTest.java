@@ -22,7 +22,7 @@ import static ec.util.spreadsheet.helpers.CellRefHelper.getRowLabel;
 import java.util.function.Predicate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

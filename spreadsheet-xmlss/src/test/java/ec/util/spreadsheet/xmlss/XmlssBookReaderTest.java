@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import javax.xml.stream.XMLOutputFactory;
 import static org.assertj.core.api.Assertions.*;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
 
 /**
@@ -39,9 +39,6 @@ import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
  * @author Philippe Charles
  */
 public class XmlssBookReaderTest {
-
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
 
     private ArrayBook doParseStream(IOSupplier<InputStream> byteSource) throws IOException {
         try (InputStream stream = byteSource.getWithIO()) {
@@ -77,7 +74,7 @@ public class XmlssBookReaderTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testParseFile() throws IOException {
+    public void testParseFile(@TempDir Path temp) throws IOException {
         assertThatNullPointerException().isThrownBy(() -> XmlssBookReader.parseFile(null));
 
         ArrayBook original = XmlssBookReader.parseFile(Top5.VALID.file(temp));
