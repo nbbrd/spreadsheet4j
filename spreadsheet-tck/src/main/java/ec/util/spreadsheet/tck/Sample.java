@@ -29,6 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.function.Supplier;
+
+import ec.util.spreadsheet.helpers.ArrayBook;
 import lombok.AccessLevel;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -78,9 +80,11 @@ public final class Sample {
     }
 
     @NonNull
-    public Book loadStream(Book.@NonNull Factory x) throws IOException {
+    public ArrayBook loadStream(Book.@NonNull Factory x) throws IOException {
         try (InputStream stream = stream()) {
-            return x.load(stream);
+            try (Book book = x.load(stream)) {
+                return ArrayBook.copyOf(book);
+            }
         }
     }
 

@@ -66,13 +66,13 @@ public class ExcelBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        return FileHelper.accept(file, this::accept);
+        return FileHelper.accept(file, this);
     }
 
     @Override
     public boolean accept(Path file) throws IOException {
         return FileHelper.hasExtension(file, ".xlsx", ".xlsm")
-                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
+                && (!Files.exists(file) || FileHelper.hasMagicNumber(file, ZIP_HEADER));
     }
 
     @Override

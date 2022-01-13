@@ -18,6 +18,7 @@ package ec.util.spreadsheet.od;
 
 import _test.Top5;
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.tck.BookFactoryAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -79,13 +80,13 @@ public class OpenDocumentBookFactoryTest {
     public void testLoadStream() throws IOException {
         OpenDocumentBookFactory x = new OpenDocumentBookFactory();
 
-        try (Book book = Top5.VALID.loadStream(x)) {
+        try (ArrayBook book = Top5.VALID.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
-        try (Book book = Top5.BAD_EXTENSION.loadStream(x)) {
+        try (ArrayBook book = Top5.BAD_EXTENSION.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
-        try (Book book = Top5.VALID_WITH_TAIL.loadStream(x)) {
+        try (ArrayBook book = Top5.VALID_WITH_TAIL.loadStream(x)) {
             Top5.assertTop5Book(book);
         }
         assertThatIOException().isThrownBy(() -> Top5.INVALID_FORMAT.loadStream(x));

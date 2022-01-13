@@ -18,6 +18,7 @@ package ec.util.spreadsheet.poi;
 
 import _test.Top5x;
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.tck.BookFactoryAssert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.io.TempDir;
@@ -87,13 +88,13 @@ public class ExcelBookFactoryTest {
     @ParameterizedTest
     @MethodSource("getFactories")
     public void testLoadStream(ExcelBookFactory x) throws IOException {
-        try (Book book = Top5x.VALID.loadStream(x)) {
+        try (ArrayBook book = Top5x.VALID.loadStream(x)) {
             Top5x.assertTop5Book(book);
         }
-        try (Book book = Top5x.BAD_EXTENSION.loadStream(x)) {
+        try (ArrayBook book = Top5x.BAD_EXTENSION.loadStream(x)) {
             Top5x.assertTop5Book(book);
         }
-        try (Book book = Top5x.VALID_WITH_TAIL.loadStream(x)) {
+        try (ArrayBook book = Top5x.VALID_WITH_TAIL.loadStream(x)) {
             Top5x.assertTop5Book(book);
         }
         assertThatIOException().isThrownBy(() -> Top5x.INVALID_FORMAT.loadStream(x));
