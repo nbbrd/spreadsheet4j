@@ -20,8 +20,9 @@ import _test.Top5x;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.tck.BookFactoryAssert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,69 +57,68 @@ public class ExcelBookFactoryTest {
         MISSING = Top5x.MISSING.file(temp);
     }
 
-    @Test
-    public void testCompliance() throws IOException {
-        for (ExcelBookFactory x : FACTORIES) {
-            BookFactoryAssert.assertThat(x).isCompliant(VALID, INVALID_FORMAT);
-        }
+    public static ExcelBookFactory[] getFactories() {
+        return FACTORIES;
     }
 
-    @Test
-    public void testLoadFile() throws IOException {
-        for (ExcelBookFactory x : FACTORIES) {
-            try (Book book = x.load(VALID)) {
-                Top5x.assertTop5Book(book);
-            }
-            try (Book book = x.load(BAD_EXTENSION)) {
-                Top5x.assertTop5Book(book);
-            }
-            try (Book book = x.load(VALID_WITH_TAIL)) {
-                Top5x.assertTop5Book(book);
-            }
-            assertThatIOException().isThrownBy(() -> x.load(INVALID_FORMAT));
-            assertThatIOException().isThrownBy(() -> x.load(EMPTY));
-            assertThatIOException().isThrownBy(() -> x.load(MISSING));
-        }
+    @ParameterizedTest
+    @MethodSource("getFactories")
+    public void testCompliance(ExcelBookFactory x) throws IOException {
+        BookFactoryAssert.assertThat(x).isCompliant(VALID, INVALID_FORMAT);
     }
 
-    @Test
-    public void testLoadStream() throws IOException {
-        for (ExcelBookFactory x : FACTORIES) {
-            try (Book book = Top5x.VALID.loadStream(x)) {
-                Top5x.assertTop5Book(book);
-            }
-            try (Book book = Top5x.BAD_EXTENSION.loadStream(x)) {
-                Top5x.assertTop5Book(book);
-            }
-            try (Book book = Top5x.VALID_WITH_TAIL.loadStream(x)) {
-                Top5x.assertTop5Book(book);
-            }
-            assertThatIOException().isThrownBy(() -> Top5x.INVALID_FORMAT.loadStream(x));
-            assertThatIOException().isThrownBy(() -> Top5x.EMPTY.loadStream(x));
+    @ParameterizedTest
+    @MethodSource("getFactories")
+    public void testLoadFile(ExcelBookFactory x) throws IOException {
+        try (Book book = x.load(VALID)) {
+            Top5x.assertTop5Book(book);
         }
+        try (Book book = x.load(BAD_EXTENSION)) {
+            Top5x.assertTop5Book(book);
+        }
+        try (Book book = x.load(VALID_WITH_TAIL)) {
+            Top5x.assertTop5Book(book);
+        }
+        assertThatIOException().isThrownBy(() -> x.load(INVALID_FORMAT));
+        assertThatIOException().isThrownBy(() -> x.load(EMPTY));
+        assertThatIOException().isThrownBy(() -> x.load(MISSING));
     }
 
-    @Test
-    public void testAcceptFile() {
-        for (ExcelBookFactory x : FACTORIES) {
-            assertThat(x.accept(VALID)).isTrue();
-            assertThat(x.accept(MISSING)).isTrue();
-            assertThat(x.accept(VALID_WITH_TAIL)).isTrue();
-            assertThat(x.accept(BAD_EXTENSION)).isFalse();
-            assertThat(x.accept(INVALID_FORMAT)).isFalse();
-            assertThat(x.accept(EMPTY)).isFalse();
+    @ParameterizedTest
+    @MethodSource("getFactories")
+    public void testLoadStream(ExcelBookFactory x) throws IOException {
+        try (Book book = Top5x.VALID.loadStream(x)) {
+            Top5x.assertTop5Book(book);
         }
+        try (Book book = Top5x.BAD_EXTENSION.loadStream(x)) {
+            Top5x.assertTop5Book(book);
+        }
+        try (Book book = Top5x.VALID_WITH_TAIL.loadStream(x)) {
+            Top5x.assertTop5Book(book);
+        }
+        assertThatIOException().isThrownBy(() -> Top5x.INVALID_FORMAT.loadStream(x));
+        assertThatIOException().isThrownBy(() -> Top5x.EMPTY.loadStream(x));
     }
 
-    @Test
-    public void testAcceptPath() throws IOException {
-        for (ExcelBookFactory x : FACTORIES) {
-            assertThat(x.accept(VALID.toPath())).isTrue();
-            assertThat(x.accept(MISSING.toPath())).isTrue();
-            assertThat(x.accept(VALID_WITH_TAIL.toPath())).isTrue();
-            assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
-            assertThat(x.accept(INVALID_FORMAT.toPath())).isFalse();
-            assertThat(x.accept(EMPTY.toPath())).isFalse();
-        }
+    @ParameterizedTest
+    @MethodSource("getFactories")
+    public void testAcceptFile(ExcelBookFactory x) {
+        assertThat(x.accept(VALID)).isTrue();
+        assertThat(x.accept(MISSING)).isTrue();
+        assertThat(x.accept(VALID_WITH_TAIL)).isTrue();
+        assertThat(x.accept(BAD_EXTENSION)).isFalse();
+        assertThat(x.accept(INVALID_FORMAT)).isFalse();
+        assertThat(x.accept(EMPTY)).isFalse();
+    }
+
+    @ParameterizedTest
+    @MethodSource("getFactories")
+    public void testAcceptPath(ExcelBookFactory x) throws IOException {
+        assertThat(x.accept(VALID.toPath())).isTrue();
+        assertThat(x.accept(MISSING.toPath())).isTrue();
+        assertThat(x.accept(VALID_WITH_TAIL.toPath())).isTrue();
+        assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
+        assertThat(x.accept(INVALID_FORMAT.toPath())).isFalse();
+        assertThat(x.accept(EMPTY.toPath())).isFalse();
     }
 }
