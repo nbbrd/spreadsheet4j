@@ -15,7 +15,7 @@
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <properties>
-        <poi.version>5.1.0</poi.version>
+        <poi.version>5.2.0</poi.version>
         <disruptor.version>3.4.4</disruptor.version>
     </properties>
 
