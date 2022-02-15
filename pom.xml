@@ -127,7 +127,7 @@
             <properties>
                 <lombok.version>1.18.22</lombok.version>
                 <java-service.version>1.4.0</java-service.version>
-                <java-design.version>1.2.1</java-design.version>
+                <java-design.version>1.2.2</java-design.version>
                 <jmh.version>1.34</jmh.version>
             </properties>
             <dependencyManagement>
