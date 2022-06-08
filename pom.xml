@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.spreadsheet4j</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.2.7-SNAPSHOT</version>
+    <version>2.3.0</version>
     <packaging>pom</packaging>
 
     <name>spreadsheet4j</name>
