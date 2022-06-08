@@ -20,12 +20,12 @@ import static ec.util.spreadsheet.tck.Assertions.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
 import org.assertj.core.api.Assertions;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  *
@@ -33,12 +33,9 @@ import org.junit.rules.TemporaryFolder;
  */
 public class HtmlBookFactoryTest {
 
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
-
     @Test
-    public void testCompliance() throws IOException {
-        File valid = createContent(temp.newFile("valid.htm"));
+    public void testCompliance(@TempDir Path temp) throws IOException {
+        File valid = createContent(Files.createFile(temp.resolve("valid.htm")).toFile());
         assertThat(new HtmlBookFactory()).isCompliant(valid);
     }
 

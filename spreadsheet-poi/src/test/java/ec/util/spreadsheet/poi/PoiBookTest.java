@@ -21,7 +21,7 @@ import static ec.util.spreadsheet.tck.SheetAssert.assertThat;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 import org.assertj.core.util.DateUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

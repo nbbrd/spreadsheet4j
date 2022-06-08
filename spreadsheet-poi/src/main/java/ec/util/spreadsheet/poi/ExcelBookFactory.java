@@ -29,6 +29,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nbbrd.service.ServiceProvider;
+import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxReader;
@@ -65,13 +66,13 @@ public class ExcelBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        return FileHelper.accept(file, this::accept);
+        return FileHelper.accept(file, this);
     }
 
     @Override
     public boolean accept(Path file) throws IOException {
         return FileHelper.hasExtension(file, ".xlsx", ".xlsm")
-                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
+                && (!Files.exists(file) || FileHelper.hasMagicNumber(file, ZIP_HEADER));
     }
 
     @Override
@@ -95,6 +96,7 @@ public class ExcelBookFactory extends Book.Factory {
     @Override
     public void store(OutputStream stream, Book book) throws IOException {
         SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, USE_SHARED_STRINGS);
+        target.setZip64Mode(Zip64Mode.AsNeeded);
         try {
             PoiBookWriter.copy(book, target);
             target.write(stream);

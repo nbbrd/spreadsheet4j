@@ -44,7 +44,7 @@ public final class XlsxReader {
     private final XlsxEntryParser.Factory entryParser;
     private final XlsxNumberingFormat.Factory numberingFormat;
     private final XlsxDateSystem.Factory dateSystem;
-    @lombok.experimental.Wither
+    @lombok.With
     private final XlsxSheetBuilder.Factory sheetBuilder;
 
     public XlsxReader() {

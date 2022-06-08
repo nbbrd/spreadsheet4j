@@ -19,8 +19,8 @@ package ec.util.spreadsheet.helpers;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
 import java.io.IOException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -33,22 +33,22 @@ public class ArrayBookBuilderTest {
     @Test
     public void testEmptyBuilder() {
         Book book = ArrayBook.builder().build();
-        Assert.assertEquals(0, book.getSheetCount());
+        Assertions.assertEquals(0, book.getSheetCount());
     }
 
     @Test
     public void testEmptySheet() throws IOException {
         Book book = ArrayBook.builder().sheet(emptySheet).build();
-        Assert.assertEquals(1, book.getSheetCount());
+        Assertions.assertEquals(1, book.getSheetCount());
         Sheet sheet = book.getSheet(0);
-        Assert.assertEquals("test", sheet.getName());
-        Assert.assertEquals(0, sheet.getRowCount());
-        Assert.assertEquals(0, sheet.getColumnCount());
+        Assertions.assertEquals("test", sheet.getName());
+        Assertions.assertEquals(0, sheet.getRowCount());
+        Assertions.assertEquals(0, sheet.getColumnCount());
     }
 
     @Test
     public void testClear() throws IOException {
         Book book = ArrayBook.builder().sheet(emptySheet).clear().build();
-        Assert.assertEquals(0, book.getSheetCount());
+        Assertions.assertEquals(0, book.getSheetCount());
     }
 }

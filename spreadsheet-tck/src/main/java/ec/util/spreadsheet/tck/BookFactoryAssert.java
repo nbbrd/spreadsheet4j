@@ -140,26 +140,38 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
     private static void assertLoadInvalid(SoftAssertions s, Book.Factory f, File invalidFile) throws IOException {
         Class<? extends IOException> invalidException = IOException.class;
 
-        s.assertThatThrownBy(() -> f.load(invalidFile))
+        s.assertThatThrownBy(() -> {
+                    try (Book ignored = f.load(invalidFile)) {
+                    }
+                })
                 .as(msg(f, "load(invalidFile)", invalidException))
                 .isNotInstanceOf(EOFException.class)
                 .isInstanceOf(invalidException)
                 .hasMessageContaining(invalidFile.getName());
 
         try (InputStream stream = Files.newInputStream(invalidFile.toPath())) {
-            s.assertThatThrownBy(() -> f.load(stream))
+            s.assertThatThrownBy(() -> {
+                        try (Book ignored = f.load(stream)) {
+                        }
+                    })
                     .as(msg(f, "load(invalidStream)", invalidException))
                     .isNotInstanceOf(EOFException.class)
                     .isInstanceOf(invalidException);
         }
 
-        s.assertThatThrownBy(() -> f.load(invalidFile.toPath()))
+        s.assertThatThrownBy(() -> {
+                    try (Book ignored = f.load(invalidFile.toPath())) {
+                    }
+                })
                 .as(msg(f, "load(invalidPath)", invalidException))
                 .isNotInstanceOf(EOFException.class)
                 .isInstanceOf(invalidException)
                 .hasMessageContaining(invalidFile.getName());
 
-        s.assertThatThrownBy(() -> f.load(invalidFile.toURI().toURL()))
+        s.assertThatThrownBy(() -> {
+                    try (Book ignored = f.load(invalidFile.toURI().toURL())) {
+                    }
+                })
                 .as(msg(f, "load(invalidURL)", invalidException))
                 .isNotInstanceOf(EOFException.class)
                 .isInstanceOf(invalidException);

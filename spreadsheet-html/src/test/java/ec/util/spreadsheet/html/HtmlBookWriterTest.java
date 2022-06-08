@@ -22,7 +22,7 @@ import ec.util.spreadsheet.helpers.ArraySheet;
 import java.io.IOException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

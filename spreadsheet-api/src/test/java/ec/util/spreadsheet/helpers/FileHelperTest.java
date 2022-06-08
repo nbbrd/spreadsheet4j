@@ -1,38 +1,36 @@
 /*
  * Copyright 2018 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.helpers;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import static org.assertj.core.api.Assertions.*;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
 /**
- *
  * @author Philippe Charles
  */
 public class FileHelperTest {
-
-    @Rule
-    public TemporaryFolder temp = new TemporaryFolder();
 
     @Test
     @SuppressWarnings("null")
@@ -64,10 +62,10 @@ public class FileHelperTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testHasMagicNumberFromFile() throws IOException {
+    public void testHasMagicNumberFromFile(@TempDir Path temp) throws IOException {
         byte[] magic = "abc".getBytes();
 
-        File file = temp.newFile("hello.bin");
+        File file = Files.createFile(temp.resolve("hello.bin")).toFile();
         Files.write(file.toPath(), magic);
 
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();
@@ -99,10 +97,10 @@ public class FileHelperTest {
 
     @Test
     @SuppressWarnings("null")
-    public void testHasMagicNumberFromPath() throws IOException {
+    public void testHasMagicNumberFromPath(@TempDir Path temp) throws IOException {
         byte[] magic = "abc".getBytes();
 
-        Path file = temp.newFile("hello.bin").toPath();
+        Path file = Files.createFile(temp.resolve("hello.bin"));
         Files.write(file, magic);
 
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();

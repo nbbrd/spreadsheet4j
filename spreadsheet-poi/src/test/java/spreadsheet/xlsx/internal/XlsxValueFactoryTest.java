@@ -24,7 +24,7 @@ import java.util.GregorianCalendar;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

@@ -26,7 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import static org.assertj.core.api.Assertions.atIndex;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import spreadsheet.xlsx.XlsxPackage;
 import spreadsheet.xlsx.XlsxSheetBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
