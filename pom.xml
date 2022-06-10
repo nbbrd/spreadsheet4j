@@ -43,6 +43,7 @@
         <module>spreadsheet-xmlss</module>
         <module>spreadsheet-util</module>
         <module>spreadsheet-bom</module>
+        <module>spreadsheet-xl</module>
     </modules>
 
     <dependencyManagement>
