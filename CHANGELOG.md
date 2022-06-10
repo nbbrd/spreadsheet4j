@@ -19,6 +19,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add Maven BOM
 
+### Fixed
+
+- Fix issues with high memory usage (SODS)
+- Fix Zip64 issue (POI)
+
 ## [2.2.6] - 2020-03-25
 
 ### Changed
