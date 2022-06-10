@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 National Bank of Belgium
+ * Copyright 2019 National Bank of Belgium
  * 
  * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
@@ -14,21 +14,11 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
+package shaded.spreadsheet.nbbrd.io.sys;
 
-module nbbrd.spreadsheet.xl {
-
-    requires static org.checkerframework.checker.qual;
-    requires static nbbrd.service;
-    requires static lombok;
-
-    requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
-    requires com.lmax.disruptor;
-    requires java.logging;
-    
-    provides ec.util.spreadsheet.Book.Factory with
-            spreadsheet.xlsx.XlsxBookFactory;
-
-    exports spreadsheet.xlsx to nbbrd.spreadsheet.poi;
-    exports spreadsheet.xlsx.internal to nbbrd.spreadsheet.poi;
+/**
+ *
+ * @author Philippe Charles
+ */
+class Repack {
 }

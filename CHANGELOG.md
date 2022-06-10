@@ -9,9 +9,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add `module-info.java` to `spreadsheet-poi`
+
 ### Changed
 
-- Move Excel native reader to its own module
+- Move Excel native reader to its own module (`spreadsheet-xl`)
 
 ### Fixed
 
@@ -25,6 +27,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fix issues with high memory usage (SODS)
 - Fix Zip64 issue (POI)
+- Fix invalid file lock on Windows+JDK8 (POI)
 
 ## [2.2.6] - 2020-03-25
 

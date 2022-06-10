@@ -43,4 +43,7 @@ module nbbrd.spreadsheet.util {
             nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss,
             nbbrd.spreadsheet.xl;
+
+    exports shaded.spreadsheet.nbbrd.io.sys to
+            nbbrd.spreadsheet.poi;
 }

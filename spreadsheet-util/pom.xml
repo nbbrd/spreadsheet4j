@@ -64,9 +64,6 @@
                         <relocation>
                             <pattern>nbbrd.io.</pattern>
                             <shadedPattern>shaded.spreadsheet.nbbrd.io.</shadedPattern>
-                            <excludes>
-                                <!--<exclude>nbbrd.io.xml.bind.*</exclude>-->
-                            </excludes>
                         </relocation>
                         <relocation>
                             <pattern>internal.io.</pattern>

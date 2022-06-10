@@ -15,7 +15,7 @@
  * limitations under the Licence.
  */
 
-module nbbrd.spreadsheet.xl {
+module nbbrd.spreadsheet.poi {
 
     requires static org.checkerframework.checker.qual;
     requires static nbbrd.service;
@@ -23,12 +23,11 @@ module nbbrd.spreadsheet.xl {
 
     requires nbbrd.spreadsheet.api;
     requires nbbrd.spreadsheet.util;
-    requires com.lmax.disruptor;
-    requires java.logging;
-    
-    provides ec.util.spreadsheet.Book.Factory with
-            spreadsheet.xlsx.XlsxBookFactory;
+    requires nbbrd.spreadsheet.xl;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
-    exports spreadsheet.xlsx to nbbrd.spreadsheet.poi;
-    exports spreadsheet.xlsx.internal to nbbrd.spreadsheet.poi;
+    provides ec.util.spreadsheet.Book.Factory with
+            ec.util.spreadsheet.poi.ExcelBookFactory,
+            ec.util.spreadsheet.poi.ExcelClassicBookFactory;
 }
