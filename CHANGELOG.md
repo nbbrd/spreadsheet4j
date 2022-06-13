@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add `module-info.java` to `spreadsheet-poi`
+- Add media types to identify spreadsheet types
 
 ### Changed
 

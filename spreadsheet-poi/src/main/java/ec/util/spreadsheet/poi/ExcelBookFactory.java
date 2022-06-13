@@ -27,12 +27,15 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import nbbrd.service.ServiceProvider;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import spreadsheet.xlsx.XlsxReader;
+
+import static java.util.Collections.singletonList;
 
 /**
  *
@@ -42,6 +45,8 @@ import spreadsheet.xlsx.XlsxReader;
 public class ExcelBookFactory extends Book.Factory {
 
     private static final boolean USE_SHARED_STRINGS = true;
+    private static final String XLSX_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private static final String XLSM_TYPE = "application/vnd.ms-excel.sheet.macroEnabled.12";
 
     private final AtomicBoolean fast;
 
@@ -62,6 +67,14 @@ public class ExcelBookFactory extends Book.Factory {
     @Override
     public String getName() {
         return "Excel";
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        Map<String, List<String>> result = new HashMap<>();
+        result.put(XLSM_TYPE, singletonList(".xlsm"));
+        result.put(XLSX_TYPE, singletonList(".xlsx"));
+        return result;
     }
 
     @Override

@@ -32,9 +32,16 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import nbbrd.service.ServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -43,9 +50,16 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @ServiceProvider(Book.Factory.class)
 public class OpenDocumentBookFactory extends Book.Factory {
 
+    private static final String ODS_TYPE = "application/vnd.oasis.opendocument.spreadsheet";
+
     @Override
     public String getName() {
         return "Open Document";
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        return singletonMap(ODS_TYPE, singletonList(".ods"));
     }
 
     @Override

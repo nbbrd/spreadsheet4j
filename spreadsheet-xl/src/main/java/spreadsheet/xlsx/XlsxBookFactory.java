@@ -26,6 +26,12 @@ import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.singletonList;
 
 /**
  * @author Philippe Charles
@@ -33,9 +39,20 @@ import java.nio.file.Path;
 @ServiceProvider(Book.Factory.class)
 public final class XlsxBookFactory extends Book.Factory {
 
+    private static final String XLSX_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    private static final String XLSM_TYPE = "application/vnd.ms-excel.sheet.macroEnabled.12";
+
     @Override
     public String getName() {
         return "Xlsx";
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        Map<String, List<String>> result = new HashMap<>();
+        result.put(XLSM_TYPE, singletonList(".xlsm"));
+        result.put(XLSX_TYPE, singletonList(".xlsx"));
+        return result;
     }
 
     @Override

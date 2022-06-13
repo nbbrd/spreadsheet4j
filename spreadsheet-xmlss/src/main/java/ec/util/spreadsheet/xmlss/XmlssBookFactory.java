@@ -18,6 +18,7 @@ package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import shaded.spreadsheet.nbbrd.io.xml.Stax;
 import java.io.File;
 import java.io.IOException;
@@ -26,11 +27,17 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import nbbrd.service.ServiceProvider;
+
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -38,6 +45,8 @@ import nbbrd.service.ServiceProvider;
  */
 @ServiceProvider(Book.Factory.class)
 public class XmlssBookFactory extends Book.Factory {
+
+    private static final String XMLSS_TYPE = "application/xml";
 
     private final XMLOutputFactory xof;
 
@@ -48,6 +57,11 @@ public class XmlssBookFactory extends Book.Factory {
     @Override
     public String getName() {
         return "XML Spreadsheet (XMLSS)";
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        return singletonMap(XMLSS_TYPE, singletonList(".xml"));
     }
 
     @Override

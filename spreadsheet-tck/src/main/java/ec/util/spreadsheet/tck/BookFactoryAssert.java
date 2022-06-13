@@ -71,6 +71,13 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
             // FIXME: must add better invalid definition
 //            s.assertThat(factory.accept(invalid.get())).isTrue();
         }
+        s.assertThat(factory.getExtensionsByMediaType())
+                .isNotNull()
+                .allSatisfy((key, values) -> {
+                    org.assertj.core.api.Assertions.assertThat(key).isNotNull().isNotBlank();
+                    org.assertj.core.api.Assertions.assertThat(values).isNotNull()
+                            .allSatisfy(value -> org.assertj.core.api.Assertions.assertThat(value).isNotNull().isNotBlank());
+                });
 
         s.assertThatThrownBy(() -> factory.isSupportedDataType(NULL_CLASS))
                 .as(msg(factory, "isSupportedDataType(nullClass)", NullPointerException.class))
