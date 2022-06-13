@@ -26,6 +26,7 @@ module nbbrd.spreadsheet.poi {
     requires nbbrd.spreadsheet.xl;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
+    requires org.apache.commons.compress;
 
     provides ec.util.spreadsheet.Book.Factory with
             ec.util.spreadsheet.poi.ExcelBookFactory,
