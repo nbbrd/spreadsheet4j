@@ -18,9 +18,11 @@ package ec.util.spreadsheet.poi;
 
 import _test.Top5x;
 import ec.util.spreadsheet.Book;
+import ec.util.spreadsheet.BookFactoryLoader;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.tck.BookFactoryAssert;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,9 +30,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Comparator;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIOException;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Philippe Charles
@@ -121,5 +123,14 @@ public class ExcelBookFactoryTest {
         assertThat(x.accept(BAD_EXTENSION.toPath())).isFalse();
         assertThat(x.accept(INVALID_FORMAT.toPath())).isFalse();
         assertThat(x.accept(EMPTY.toPath())).isFalse();
+    }
+
+    @Test
+    public void testRank() {
+        assertThat(BookFactoryLoader.get())
+                .hasSize(3)
+                .isSortedAccordingTo(Comparator.comparingInt(Book.Factory::getRank).reversed())
+                .extracting(factory -> factory.getClass().getSimpleName())
+                .contains("XlsxBookFactory", atIndex(0));
     }
 }

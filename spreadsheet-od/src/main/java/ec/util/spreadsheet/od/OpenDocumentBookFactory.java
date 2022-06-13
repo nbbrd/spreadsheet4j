@@ -58,6 +58,11 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return WRAPPED_RANK;
+    }
+
+    @Override
     public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
         return singletonMap(ODS_TYPE, singletonList(".ods"));
     }

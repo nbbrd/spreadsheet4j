@@ -70,6 +70,11 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return WRAPPED_RANK;
+    }
+
+    @Override
     public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
         Map<String, List<String>> result = new HashMap<>();
         result.put(XLSM_TYPE, singletonList(".xlsm"));

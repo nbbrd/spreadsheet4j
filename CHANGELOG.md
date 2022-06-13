@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Add `module-info.java` to `spreadsheet-poi`
 - Add media types to identify spreadsheet types
+- Add sorting of book factories by rank
 
 ### Changed
 

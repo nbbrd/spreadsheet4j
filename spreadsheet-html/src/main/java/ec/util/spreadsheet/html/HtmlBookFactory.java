@@ -54,6 +54,11 @@ public class HtmlBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return NATIVE_RANK;
+    }
+
+    @Override
     public boolean canLoad() {
         return true;
     }

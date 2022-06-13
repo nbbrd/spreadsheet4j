@@ -23,7 +23,7 @@ module nbbrd.spreadsheet.xl {
 
     requires nbbrd.spreadsheet.api;
     requires nbbrd.spreadsheet.util;
-    requires com.lmax.disruptor;
+    requires static com.lmax.disruptor;
     requires java.logging;
     
     provides ec.util.spreadsheet.Book.Factory with

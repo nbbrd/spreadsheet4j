@@ -54,6 +54,11 @@ public class ExcelClassicBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return WRAPPED_RANK;
+    }
+
+    @Override
     public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
         return singletonMap(XLS_TYPE, singletonList(".xls"));
     }

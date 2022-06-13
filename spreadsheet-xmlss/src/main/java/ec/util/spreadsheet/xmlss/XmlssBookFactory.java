@@ -60,6 +60,11 @@ public class XmlssBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return NATIVE_RANK;
+    }
+
+    @Override
     public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
         return singletonMap(XMLSS_TYPE, singletonList(".xml"));
     }

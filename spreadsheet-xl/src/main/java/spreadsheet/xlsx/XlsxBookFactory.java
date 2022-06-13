@@ -48,6 +48,11 @@ public final class XlsxBookFactory extends Book.Factory {
     }
 
     @Override
+    public int getRank() {
+        return NATIVE_RANK;
+    }
+
+    @Override
     public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
         Map<String, List<String>> result = new HashMap<>();
         result.put(XLSM_TYPE, singletonList(".xlsm"));
