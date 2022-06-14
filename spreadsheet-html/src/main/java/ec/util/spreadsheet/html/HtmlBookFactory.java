@@ -22,8 +22,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
 import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -31,6 +39,8 @@ import nbbrd.service.ServiceProvider;
  */
 @ServiceProvider(Book.Factory.class)
 public class HtmlBookFactory extends Book.Factory {
+
+    private static final String HTML_TYPE = "text/html";
 
     private final XMLOutputFactory xof;
 
@@ -41,6 +51,11 @@ public class HtmlBookFactory extends Book.Factory {
     @Override
     public String getName() {
         return "Basic Html";
+    }
+
+    @Override
+    public int getRank() {
+        return NATIVE_RANK;
     }
 
     @Override
@@ -56,6 +71,11 @@ public class HtmlBookFactory extends Book.Factory {
     @Override
     public Book load(InputStream stream) throws IOException {
         return newReader().read(stream);
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        return singletonMap(HTML_TYPE, asList(".html", ".htm"));
     }
 
     @Override

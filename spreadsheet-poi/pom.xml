@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
 
     <artifactId>spreadsheet-poi</artifactId>
@@ -16,7 +16,6 @@
 
     <properties>
         <poi.version>5.2.2</poi.version>
-        <disruptor.version>3.4.4</disruptor.version>
     </properties>
 
     <dependencyManagement>
@@ -32,12 +31,6 @@
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
-            </dependency>
-            <!-- other -->
-            <dependency>
-                <groupId>com.lmax</groupId>
-                <artifactId>disruptor</artifactId>
-                <version>${disruptor.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -73,7 +66,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>spreadsheet-util</artifactId>
+            <artifactId>spreadsheet-xl</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -114,12 +107,7 @@
             <artifactId>log4j-api</artifactId>
             <version>2.17.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        
+
         <!-- test only -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

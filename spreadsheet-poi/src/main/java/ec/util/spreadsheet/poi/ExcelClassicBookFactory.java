@@ -28,9 +28,16 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
 import nbbrd.service.ServiceProvider;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.checkerframework.checker.nullness.qual.NonNull;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 /**
  *
@@ -39,9 +46,21 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 @ServiceProvider(Book.Factory.class)
 public class ExcelClassicBookFactory extends Book.Factory {
 
+    private static final String XLS_TYPE = "application/vnd.ms-excel";
+
     @Override
     public String getName() {
         return "Excel Classic";
+    }
+
+    @Override
+    public int getRank() {
+        return WRAPPED_RANK;
+    }
+
+    @Override
+    public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+        return singletonMap(XLS_TYPE, singletonList(".xls"));
     }
 
     @Override

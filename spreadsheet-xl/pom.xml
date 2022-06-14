@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
@@ -8,10 +9,10 @@
         <version>2.4.0</version>
     </parent>
 
-    <artifactId>spreadsheet-od</artifactId>
+    <artifactId>spreadsheet-xl</artifactId>
 
-    <name>spreadsheet4j-od</name>
-    <description>Spreadsheet facade for Java - OD</description>
+    <name>spreadsheet4j-xl</name>
+    <description>Spreadsheet facade for Java - Excel</description>
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <dependencies>
@@ -19,6 +20,11 @@
         <dependency>
             <groupId>org.checkerframework</groupId>
             <artifactId>checker-qual</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-design-util</groupId>
+            <artifactId>java-design-processor</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -31,7 +37,7 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -39,15 +45,26 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.miachm.sods</groupId>
-            <artifactId>SODS</artifactId>
-            <version>1.4.0</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>spreadsheet-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>3.4.4</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- test only -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

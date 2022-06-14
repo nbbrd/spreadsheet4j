@@ -1,17 +1,17 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet;
@@ -30,12 +30,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.ObjIntConsumer;
 import nbbrd.service.Mutability;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceSorter;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -156,6 +156,11 @@ public abstract class Book implements Closeable {
          */
         @NonNull
         abstract public String getName();
+
+        @ServiceSorter(reverse = true)
+        public int getRank() {
+            return UNKNOWN_RANK;
+        }
 
         //<editor-fold defaultstate="collapsed" desc="Loading methods">
         /**
@@ -282,6 +287,10 @@ public abstract class Book implements Closeable {
         abstract public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException;
         //</editor-fold>
 
+        public @NonNull Map<String, List<String>> getExtensionsByMediaType() {
+            return Collections.emptyMap();
+        }
+
         @Override
         public boolean accept(Path entry) throws IOException {
             try {
@@ -297,6 +306,10 @@ public abstract class Book implements Closeable {
                     || Number.class.isAssignableFrom(type)
                     || String.class.isAssignableFrom(type);
         }
+
+        public static final int NATIVE_RANK = Byte.MAX_VALUE;
+        public static final int WRAPPED_RANK = 0;
+        public static final int UNKNOWN_RANK = -1;
     }
 
     private static IOException translate(FileNotFoundException ex) {
