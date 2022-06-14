@@ -9,6 +9,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [2.4.0] - 2022-06-14
+
+### Added
+
 - Add `module-info.java` to `spreadsheet-poi`
 - Add media types to identify spreadsheet types
 - Add sorting of book factories by rank
@@ -93,7 +101,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.6...v2.3.0
 [2.2.6]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.5...v2.2.6
 [2.2.5]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.4...v2.2.5
