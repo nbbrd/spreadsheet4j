@@ -416,6 +416,7 @@
                         <artifactId>gitflow-maven-plugin</artifactId>
                         <version>1.18.0</version>
                         <configuration>
+                            <installProject>true</installProject>
                             <gitFlowConfig>
                                 <versionTagPrefix>v</versionTagPrefix>
                             </gitFlowConfig>
