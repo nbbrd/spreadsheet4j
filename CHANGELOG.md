@@ -13,7 +13,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- Deprecate API methods: `Sheet#inv()` and `Book.Factory.load(URL)`
+- Deprecate `Sheet#inv()`
+- Deprecate `Book.Factory#load(URL)`
+- Deprecate `Cell`, `Sheet#getCell(int,int)`, `Sheet#forEach(SheetConsumer)`
 - Replace `Book#getSheetCount()` with `Book#getSheetCount2()`
 
 ### Fixed

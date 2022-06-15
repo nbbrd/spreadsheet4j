@@ -1,17 +1,17 @@
 /*
  * Copyright 2013 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.helpers;
@@ -19,21 +19,14 @@ package ec.util.spreadsheet.helpers;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetConsumer;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import nbbrd.design.NotThreadSafe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.io.Serializable;
+import java.util.*;
+
 /**
- *
  * @author Philippe Charles
  */
 @NotThreadSafe
@@ -43,6 +36,7 @@ public final class ArraySheet extends Sheet implements Serializable {
     private final int rowCount;
     private final int columnCount;
     private final Serializable[] values;
+    @Deprecated
     private final FlyweightCell flyweightCell;
     private final boolean inv;
 
@@ -231,6 +225,7 @@ public final class ArraySheet extends Sheet implements Serializable {
         @NonNull
         abstract public Builder value(int row, int column, @Nullable Object value) throws IndexOutOfBoundsException;
 
+        @Deprecated
         @NonNull
         public Builder value(int row, int column, @Nullable Cell value) throws IndexOutOfBoundsException {
             Object tmp = value == null ? null : value.getValue();
@@ -307,6 +302,7 @@ public final class ArraySheet extends Sheet implements Serializable {
     }
 
     // @VisibleForTesting
+    @Deprecated
     static final class FlyweightCell extends Cell implements Serializable {
 
         private transient Object value = null;

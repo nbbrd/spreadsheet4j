@@ -27,12 +27,13 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Philippe Charles
  */
 //@FlyweightPattern
+@Deprecated
 final class OdCell extends ec.util.spreadsheet.Cell {
 
     private final ZoneId zoneId = ZoneId.systemDefault();
     private transient Object value = null;
 
-    private boolean isValid(Object value) {
+    static boolean isValid(Object value) {
         return value instanceof LocalDateTime
                 || value instanceof Number
                 || value instanceof String;

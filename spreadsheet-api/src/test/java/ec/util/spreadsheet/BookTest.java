@@ -23,6 +23,9 @@ import java.io.OutputStream;
 import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -56,6 +59,11 @@ public class BookTest {
 
                             @Override
                             public Cell getCell(int rowIdx, int columnIdx) throws IndexOutOfBoundsException {
+                                throw new IndexOutOfBoundsException();
+                            }
+
+                            @Override
+                            public @Nullable Object getCellValue(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException {
                                 throw new IndexOutOfBoundsException();
                             }
 

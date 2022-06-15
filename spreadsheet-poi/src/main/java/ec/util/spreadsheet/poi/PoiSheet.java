@@ -1,36 +1,39 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.poi;
 
 import ec.util.spreadsheet.SheetConsumer;
-import java.util.Iterator;
-import java.util.Objects;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Iterator;
+import java.util.Objects;
 
 /**
- *
  * @author Philippe Charles
  */
 final class PoiSheet extends ec.util.spreadsheet.Sheet {
 
     private final Sheet sheet;
+    @Deprecated
     private final PoiCell flyweightCell;
     private final int rowCount;
     private final int columnCount;
@@ -70,6 +73,35 @@ final class PoiSheet extends ec.util.spreadsheet.Sheet {
             ec.util.spreadsheet.Cell result = lookupCell(row, columnIdx);
             if (result != null) {
                 return result;
+            }
+            if (columnIdx < 0 || columnIdx >= columnCount) {
+                throw new IndexOutOfBoundsException();
+            }
+            return null;
+        }
+        if (rowIdx < 0 || rowIdx >= rowCount) {
+            throw new IndexOutOfBoundsException();
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable Object getCellValue(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException {
+        Row row = sheet.getRow(rowIdx);
+        if (row != null) {
+            Cell cell = row.getCell(columnIdx);
+            if (cell != null) {
+                ec.util.spreadsheet.Cell.Type type = PoiCell.getCellType(cell);
+                if (type != null) {
+                    switch (type) {
+                        case DATE:
+                            return cell.getDateCellValue();
+                        case NUMBER:
+                            return cell.getNumericCellValue();
+                        case STRING:
+                            return cell.getStringCellValue();
+                    }
+                }
             }
             if (columnIdx < 0 || columnIdx >= columnCount) {
                 throw new IndexOutOfBoundsException();

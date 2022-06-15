@@ -28,6 +28,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
  * @author Philippe Charles
  */
 //@FlyweightPattern
+@Deprecated
 final class PoiCell extends ec.util.spreadsheet.Cell {
 
     private Cell cell = null;
@@ -36,7 +37,7 @@ final class PoiCell extends ec.util.spreadsheet.Cell {
     @Nullable
     PoiCell withCell(@NonNull Cell cell) {
         this.cell = cell;
-        this.type = getType(cell);
+        this.type = getCellType(cell);
         return type != null ? this : null;
     }
 
@@ -89,19 +90,19 @@ final class PoiCell extends ec.util.spreadsheet.Cell {
         return cell.getNumericCellValue();
     }
 
-    private static Type getType(Cell cell) {
-        switch (getFinalType(cell)) {
+    static @Nullable Type getCellType(Cell poiCell) {
+        switch (getFinalType(poiCell)) {
             case STRING:
                 return Type.STRING;
             case NUMERIC:
-                return DateUtil.isCellDateFormatted(cell) ? Type.DATE : Type.NUMBER;
+                return DateUtil.isCellDateFormatted(poiCell) ? Type.DATE : Type.NUMBER;
             default:
                 return null;
         }
     }
 
-    private static CellType getFinalType(Cell cell) {
-        CellType result = cell.getCellType();
-        return result != CellType.FORMULA ? result : cell.getCachedFormulaResultType();
+    private static CellType getFinalType(Cell poiCell) {
+        CellType result = poiCell.getCellType();
+        return result != CellType.FORMULA ? result : poiCell.getCachedFormulaResultType();
     }
 }

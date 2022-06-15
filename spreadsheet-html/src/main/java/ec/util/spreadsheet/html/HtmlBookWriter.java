@@ -1,46 +1,42 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.html;
 
 import ec.util.spreadsheet.Book;
-import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import shaded.spreadsheet.nbbrd.io.xml.Stax;
 import shaded.spreadsheet.nbbrd.io.xml.Xml;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Writer;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
- *
  * @author Philippe Charles
  */
 final class HtmlBookWriter {
@@ -122,14 +118,14 @@ final class HtmlBookWriter {
         for (int i = 0; i < rowCount; i++) {
             f.beginRow();
             for (int j = 0; j < columnCount; j++) {
-                Cell cell = sheet.getCell(i, j);
-                if (cell != null) {
-                    if (cell.isDate()) {
-                        f.writeCell(dateFormat.format(cell.getDate()), false, "type-date");
-                    } else if (cell.isNumber()) {
-                        f.writeCell(numberFormat.format(cell.getDouble()), false, "type-number");
-                    } else if (cell.isString()) {
-                        f.writeCell(cell.getString(), false, "");
+                Object cellValue = sheet.getCellValue(i, j);
+                if (cellValue != null) {
+                    if (cellValue instanceof Date) {
+                        f.writeCell(dateFormat.format((Date) cellValue), false, "type-date");
+                    } else if (cellValue instanceof Number) {
+                        f.writeCell(numberFormat.format(((Number) cellValue).doubleValue()), false, "type-number");
+                    } else if (cellValue instanceof String) {
+                        f.writeCell((String) cellValue, false, "");
                     }
                 } else {
                     f.writeCell("", false, "");
