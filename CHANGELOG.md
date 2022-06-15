@@ -9,6 +9,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Add lightweight xlsx writer [#5](https://github.com/nbbrd/spreadsheet4j/issues/5)
+
 ### Changed
 
 ### Fixed

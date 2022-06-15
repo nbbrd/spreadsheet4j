@@ -44,6 +44,7 @@
         <module>spreadsheet-util</module>
         <module>spreadsheet-bom</module>
         <module>spreadsheet-xl</module>
+        <module>spreadsheet-fastexcel</module>
     </modules>
 
     <dependencyManagement>
