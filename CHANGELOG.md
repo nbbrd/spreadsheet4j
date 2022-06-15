@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Deprecate API methods: `Sheet#inv()` and `Book.Factory.load(URL)`
+
 ### Fixed
 
 ## [2.4.0] - 2022-06-14

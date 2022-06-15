@@ -214,6 +214,7 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
+        @Deprecated
         @NonNull
         public Book load(@NonNull URL url) throws IOException {
             try (InputStream stream = url.openStream()) {

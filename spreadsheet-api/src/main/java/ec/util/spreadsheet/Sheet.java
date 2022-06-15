@@ -113,6 +113,7 @@ public abstract class Sheet {
     @NonNull
     abstract public String getName();
 
+    @Deprecated
     @NonNull
     public Sheet inv() {
         return invUsingDelegate(this);

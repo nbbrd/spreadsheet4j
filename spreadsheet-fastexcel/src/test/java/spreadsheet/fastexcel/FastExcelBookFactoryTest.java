@@ -30,7 +30,6 @@ public class FastExcelBookFactoryTest {
     public void testContent(@TempDir Path temp) throws IOException {
         File inputFile = VALID.file(temp);
         File outputFile = Files.createTempFile("output", ".xlsx").toFile();
-        System.out.println(outputFile);
 
         XlsxBookFactory reader = new XlsxBookFactory();
         FastExcelBookFactory writer = new FastExcelBookFactory();
