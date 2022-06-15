@@ -106,7 +106,7 @@ final class HtmlBookWriter {
         f.writeStyle(STYLE);
         f.endHead();
         f.beginBody();
-        int sheetCount = book.getSheetCount();
+        int sheetCount = book.getSheetCount2();
         for (int s = 0; s < sheetCount; s++) {
             writeTable(f, book.getSheet(s));
         }

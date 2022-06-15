@@ -110,7 +110,7 @@ public final class FastExcelBookFactory extends Book.Factory {
     private static final byte[] ZIP_HEADER = {(byte) 0x50, (byte) 0x4B};
 
     private static void writeBookData(Workbook workbook, Book book) throws IOException {
-        for (int s = 0; s < book.getSheetCount(); s++) {
+        for (int s = 0; s < book.getSheetCount2(); s++) {
             Sheet sheet = book.getSheet(s);
             Worksheet worksheet = workbook.newWorksheet(sheet.getName());
             writeSheetData(worksheet, sheet);

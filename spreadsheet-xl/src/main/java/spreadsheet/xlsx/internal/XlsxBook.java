@@ -1,49 +1,39 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
 import shaded.spreadsheet.nbbrd.io.xml.Sax;
+import spreadsheet.xlsx.*;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import spreadsheet.xlsx.XlsxDataType;
-import spreadsheet.xlsx.XlsxDateSystem;
-import spreadsheet.xlsx.XlsxNumberingFormat;
-import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.XlsxReader;
-import spreadsheet.xlsx.XlsxSheetBuilder;
-import spreadsheet.xlsx.XlsxEntryParser;
 
 /**
- *
  * @author Philippe Charles
  */
 @lombok.RequiredArgsConstructor
@@ -120,16 +110,20 @@ public final class XlsxBook extends Book {
         List<String> y = sharedStrings.getWithIO();
         boolean[] z = dateFormats.getWithIO();
 
-        IntStream.range(0, getSheetCount())
-                .parallel()
-                .forEach(index -> {
-                    try {
-                        Sheet sheet = getSheet(index, DefaultSheetBuilder.of(x, y, z), new SaxEntryParser(Sax.createReader()));
-                        action.accept(sheet, index);
-                    } catch (IOException ex) {
-                        throw new UncheckedIOException(ex);
-                    }
-                });
+        try {
+            IntStream.range(0, getSheetCount2())
+                    .parallel()
+                    .forEach(index -> {
+                        try {
+                            Sheet sheet = getSheet(index, DefaultSheetBuilder.of(x, y, z), new SaxEntryParser(Sax.createReader()));
+                            action.accept(sheet, index);
+                        } catch (IOException ex) {
+                            throw new UncheckedIOException(ex);
+                        }
+                    });
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
+        }
     }
 
     private Sheet getSheet(int index, XlsxSheetBuilder sheetBuilder, XlsxEntryParser entryParser) throws IOException {

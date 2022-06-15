@@ -59,7 +59,7 @@ final class XmlssBookWriter {
 
     private static void write(BasicXmlssWriter f, Book book) throws IOException, XMLStreamException {
         f.beginWorkbook();
-        int sheetCount = book.getSheetCount();
+        int sheetCount = book.getSheetCount2();
         for (int s = 0; s < sheetCount; s++) {
             write(f, book.getSheet(s));
         }
