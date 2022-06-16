@@ -50,7 +50,7 @@ public class HtmlBookFactory extends Book.Factory {
 
     @Override
     public String getName() {
-        return "Basic Html";
+        return "Html table";
     }
 
     @Override
