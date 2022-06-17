@@ -1,34 +1,35 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet;
 
-import java.util.Objects;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.Objects;
 
 /**
  * Facade that represents <b>a sheet in a spreadsheet</b>.
  * <br>Note that you should not store a cell since some implementations may use
  * the flyweight pattern.
  *
+ * @author Philippe Charles
  * @see Book
  * @see Cell
- * @author Philippe Charles
  */
 //@FacadePattern
 public abstract class Sheet {
@@ -50,20 +51,16 @@ public abstract class Sheet {
     abstract public int getColumnCount();
 
     /**
-     * Returns the cell located at the specified position.
-     *
-     * @param rowIdx a zero-based row index
-     * @param columnIdx a zero-based column index
-     * @return a cell if available, null otherwise
-     * @throws IndexOutOfBoundsException if the position is out of bounds
+     * @deprecated use {@link #getCellValue(int, int)} instead
      */
+    @Deprecated
     @Nullable
     abstract public Cell getCell(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException;
 
     /**
      * Returns the cell value located at the specified position.
      *
-     * @param rowIdx a zero-based row index
+     * @param rowIdx    a zero-based row index
      * @param columnIdx a zero-based column index
      * @return a value if available, null otherwise
      * @throws IndexOutOfBoundsException if the position is out of bounds
@@ -74,17 +71,9 @@ public abstract class Sheet {
     }
 
     /**
-     * Performs the given action for each non-null cell of the sheet until all
-     * cells have been processed or an exception has been thrown.
-     *
-     * @implSpec
-     * <p>
-     * The default implementation parses the content by row.
-     *
-     * @param action The action to be performed for each cell
-     * @throws NullPointerException if the specified action is null
-     * @since 2.2.0
+     * @deprecated use {@link #forEachValue(SheetConsumer)} instead
      */
+    @Deprecated
     public void forEach(@NonNull SheetConsumer<? super Cell> action) {
         forEachByRow(this, action);
     }
@@ -93,12 +82,10 @@ public abstract class Sheet {
      * Performs the given action for each non-null cell value of the sheet until
      * all cell values have been processed or an exception has been thrown.
      *
-     * @implSpec
-     * <p>
-     * The default implementation parses the content by row.
-     *
      * @param action The action to be performed for each cell
      * @throws NullPointerException if the specified action is null
+     * @implSpec <p>
+     * The default implementation parses the content by row.
      * @since 2.2.0
      */
     public void forEachValue(@NonNull SheetConsumer<? super Object> action) {
@@ -113,6 +100,7 @@ public abstract class Sheet {
     @NonNull
     abstract public String getName();
 
+    @Deprecated
     @NonNull
     public Sheet inv() {
         return invUsingDelegate(this);

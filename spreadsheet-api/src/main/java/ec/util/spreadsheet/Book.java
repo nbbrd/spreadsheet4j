@@ -16,15 +16,14 @@
  */
 package ec.util.spreadsheet;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import nbbrd.service.Mutability;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceSorter;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.io.*;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -32,12 +31,6 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.ObjIntConsumer;
-import nbbrd.service.Mutability;
-import nbbrd.service.Quantifier;
-import nbbrd.service.ServiceDefinition;
-import nbbrd.service.ServiceSorter;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Facade that represents <b>a book in a spreadsheet</b>. It is created by a
@@ -47,10 +40,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * <br>This facade might also lock some resources. Therefore it is recommended
  * to {@link #close() close} it after use.
  *
+ * @author Philippe Charles
  * @see Factory
  * @see Sheet
  * @see Cell
- * @author Philippe Charles
  */
 //@FacadePattern
 public abstract class Book implements Closeable {
@@ -61,6 +54,18 @@ public abstract class Book implements Closeable {
      * @return a sheet count
      */
     @NonNegative
+    public int getSheetCount2() throws IOException {
+        try {
+            return getSheetCount();
+        } catch (UncheckedIOException ex) {
+            throw ex.getCause();
+        }
+    }
+
+    /**
+     * @deprecated use {@link #getSheetCount2()} instead
+     */
+    @Deprecated
     abstract public int getSheetCount();
 
     /**
@@ -68,9 +73,9 @@ public abstract class Book implements Closeable {
      *
      * @param index a zero-based index
      * @return a non-null sheet
-     * @throws IOException if something goes wrong during loading
+     * @throws IOException               if something goes wrong during loading
      * @throws IndexOutOfBoundsException if the index is out of bounds
-     * (0<=index<sheetCount)
+     *                                   (0<=index<sheetCount)
      */
     @NonNull
     abstract public Sheet getSheet(@NonNegative int index) throws IOException, IndexOutOfBoundsException;
@@ -80,7 +85,7 @@ public abstract class Book implements Closeable {
      *
      * @param index a zero-based index
      * @return a non-null name
-     * @throws IOException if something goes wrong during loading
+     * @throws IOException               if something goes wrong during loading
      * @throws IndexOutOfBoundsException if the index is out of bounds
      */
     @NonNull
@@ -92,22 +97,20 @@ public abstract class Book implements Closeable {
      * Performs the given action for each sheet of the book until all sheets
      * have been processed or an exception has been thrown.
      *
-     * @implSpec
-     * <p>
+     * @param action The action to be performed for each sheet
+     * @throws NullPointerException if the specified action is null
+     * @throws IOException          if something goes wrong during loading
+     * @implSpec <p>
      * The default implementation behaves as if:<pre>{@code
      *     for (int index = 0; index < getSheetCount(); index++) {
      *         action.accept(getSheet(index), index);
      *     }
      * }</pre>
-     *
-     * @param action The action to be performed for each sheet
-     * @throws NullPointerException if the specified action is null
-     * @throws IOException if something goes wrong during loading
      * @since 2.2.0
      */
     public void forEach(@NonNull ObjIntConsumer<? super Sheet> action) throws IOException {
         Objects.requireNonNull(action);
-        for (int index = 0; index < getSheetCount(); index++) {
+        for (int index = 0; index < getSheetCount2(); index++) {
             action.accept(getSheet(index), index);
         }
     }
@@ -116,13 +119,11 @@ public abstract class Book implements Closeable {
      * Performs in parallel the given action for each sheet of the book until
      * all sheets have been processed or an exception has been thrown.
      *
-     * @implSpec
-     * <p>
-     * The default implementation behaves as the regular foreach.
-     *
      * @param action The action to be performed for each sheet
      * @throws NullPointerException if the specified action is null
-     * @throws IOException if something goes wrong during loading
+     * @throws IOException          if something goes wrong during loading
+     * @implSpec <p>
+     * The default implementation behaves as the regular foreach.
      * @since 2.2.2
      */
     public void parallelForEach(@NonNull ObjIntConsumer<? super Sheet> action) throws IOException {
@@ -163,6 +164,7 @@ public abstract class Book implements Closeable {
         }
 
         //<editor-fold defaultstate="collapsed" desc="Loading methods">
+
         /**
          * Checks if this factory can load a book from a spreadsheet.
          *
@@ -214,6 +216,7 @@ public abstract class Book implements Closeable {
          * @return a non-null book
          * @throws IOException if something goes wrong during the loading.
          */
+        @Deprecated
         @NonNull
         public Book load(@NonNull URL url) throws IOException {
             try (InputStream stream = url.openStream()) {
@@ -236,6 +239,7 @@ public abstract class Book implements Closeable {
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Storing methods">
+
         /**
          * Checks if this factory can store a book in a spreadsheet.
          *
@@ -281,7 +285,7 @@ public abstract class Book implements Closeable {
          * close</u> the stream after use.
          *
          * @param stream a non-null spreadsheet stream
-         * @param book the data to be stored
+         * @param book   the data to be stored
          * @throws IOException if something goes wrong during the storing.
          */
         abstract public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException;

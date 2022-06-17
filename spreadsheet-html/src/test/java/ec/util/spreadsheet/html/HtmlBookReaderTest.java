@@ -20,6 +20,8 @@ import static ec.util.spreadsheet.tck.Assertions.*;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 /**
  *
  * @author Philippe Charles
@@ -27,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class HtmlBookReaderTest {
 
     @Test
-    public void testReadString() {
+    public void testReadString() throws IOException {
         HtmlBookReader reader = new HtmlBookReader();
 
         ArrayBook book;

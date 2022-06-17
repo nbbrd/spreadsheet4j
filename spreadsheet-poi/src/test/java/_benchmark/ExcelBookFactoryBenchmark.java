@@ -91,7 +91,7 @@ public class ExcelBookFactoryBenchmark {
     }
 
     private String[] getSheetNames(Book book) throws IOException {
-        String[] result = new String[book.getSheetCount()];
+        String[] result = new String[book.getSheetCount2()];
         for (int i = 0; i < result.length; i++) {
             result[i] = book.getSheetName(i);
         }

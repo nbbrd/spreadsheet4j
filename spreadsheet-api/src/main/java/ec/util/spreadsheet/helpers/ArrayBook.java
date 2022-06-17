@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
 import nbbrd.design.NotThreadSafe;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -41,6 +42,11 @@ public final class ArrayBook extends Book implements Serializable {
     // @VisibleForTesting
     ArrayBook(@NonNull ArraySheet[] sheets) {
         this.sheets = sheets;
+    }
+
+    @Override
+    public @NonNegative int getSheetCount2() {
+        return sheets.length;
     }
 
     @Override
@@ -61,7 +67,7 @@ public final class ArrayBook extends Book implements Serializable {
     @Override
     public void forEach(ObjIntConsumer<? super Sheet> action) {
         Objects.requireNonNull(action);
-        for (int index = 0; index < getSheetCount(); index++) {
+        for (int index = 0; index < getSheetCount2(); index++) {
             action.accept(getSheet(index), index);
         }
     }
@@ -73,7 +79,7 @@ public final class ArrayBook extends Book implements Serializable {
 
     @NonNull
     public ArrayBook copy() {
-        ArraySheet[] result = new ArraySheet[getSheetCount()];
+        ArraySheet[] result = new ArraySheet[getSheetCount2()];
         for (int s = 0; s < result.length; s++) {
             result[s] = getSheet(s).copy();
         }
@@ -104,7 +110,7 @@ public final class ArrayBook extends Book implements Serializable {
         if (book instanceof ArrayBook) {
             return ((ArrayBook) book).copy();
         }
-        ArraySheet[] sheets = new ArraySheet[book.getSheetCount()];
+        ArraySheet[] sheets = new ArraySheet[book.getSheetCount2()];
         for (int s = 0; s < sheets.length; s++) {
             sheets[s] = ArraySheet.copyOf(book.getSheet(s));
         }
@@ -144,7 +150,7 @@ public final class ArrayBook extends Book implements Serializable {
 
         @Override
         public Builder book(Book book) throws IOException {
-            for (int i = 0; i < book.getSheetCount(); i++) {
+            for (int i = 0; i < book.getSheetCount2(); i++) {
                 sheet(book.getSheet(i));
             }
             return this;

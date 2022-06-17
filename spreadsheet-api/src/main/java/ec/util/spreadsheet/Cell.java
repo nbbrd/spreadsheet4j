@@ -29,6 +29,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @author Philippe Charles
  */
 //@FacadePattern
+@Deprecated
 public abstract class Cell {
 
     /**

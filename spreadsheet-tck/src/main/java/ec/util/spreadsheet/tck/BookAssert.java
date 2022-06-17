@@ -67,9 +67,9 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
      * @throws AssertionError - if the actual Book's sheetCount is not equal to
      * the given one.
      */
-    public BookAssert hasSheetCount(int sheetCount) {
+    public BookAssert hasSheetCount(int sheetCount) throws IOException {
         isNotNull();
-        int actualSheetCount = actual.getSheetCount();
+        int actualSheetCount = actual.getSheetCount2();
         if (actualSheetCount != sheetCount) {
             failWithMessage("\nExpecting sheetCount of:\n  <%s>\nto be:\n  <%s>\nbut was:\n  <%s>", actual, sheetCount, actualSheetCount);
         }
@@ -102,24 +102,24 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
         assertForEach(s, book);
         assertNulls(s, book);
         assertGetSheetName(s, book);
-        for (int index = 0; index < book.getSheetCount(); index++) {
+        for (int index = 0; index < book.getSheetCount2(); index++) {
             SheetAssert.assertCompliance(s, book.getSheet(index));
         }
     }
 
-    private static void assertBounds(SoftAssertions s, Book book) {
-        s.assertThat(book.getSheetCount()).isGreaterThanOrEqualTo(0);
+    private static void assertBounds(SoftAssertions s, Book book) throws IOException {
+        s.assertThat(book.getSheetCount2()).isGreaterThanOrEqualTo(0);
         s.assertThatThrownBy(() -> book.getSheet(-1))
                 .as(msg(book, "getSheet(int)", IndexOutOfBoundsException.class))
                 .isInstanceOf(IndexOutOfBoundsException.class);
-        s.assertThatThrownBy(() -> book.getSheet(book.getSheetCount()))
+        s.assertThatThrownBy(() -> book.getSheet(book.getSheetCount2()))
                 .as(msg(book, "getSheet(int)", IndexOutOfBoundsException.class))
                 .isInstanceOf(IndexOutOfBoundsException.class);
     }
 
     private static void assertForEach(SoftAssertions s, Book book) throws IOException {
         List<Tuple> expected = new ArrayList<>();
-        for (int index = 0; index < book.getSheetCount(); index++) {
+        for (int index = 0; index < book.getSheetCount2(); index++) {
             expected.add(summarize(index, book.getSheet(index)));
         }
 
@@ -127,7 +127,7 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
         book.forEach((sheet, i) -> normal.add(summarize(i, sheet)));
         s.assertThat(normal).containsExactlyElementsOf(expected);
 
-        Tuple[] parallel = new Tuple[book.getSheetCount()];
+        Tuple[] parallel = new Tuple[book.getSheetCount2()];
         book.parallelForEach((sheet, i) -> parallel[i] = summarize(i, sheet));
         s.assertThat(parallel).containsExactlyElementsOf(expected);
     }
@@ -144,16 +144,16 @@ public class BookAssert extends AbstractAssert<BookAssert, Book> {
     }
 
     private static void assertGetSheetName(SoftAssertions s, Book book) throws IOException {
-        for (int i = 0; i < book.getSheetCount(); i++) {
+        for (int i = 0; i < book.getSheetCount2(); i++) {
             s.assertThat(book.getSheetName(i)).isEqualTo(book.getSheet(i).getName());
         }
         s.assertThatThrownBy(() -> book.getSheetName(-1)).isInstanceOf(IndexOutOfBoundsException.class);
-        s.assertThatThrownBy(() -> book.getSheetName(book.getSheetCount())).isInstanceOf(IndexOutOfBoundsException.class);
+        s.assertThatThrownBy(() -> book.getSheetName(book.getSheetCount2())).isInstanceOf(IndexOutOfBoundsException.class);
     }
 
     static void assertContentEquals(SoftAssertions s, Book l, Book r, boolean strict) throws IOException {
-        s.assertThat(l.getSheetCount()).isEqualTo(r.getSheetCount());
-        for (int index = 0; index < l.getSheetCount(); index++) {
+        s.assertThat(l.getSheetCount2()).isEqualTo(r.getSheetCount2());
+        for (int index = 0; index < l.getSheetCount2(); index++) {
             SheetAssert.assertContentEquals(s, l.getSheet(index), r.getSheet(index), strict);
         }
     }

@@ -46,6 +46,7 @@ public final class CompactSheet extends Sheet {
     private final List<String> sharedStrings;
     private final List<String> localStrings;
 
+    @Deprecated
     private final FlyweightCell flyweightCell = new FlyweightCell();
 
     @Override
@@ -141,6 +142,7 @@ public final class CompactSheet extends Sheet {
         return new Builder(rowCount, columnCount, name, sharedStrings);
     }
 
+    @Deprecated
     private final class FlyweightCell extends Cell implements Serializable {
 
         private int index = -1;

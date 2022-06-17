@@ -117,7 +117,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
 
     private static SpreadSheet toSpreadSheet(Book book) throws IOException {
         SpreadSheet result = new SpreadSheet();
-        for (int s = 0; s < book.getSheetCount(); s++) {
+        for (int s = 0; s < book.getSheetCount2(); s++) {
             result.appendSheet(toSheet(book.getSheet(s)));
         }
         return result;

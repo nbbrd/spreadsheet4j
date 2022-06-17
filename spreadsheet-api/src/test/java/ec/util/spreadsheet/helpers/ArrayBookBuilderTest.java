@@ -32,14 +32,14 @@ public class ArrayBookBuilderTest {
 
     @Test
     public void testEmptyBuilder() {
-        Book book = ArrayBook.builder().build();
-        Assertions.assertEquals(0, book.getSheetCount());
+        ArrayBook book = ArrayBook.builder().build();
+        Assertions.assertEquals(0, book.getSheetCount2());
     }
 
     @Test
-    public void testEmptySheet() throws IOException {
-        Book book = ArrayBook.builder().sheet(emptySheet).build();
-        Assertions.assertEquals(1, book.getSheetCount());
+    public void testEmptySheet() {
+        ArrayBook book = ArrayBook.builder().sheet(emptySheet).build();
+        Assertions.assertEquals(1, book.getSheetCount2());
         Sheet sheet = book.getSheet(0);
         Assertions.assertEquals("test", sheet.getName());
         Assertions.assertEquals(0, sheet.getRowCount());
@@ -47,8 +47,8 @@ public class ArrayBookBuilderTest {
     }
 
     @Test
-    public void testClear() throws IOException {
-        Book book = ArrayBook.builder().sheet(emptySheet).clear().build();
-        Assertions.assertEquals(0, book.getSheetCount());
+    public void testClear() {
+        ArrayBook book = ArrayBook.builder().sheet(emptySheet).clear().build();
+        Assertions.assertEquals(0, book.getSheetCount2());
     }
 }

@@ -127,6 +127,6 @@ final class PoiBook extends Book {
     }
 
     private boolean isSheetIndexOutOfBounds(int index) {
-        return index < 0 || index >= getSheetCount();
+        return index < 0 || index >= workbook.getNumberOfSheets();
     }
 }
