@@ -9,6 +9,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [2.5.0] - 2022-06-17
+
+### Added
+
 - Add lightweight xlsx writer [#5](https://github.com/nbbrd/spreadsheet4j/issues/5)
 
 ### Changed
@@ -17,8 +25,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Deprecate `Book.Factory#load(URL)`
 - Deprecate `Cell`, `Sheet#getCell(int,int)`, `Sheet#forEach(SheetConsumer)`
 - Replace `Book#getSheetCount()` with `Book#getSheetCount2()`
-
-### Fixed
 
 ## [2.4.0] - 2022-06-14
 
@@ -108,7 +114,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.6...v2.3.0
 [2.2.6]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.5...v2.2.6
