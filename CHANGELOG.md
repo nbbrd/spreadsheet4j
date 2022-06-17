@@ -13,6 +13,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix javadoc generation on module `spreadsheet-fastexcel`
+
 ## [2.5.0] - 2022-06-17
 
 ### Added
