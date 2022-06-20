@@ -11,6 +11,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Improve `FastExcelBookFactory` name
+
 ### Fixed
 
 ## [2.5.1] - 2022-06-20
