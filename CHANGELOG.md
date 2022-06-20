@@ -13,6 +13,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+## [2.5.1] - 2022-06-20
+
+### Fixed
+
 - Fix javadoc generation on module `spreadsheet-fastexcel`
 
 ## [2.5.0] - 2022-06-17
@@ -116,7 +120,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.1...HEAD
+[2.5.1]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.2.6...v2.3.0
