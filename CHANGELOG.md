@@ -15,6 +15,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Fixed
 
+- Fix dependency inheritance in BOM
+
 ## [2.5.1] - 2022-06-20
 
 ### Fixed
