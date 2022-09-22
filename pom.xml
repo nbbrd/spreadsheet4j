@@ -11,6 +11,7 @@
     <name>spreadsheet4j</name>
     <description>Spreadsheet facade for Java</description>
     <url>https://github.com/nbbrd/spreadsheet4j</url>
+    <inceptionYear>2014</inceptionYear>
 
     <licenses>
         <license>
@@ -42,9 +43,9 @@
         <module>spreadsheet-od</module>
         <module>spreadsheet-xmlss</module>
         <module>spreadsheet-util</module>
-        <module>spreadsheet-bom</module>
         <module>spreadsheet-xl</module>
         <module>spreadsheet-fastexcel</module>
+        <module>spreadsheet-bom</module>
     </modules>
 
     <dependencyManagement>
