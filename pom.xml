@@ -487,7 +487,8 @@
                         <artifactId>gitflow-maven-plugin</artifactId>
                         <version>1.19.0</version>
                         <configuration>
-                            <installProject>true</installProject>
+                            <!-- Avoid problem when testing without installing shaded code -->
+                            <skipTestProject>true</skipTestProject>
                             <gitFlowConfig>
                                 <versionTagPrefix>v</versionTagPrefix>
                             </gitFlowConfig>
