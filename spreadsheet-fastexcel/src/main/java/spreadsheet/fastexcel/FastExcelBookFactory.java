@@ -46,7 +46,7 @@ public final class FastExcelBookFactory extends Book.Factory {
 
     @Override
     public String getName() {
-        return "Xlsx";
+        return "Excel Workbook";
     }
 
     @Override

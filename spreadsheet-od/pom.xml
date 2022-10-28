@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.5.1</version>
+        <version>2.5.2</version>
     </parent>
 
     <artifactId>spreadsheet-od</artifactId>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.github.miachm.sods</groupId>
             <artifactId>SODS</artifactId>
-            <version>1.4.0</version>
+            <version>1.5.1</version>
         </dependency>
 
         <!-- test only -->
