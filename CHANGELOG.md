@@ -7,7 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added
+## [2.5.2] - 2022-10-28
 
 ### Changed
 
@@ -124,7 +124,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.1...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.2...HEAD
+[2.5.2]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.1...v2.5.2
 [2.5.1]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.3.0...v2.4.0
