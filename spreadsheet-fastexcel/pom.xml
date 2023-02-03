@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.dhatim</groupId>
             <artifactId>fastexcel</artifactId>
-            <version>0.14.4</version>
+            <version>0.14.17</version>
         </dependency>
 
         <!-- test only -->
