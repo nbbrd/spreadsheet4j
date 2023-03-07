@@ -104,7 +104,7 @@ final class PoiBook extends Book {
     }
 
     @Override
-    public Sheet getSheet(int index) {
+    public @NonNull Sheet getSheet(int index) {
         try {
             return new PoiSheet(workbook.getSheetAt(index));
         } catch (IllegalArgumentException ex) {
@@ -113,7 +113,7 @@ final class PoiBook extends Book {
     }
 
     @Override
-    public String getSheetName(@NonNegative int index) {
+    public @NonNull String getSheetName(@NonNegative int index) {
         try {
             return workbook.getSheetName(index);
         } catch (IllegalArgumentException ex) {

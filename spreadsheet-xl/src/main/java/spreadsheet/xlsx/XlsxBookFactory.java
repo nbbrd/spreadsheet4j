@@ -43,7 +43,7 @@ public final class XlsxBookFactory extends Book.Factory {
     private static final String XLSM_TYPE = "application/vnd.ms-excel.sheet.macroEnabled.12";
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Xlsx";
     }
 
@@ -72,13 +72,13 @@ public final class XlsxBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         checkFile(file);
         return new XlsxReader().read(file.toPath());
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         if (stream.available() == 0) {
             throw new EOFException();
         }
@@ -91,7 +91,7 @@ public final class XlsxBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         throw new UnsupportedOperationException("Not supported");
     }
 

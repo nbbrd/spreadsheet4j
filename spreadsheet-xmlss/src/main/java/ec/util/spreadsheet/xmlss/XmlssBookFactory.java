@@ -55,7 +55,7 @@ public class XmlssBookFactory extends Book.Factory {
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "XML Spreadsheet (XMLSS)";
     }
 
@@ -81,17 +81,17 @@ public class XmlssBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         return XmlssBookReader.parseFile(file);
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         return XmlssBookReader.parseStream(stream);
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         newWriter().write(stream, book);
     }
 

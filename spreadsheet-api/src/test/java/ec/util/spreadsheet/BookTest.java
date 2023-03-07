@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public class BookTest {
             }
 
             @Override
-            public Sheet getSheet(int index) throws IOException, IndexOutOfBoundsException {
+            public @NonNull Sheet getSheet(int index) throws IOException, IndexOutOfBoundsException {
                 switch (index) {
                     case 0:
                         return new Sheet() {
@@ -86,17 +87,17 @@ public class BookTest {
     public void testIsSupportedDataType() {
         Book.Factory mock = new Book.Factory() {
             @Override
-            public String getName() {
+            public @NonNull String getName() {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
             @Override
-            public Book load(InputStream stream) throws IOException {
+            public @NonNull Book load(@NonNull InputStream stream) throws IOException {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
             @Override
-            public void store(OutputStream stream, Book book) throws IOException {
+            public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 

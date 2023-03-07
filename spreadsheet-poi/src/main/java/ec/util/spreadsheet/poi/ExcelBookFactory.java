@@ -65,7 +65,7 @@ public class ExcelBookFactory extends Book.Factory {
     //</editor-fold>
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Excel";
     }
 
@@ -94,7 +94,7 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         checkFile(file);
         return fast.get()
                 ? new XlsxReader().read(file.toPath())
@@ -102,7 +102,7 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         if (stream.available() == 0) {
             throw new EOFException();
         }
@@ -112,7 +112,7 @@ public class ExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         SXSSFWorkbook target = new SXSSFWorkbook(null, 100, false, USE_SHARED_STRINGS);
         target.setZip64Mode(Zip64Mode.AsNeeded);
         try {

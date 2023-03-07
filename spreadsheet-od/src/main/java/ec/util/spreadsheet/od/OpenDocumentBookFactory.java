@@ -53,7 +53,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
     private static final String ODS_TYPE = "application/vnd.oasis.opendocument.spreadsheet";
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Open Document";
     }
 
@@ -79,7 +79,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         checkFile(file);
         try {
             return new OdBook(new SpreadSheet(file));
@@ -89,7 +89,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         if (stream.available() == 0) {
             throw new EOFException();
         }
@@ -106,12 +106,12 @@ public class OpenDocumentBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(File file, Book book) throws IOException {
+    public void store(@NonNull File file, @NonNull Book book) throws IOException {
         toSpreadSheet(book).save(file);
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         toSpreadSheet(book).save(stream);
     }
 
