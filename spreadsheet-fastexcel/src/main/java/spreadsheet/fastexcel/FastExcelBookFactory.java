@@ -87,23 +87,9 @@ public final class FastExcelBookFactory extends Book.Factory {
 
     @Override
     public void store(OutputStream stream, Book book) throws IOException {
-        Workbook workbook = new Workbook(stream, "spreadsheet4j", null);
-        writeBookData(workbook, book);
-        workbook.finish();
-    }
-
-    @NonNull
-    private static File checkFile(@NonNull File file) throws IOException {
-        if (!file.exists()) {
-            throw new NoSuchFileException(file.getPath());
+        try (Workbook workbook = new Workbook(stream, "spreadsheet4j", null)) {
+            writeBookData(workbook, book);
         }
-        if (!file.canRead() || file.isDirectory()) {
-            throw new AccessDeniedException(file.getPath());
-        }
-        if (file.length() == 0) {
-            throw new EOFException(file.getPath());
-        }
-        return file;
     }
 
     // https://en.wikipedia.org/wiki/List_of_file_signatures
@@ -112,9 +98,9 @@ public final class FastExcelBookFactory extends Book.Factory {
     private static void writeBookData(Workbook workbook, Book book) throws IOException {
         for (int s = 0; s < book.getSheetCount2(); s++) {
             Sheet sheet = book.getSheet(s);
-            Worksheet worksheet = workbook.newWorksheet(sheet.getName());
-            writeSheetData(worksheet, sheet);
-            worksheet.finish();
+            try (Worksheet worksheet = workbook.newWorksheet(sheet.getName())) {
+                writeSheetData(worksheet, sheet);
+            }
         }
     }
 
