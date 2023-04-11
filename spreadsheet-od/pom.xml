@@ -41,7 +41,7 @@
         <dependency>
             <groupId>com.github.miachm.sods</groupId>
             <artifactId>SODS</artifactId>
-            <version>1.5.3</version>
+            <version>1.5.4</version>
         </dependency>
 
         <!-- test only -->
