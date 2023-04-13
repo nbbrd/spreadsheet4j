@@ -21,9 +21,11 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
@@ -63,33 +65,33 @@ public class FileHelperTest {
     @Test
     @SuppressWarnings("null")
     public void testHasMagicNumberFromFile(@TempDir Path temp) throws IOException {
-        byte[] magic = "abc".getBytes();
+        byte[] magic = "abc".getBytes(UTF_8);
 
         File file = Files.createFile(temp.resolve("hello.bin")).toFile();
         Files.write(file.toPath(), magic);
 
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();
 
-        Files.write(file.toPath(), "".getBytes());
+        Files.write(file.toPath(), "".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file.toPath(), "abcdefg".getBytes());
+        Files.write(file.toPath(), "abcdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();
 
-        Files.write(file.toPath(), "bcdefg".getBytes());
+        Files.write(file.toPath(), "bcdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file.toPath(), "ab".getBytes());
+        Files.write(file.toPath(), "ab".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file.toPath(), "abdefg".getBytes());
+        Files.write(file.toPath(), "abdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file.toPath(), "xxx".getBytes());
-        assertThat(FileHelper.hasMagicNumber(file, "".getBytes())).isTrue();
+        Files.write(file.toPath(), "xxx".getBytes(UTF_8));
+        assertThat(FileHelper.hasMagicNumber(file, "".getBytes(UTF_8))).isTrue();
 
-        Files.write(file.toPath(), "".getBytes());
-        assertThat(FileHelper.hasMagicNumber(file, "".getBytes())).isTrue();
+        Files.write(file.toPath(), "".getBytes(UTF_8));
+        assertThat(FileHelper.hasMagicNumber(file, "".getBytes(UTF_8))).isTrue();
 
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber((File) null, magic));
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber(file, null));
@@ -98,33 +100,33 @@ public class FileHelperTest {
     @Test
     @SuppressWarnings("null")
     public void testHasMagicNumberFromPath(@TempDir Path temp) throws IOException {
-        byte[] magic = "abc".getBytes();
+        byte[] magic = "abc".getBytes(UTF_8);
 
         Path file = Files.createFile(temp.resolve("hello.bin"));
         Files.write(file, magic);
 
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();
 
-        Files.write(file, "".getBytes());
+        Files.write(file, "".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file, "abcdefg".getBytes());
+        Files.write(file, "abcdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isTrue();
 
-        Files.write(file, "bcdefg".getBytes());
+        Files.write(file, "bcdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file, "ab".getBytes());
+        Files.write(file, "ab".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file, "abdefg".getBytes());
+        Files.write(file, "abdefg".getBytes(UTF_8));
         assertThat(FileHelper.hasMagicNumber(file, magic)).isFalse();
 
-        Files.write(file, "xxx".getBytes());
-        assertThat(FileHelper.hasMagicNumber(file, "".getBytes())).isTrue();
+        Files.write(file, "xxx".getBytes(UTF_8));
+        assertThat(FileHelper.hasMagicNumber(file, "".getBytes(UTF_8))).isTrue();
 
-        Files.write(file, "".getBytes());
-        assertThat(FileHelper.hasMagicNumber(file, "".getBytes())).isTrue();
+        Files.write(file, "".getBytes(UTF_8));
+        assertThat(FileHelper.hasMagicNumber(file, "".getBytes(UTF_8))).isTrue();
 
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber((Path) null, magic));
         assertThatNullPointerException().isThrownBy(() -> FileHelper.hasMagicNumber(file, null));

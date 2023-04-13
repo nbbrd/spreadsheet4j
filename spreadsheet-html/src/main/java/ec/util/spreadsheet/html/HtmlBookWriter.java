@@ -52,7 +52,7 @@ final class HtmlBookWriter {
 
     HtmlBookWriter(@NonNull XMLOutputFactory xof) {
         this.xof = Objects.requireNonNull(xof);
-        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        this.dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
         this.numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
         numberFormat.setMaximumFractionDigits(9);
         numberFormat.setMaximumIntegerDigits(12);

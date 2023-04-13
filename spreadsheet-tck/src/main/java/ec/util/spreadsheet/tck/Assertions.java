@@ -16,6 +16,8 @@
  */
 package ec.util.spreadsheet.tck;
 
+import java.util.Locale;
+
 /**
  * Entry point for assertions of different data types. Each method in this class
  * is a static factory for the type-specific assertion objects.
@@ -78,6 +80,6 @@ public class Assertions {
     }
 
     static String msg(Class<?> codeClass, String code, Class<? extends Throwable> exClass) {
-        return String.format("Expecting '%s#%s' to raise '%s'", codeClass.getName(), code, exClass.getName());
+        return String.format(Locale.ROOT, "Expecting '%s#%s' to raise '%s'", codeClass.getName(), code, exClass.getName());
     }
 }

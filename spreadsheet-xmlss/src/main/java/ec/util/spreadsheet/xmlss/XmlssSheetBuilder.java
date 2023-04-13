@@ -58,7 +58,7 @@ abstract class XmlssSheetBuilder {
             this.numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
             numberFormat.setMaximumFractionDigits(9);
             numberFormat.setMaximumIntegerDigits(12);
-            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            this.dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
             this.sheetDataBuilder = ArraySheet.builder();
         }
 
