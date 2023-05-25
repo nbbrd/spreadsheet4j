@@ -229,7 +229,7 @@
                 </property>
             </activation>
             <properties>
-                <lombok.version>1.18.26</lombok.version>
+                <lombok.version>1.18.28</lombok.version>
                 <java-service.version>1.6.1</java-service.version>
                 <java-design.version>1.4.0</java-design.version>
                 <jmh.version>1.36</jmh.version>
