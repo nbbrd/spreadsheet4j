@@ -16,10 +16,7 @@
  */
 package ec.util.spreadsheet;
 
-import nbbrd.service.Mutability;
-import nbbrd.service.Quantifier;
-import nbbrd.service.ServiceDefinition;
-import nbbrd.service.ServiceSorter;
+import nbbrd.service.*;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -155,6 +152,7 @@ public abstract class Book implements Closeable {
          *
          * @return a non-null identifier
          */
+        @ServiceId
         @NonNull
         abstract public String getName();
 
