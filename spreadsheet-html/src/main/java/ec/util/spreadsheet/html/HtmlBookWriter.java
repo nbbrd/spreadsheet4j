@@ -18,9 +18,9 @@ package ec.util.spreadsheet.html;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
+import nbbrd.io.xml.Stax;
+import nbbrd.io.xml.Xml;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import shaded.spreadsheet.nbbrd.io.xml.Stax;
-import shaded.spreadsheet.nbbrd.io.xml.Xml;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;

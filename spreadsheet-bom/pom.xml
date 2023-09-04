@@ -46,11 +46,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <artifactId>spreadsheet-util</artifactId>
-                <groupId>${project.groupId}</groupId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <artifactId>spreadsheet-xmlss</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
@@ -62,6 +57,11 @@
             </dependency>
             <dependency>
                 <artifactId>spreadsheet-fastexcel</artifactId>
+                <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>spreadsheet-standalone</artifactId>
                 <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>

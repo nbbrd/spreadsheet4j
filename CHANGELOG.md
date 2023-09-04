@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 - Replace `spreadsheet-tck` with a test-jar
+- Replace `spreadsheet-util` with `spreadsheet-standalone`
 
 ## [2.5.3] - 2023-09-04
 

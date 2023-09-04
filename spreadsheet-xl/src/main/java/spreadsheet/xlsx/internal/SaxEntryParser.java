@@ -16,13 +16,14 @@
  */
 package spreadsheet.xlsx.internal;
 
-import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
-import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import nbbrd.io.function.IOSupplier;
+import nbbrd.io.xml.Sax;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.xml.sax.Attributes;

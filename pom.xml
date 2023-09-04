@@ -41,9 +41,9 @@
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
         <module>spreadsheet-xmlss</module>
-        <module>spreadsheet-util</module>
         <module>spreadsheet-xl</module>
         <module>spreadsheet-fastexcel</module>
+        <module>spreadsheet-standalone</module>
         <module>spreadsheet-bom</module>
     </modules>
 
@@ -68,6 +68,15 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>3.24.2</version>
+            </dependency>
+
+            <!-- dependencies  -->
+            <dependency>
+                <groupId>com.github.nbbrd.java-io-util</groupId>
+                <artifactId>java-io-bom</artifactId>
+                <version>0.0.25</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -117,6 +126,11 @@
                     <version>3.1.2</version>
                 </plugin>
                 <!-- Other plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
@@ -529,8 +543,6 @@
                         <artifactId>gitflow-maven-plugin</artifactId>
                         <version>1.20.0</version>
                         <configuration>
-                            <!-- Avoid problem when testing without installing shaded code -->
-                            <skipTestProject>true</skipTestProject>
                             <gitFlowConfig>
                                 <versionTagPrefix>v</versionTagPrefix>
                             </gitFlowConfig>

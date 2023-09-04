@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+        <artifactId>spreadsheet-parent</artifactId>
+        <version>2.5.4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>spreadsheet-standalone</artifactId>
+
+    <name>spreadsheet4j-standalone</name>
+    <description>Spreadsheet facade for Java - Standalone</description>
+    <url>https://github.com/nbbrd/spreadsheet4j</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-fastexcel</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-html</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-od</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-xl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-xmlss</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Generates a all-in-one executable jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>**/module-info.class</exclude>
+                                <exclude>**/pom.properties</exclude>
+                                <exclude>**/pom.xml</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>META-INF/README.md</exclude>
+                                <exclude>META-INF/CHANGES</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <transformers>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        </transformer>
+                    </transformers>
+                    <relocations>
+                        <relocation>
+                            <pattern>internal</pattern>
+                            <shadedPattern>standalone_spreadsheet.internal</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>nbbrd</pattern>
+                            <shadedPattern>standalone_spreadsheet.nbbrd</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com</pattern>
+                            <shadedPattern>standalone_spreadsheet.com</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org</pattern>
+                            <shadedPattern>standalone_spreadsheet.org</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

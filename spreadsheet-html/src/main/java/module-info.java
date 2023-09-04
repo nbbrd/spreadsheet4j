@@ -21,7 +21,7 @@ module nbbrd.spreadsheet.html {
     requires static nbbrd.service;
 
     requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
+    requires nbbrd.io.xml;
     requires org.jsoup;
     
     provides ec.util.spreadsheet.Book.Factory with 

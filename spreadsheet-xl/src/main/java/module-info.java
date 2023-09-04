@@ -22,7 +22,7 @@ module nbbrd.spreadsheet.xl {
     requires static lombok;
 
     requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
+    requires nbbrd.io.xml;
     requires static com.lmax.disruptor;
     requires java.logging;
     
