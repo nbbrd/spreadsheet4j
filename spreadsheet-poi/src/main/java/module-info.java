@@ -22,8 +22,6 @@ module nbbrd.spreadsheet.poi {
     requires static lombok;
 
     requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
-    requires nbbrd.spreadsheet.xl;
     requires org.apache.poi.poi;
     requires org.apache.poi.ooxml;
     requires org.apache.commons.compress;

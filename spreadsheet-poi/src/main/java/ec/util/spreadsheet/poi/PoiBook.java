@@ -33,9 +33,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import shaded.spreadsheet.nbbrd.io.sys.OS;
 
 import java.io.*;
+import java.util.Locale;
 
 /**
  * @author Philippe Charles
@@ -47,7 +47,7 @@ final class PoiBook extends Book {
     public static Book create(@NonNull File file) throws IOException {
         try {
             // Fix strange bug on Windows+Java8 that keeps a handle on invalid file
-            if (OS.Name.WINDOWS.equals(OS.NAME)) {
+            if (isWindows()) {
                 try (InputStream stream = new FileInputStream(file)) {
                     try (PoiBook book = new PoiBook(new XSSFWorkbook(OPCPackage.open(stream)))) {
                         return ArrayBook.copyOf(book);
@@ -61,6 +61,10 @@ final class PoiBook extends Book {
         } catch (EmptyFileException ex) {
             throw new EOFException();
         }
+    }
+
+    private static boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
     }
 
     @NonNull
