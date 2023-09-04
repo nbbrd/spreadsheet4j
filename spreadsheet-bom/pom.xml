@@ -19,48 +19,50 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-api</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <artifactId>spreadsheet-api</artifactId>
                 <groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+                <classifier>tests</classifier>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
                 <artifactId>spreadsheet-html</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-od</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-poi</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>spreadsheet-tck</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-util</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-xmlss</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-xl</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>spreadsheet-fastexcel</artifactId>
+                <groupId>${project.groupId}</groupId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

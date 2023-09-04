@@ -26,46 +26,46 @@ public class Assertions {
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.tck.BookAssert}</code>.
+     * <code>{@link BookAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.tck.BookAssert assertThat(ec.util.spreadsheet.Book actual) {
-        return new ec.util.spreadsheet.tck.BookAssert(actual);
+    public static BookAssert assertThat(ec.util.spreadsheet.Book actual) {
+        return new BookAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.tck.BookFactoryAssert}</code>.
+     * <code>{@link BookFactoryAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.tck.BookFactoryAssert assertThat(ec.util.spreadsheet.Book.Factory actual) {
-        return new ec.util.spreadsheet.tck.BookFactoryAssert(actual);
+    public static BookFactoryAssert assertThat(ec.util.spreadsheet.Book.Factory actual) {
+        return new BookFactoryAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.tck.CellAssert}</code>.
+     * <code>{@link CellAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.tck.CellAssert assertThat(ec.util.spreadsheet.Cell actual) {
-        return new ec.util.spreadsheet.tck.CellAssert(actual);
+    public static CellAssert assertThat(ec.util.spreadsheet.Cell actual) {
+        return new CellAssert(actual);
     }
 
     /**
      * Creates a new instance of
-     * <code>{@link ec.util.spreadsheet.tck.SheetAssert}</code>.
+     * <code>{@link SheetAssert}</code>.
      *
      * @param actual the actual value.
      * @return the created assertion object.
      */
-    public static ec.util.spreadsheet.tck.SheetAssert assertThat(ec.util.spreadsheet.Sheet actual) {
-        return new ec.util.spreadsheet.tck.SheetAssert(actual);
+    public static SheetAssert assertThat(ec.util.spreadsheet.Sheet actual) {
+        return new SheetAssert(actual);
     }
 
     /**

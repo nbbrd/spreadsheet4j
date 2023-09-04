@@ -37,7 +37,6 @@
 
     <modules>
         <module>spreadsheet-api</module>
-        <module>spreadsheet-tck</module>
         <module>spreadsheet-html</module>
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
