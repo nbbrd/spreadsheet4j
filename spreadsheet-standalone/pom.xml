@@ -64,6 +64,11 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>${project.groupId}:spreadsheet-api</exclude>
+                        </excludes>
+                    </artifactSet>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
