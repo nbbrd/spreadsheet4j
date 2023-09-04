@@ -22,28 +22,21 @@ module nbbrd.spreadsheet.util {
 
     exports shaded.spreadsheet.nbbrd.io to
             nbbrd.spreadsheet.html,
-            nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss,
             nbbrd.spreadsheet.xl;
 
     exports shaded.spreadsheet.nbbrd.io.function to
             nbbrd.spreadsheet.html,
-            nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss,
             nbbrd.spreadsheet.xl;
 
     exports shaded.spreadsheet.nbbrd.io.xml to
             nbbrd.spreadsheet.html,
-            nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss,
             nbbrd.spreadsheet.xl;
 
     exports shaded.spreadsheet.nbbrd.io.zip to
             nbbrd.spreadsheet.html,
-            nbbrd.spreadsheet.poi,
             nbbrd.spreadsheet.xmlss,
             nbbrd.spreadsheet.xl;
-
-    exports shaded.spreadsheet.nbbrd.io.sys to
-            nbbrd.spreadsheet.poi;
 }

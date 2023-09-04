@@ -28,7 +28,4 @@ module nbbrd.spreadsheet.xl {
     
     provides ec.util.spreadsheet.Book.Factory with
             spreadsheet.xlsx.XlsxBookFactory;
-
-    exports spreadsheet.xlsx to nbbrd.spreadsheet.poi;
-    exports spreadsheet.xlsx.internal to nbbrd.spreadsheet.poi;
 }
