@@ -26,6 +26,7 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <!-- compile and runtime -->
         <dependency>
             <groupId>${project.groupId}</groupId>

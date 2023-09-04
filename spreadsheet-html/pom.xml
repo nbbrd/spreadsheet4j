@@ -14,10 +14,6 @@
     <description>Spreadsheet facade for Java - HTML</description>
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
-    <properties>
-        <jsoup.version>1.16.1</jsoup.version>
-    </properties>
-
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -45,7 +41,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>${jsoup.version}</version>
+            <version>1.16.1</version>
         </dependency>
         
         <!-- test only -->
