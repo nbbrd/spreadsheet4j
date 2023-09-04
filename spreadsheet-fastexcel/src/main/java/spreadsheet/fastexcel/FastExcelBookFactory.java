@@ -24,10 +24,11 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 
-import java.io.*;
-import java.nio.file.AccessDeniedException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Date;
@@ -45,7 +46,7 @@ public final class FastExcelBookFactory extends Book.Factory {
     private static final String XLSX_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Excel Workbook";
     }
 
@@ -86,24 +87,10 @@ public final class FastExcelBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
-        Workbook workbook = new Workbook(stream, "spreadsheet4j", null);
-        writeBookData(workbook, book);
-        workbook.finish();
-    }
-
-    @NonNull
-    private static File checkFile(@NonNull File file) throws IOException {
-        if (!file.exists()) {
-            throw new NoSuchFileException(file.getPath());
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
+        try (Workbook workbook = new Workbook(stream, "spreadsheet4j", null)) {
+            writeBookData(workbook, book);
         }
-        if (!file.canRead() || file.isDirectory()) {
-            throw new AccessDeniedException(file.getPath());
-        }
-        if (file.length() == 0) {
-            throw new EOFException(file.getPath());
-        }
-        return file;
     }
 
     // https://en.wikipedia.org/wiki/List_of_file_signatures
@@ -112,9 +99,9 @@ public final class FastExcelBookFactory extends Book.Factory {
     private static void writeBookData(Workbook workbook, Book book) throws IOException {
         for (int s = 0; s < book.getSheetCount2(); s++) {
             Sheet sheet = book.getSheet(s);
-            Worksheet worksheet = workbook.newWorksheet(sheet.getName());
-            writeSheetData(worksheet, sheet);
-            worksheet.finish();
+            try (Worksheet worksheet = workbook.newWorksheet(sheet.getName())) {
+                writeSheetData(worksheet, sheet);
+            }
         }
     }
 

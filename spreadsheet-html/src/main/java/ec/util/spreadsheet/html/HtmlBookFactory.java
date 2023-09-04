@@ -49,7 +49,7 @@ public class HtmlBookFactory extends Book.Factory {
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Html table";
     }
 
@@ -64,12 +64,12 @@ public class HtmlBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         return newReader().read(file);
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         return newReader().read(stream);
     }
 
@@ -84,12 +84,12 @@ public class HtmlBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         newWriter().write(book, stream);
     }
 
     @Override
-    public boolean isSupportedDataType(Class<?> type) {
+    public boolean isSupportedDataType(@NonNull Class<?> type) {
         return String.class.isAssignableFrom(type);
     }
 

@@ -16,11 +16,12 @@
  */
 package spreadsheet.xlsx.internal;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import spreadsheet.xlsx.XlsxDateSystem;
+
+import java.util.Calendar;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  *
@@ -38,7 +39,7 @@ public class DefaultDateSystemTest {
 
     @Test
     public void testGetJavaDate() {
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = XlsxValueFactory.NumberOrDateParser.newCalendar();
 
         XlsxDateSystem x1900 = DefaultDateSystem.X1900;
         assertThat(x1900.getJavaDate(cal, EARLIEST_DATE_1900)).isEqualTo("1900-01-01T00:00:00.000");

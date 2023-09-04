@@ -26,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.function.IntPredicate;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -54,7 +56,7 @@ final class XlsxValueFactory {
     private final Parser date;
 
     XlsxValueFactory(XlsxDateSystem dateSystem, IntPredicate dateFormats) {
-        this.numberOrDate = new NumberOrDateParser(dateSystem, dateFormats, new GregorianCalendar());
+        this.numberOrDate = new NumberOrDateParser(dateSystem, dateFormats, NumberOrDateParser.newCalendar());
         this.sharedString = new SharedStringParser();
         this.date = new DateParser();
     }
@@ -98,6 +100,10 @@ final class XlsxValueFactory {
 
     @lombok.AllArgsConstructor
     static final class NumberOrDateParser implements ParserWithStyle {
+
+        static GregorianCalendar newCalendar() {
+            return new GregorianCalendar(TimeZone.getDefault(), Locale.getDefault(Locale.Category.FORMAT));
+        }
 
         private final XlsxDateSystem dateSystem;
         private final IntPredicate dateFormats;

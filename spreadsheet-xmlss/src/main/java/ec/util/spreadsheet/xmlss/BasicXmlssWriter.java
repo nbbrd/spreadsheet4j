@@ -41,7 +41,7 @@ final class BasicXmlssWriter {
         numberFormat = NumberFormat.getNumberInstance(Locale.ROOT);
         numberFormat.setMaximumFractionDigits(9);
         numberFormat.setMaximumIntegerDigits(12);
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
     }
 
     public void beginWorkbook() throws XMLStreamException {

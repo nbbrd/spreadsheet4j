@@ -16,14 +16,15 @@
  */
 package spreadsheet.xlsx.internal;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -39,9 +40,9 @@ public class XlsxValueFactoryTest {
 
     @Test
     public void testGetNumberOrDate() {
-        XlsxValueFactory.ParserWithStyle f = new XlsxValueFactory.NumberOrDateParser(DefaultDateSystem.X1904, DATE_FORMATS, new GregorianCalendar());
+        XlsxValueFactory.ParserWithStyle f = new XlsxValueFactory.NumberOrDateParser(DefaultDateSystem.X1904, DATE_FORMATS, XlsxValueFactory.NumberOrDateParser.newCalendar());
         CustomCallback c = new CustomCallback();
-        Calendar cal = new GregorianCalendar();
+        Calendar cal = XlsxValueFactory.NumberOrDateParser.newCalendar();
 
         f.parse(c, "1", NO_STYLE);
         assertThat(c.result).isEqualTo(1d);

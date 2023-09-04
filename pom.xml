@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.spreadsheet4j</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.5.2</version>
+    <version>2.5.3</version>
     <packaging>pom</packaging>
 
     <name>spreadsheet4j</name>
@@ -54,21 +54,21 @@
             <dependency>
                 <groupId>org.checkerframework</groupId>
                 <artifactId>checker-qual</artifactId>
-                <version>3.26.0</version>
+                <version>3.37.0</version>
             </dependency>
 
             <!-- test libraries -->
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.9.1</version>
+                <version>5.10.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.23.1</version>
+                <version>3.24.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -80,22 +80,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
+                    <version>3.11.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -105,7 +105,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.3.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -115,13 +115,18 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M7</version>
+                    <version>3.1.2</version>
                 </plugin>
                 <!-- Other plugins -->
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
-                    <version>0.4.0</version>
+                    <version>0.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>de.thetaphi</groupId>
+                    <artifactId>forbiddenapis</artifactId>
+                    <version>3.5.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -134,6 +139,44 @@
                         <id>check-changelog</id>
                         <goals>
                             <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <semver>true</semver>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <properties>
+                        <!-- Enable parallel execution of junit5 tests -->
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.enabled=true
+                            junit.jupiter.execution.parallel.mode.default=concurrent
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>de.thetaphi</groupId>
+                <artifactId>forbiddenapis</artifactId>
+                <configuration>
+                    <failOnUnsupportedJava>false</failOnUnsupportedJava>
+                    <bundledSignatures>
+                        <bundledSignature>jdk-unsafe</bundledSignature>
+                        <bundledSignature>jdk-deprecated</bundledSignature>
+                        <bundledSignature>jdk-internal</bundledSignature>
+                        <bundledSignature>jdk-non-portable</bundledSignature>
+                        <bundledSignature>jdk-reflection</bundledSignature>
+                    </bundledSignatures>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>testCheck</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -186,10 +229,10 @@
                 </property>
             </activation>
             <properties>
-                <lombok.version>1.18.24</lombok.version>
-                <java-service.version>1.5.2</java-service.version>
-                <java-design.version>1.3.1</java-design.version>
-                <jmh.version>1.35</jmh.version>
+                <lombok.version>1.18.28</lombok.version>
+                <java-service.version>1.7.0</java-service.version>
+                <java-design.version>1.4.0</java-design.version>
+                <jmh.version>1.37</jmh.version>
             </properties>
             <dependencyManagement>
                 <dependencies>
@@ -347,17 +390,17 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.4.0</version>
                         <dependencies>
                             <dependency>
                                 <groupId>org.kordamp.maven</groupId>
                                 <artifactId>pomchecker-enforcer-rules</artifactId>
-                                <version>1.3.0</version>
+                                <version>1.9.0</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>extra-enforcer-rules</artifactId>
-                                <version>1.6.1</version>
+                                <version>1.7.0</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -420,7 +463,7 @@
                     <plugin>
                         <groupId>org.gaul</groupId>
                         <artifactId>modernizer-maven-plugin</artifactId>
-                        <version>2.4.0</version>
+                        <version>2.6.0</version>
                         <configuration>
                             <javaVersion>1.8</javaVersion>
                         </configuration>
@@ -452,7 +495,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.8</version>
+                        <version>0.8.10</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -485,9 +528,10 @@
                     <plugin>
                         <groupId>com.amashchenko.maven.plugin</groupId>
                         <artifactId>gitflow-maven-plugin</artifactId>
-                        <version>1.19.0</version>
+                        <version>1.20.0</version>
                         <configuration>
-                            <installProject>true</installProject>
+                            <!-- Avoid problem when testing without installing shaded code -->
+                            <skipTestProject>true</skipTestProject>
                             <gitFlowConfig>
                                 <versionTagPrefix>v</versionTagPrefix>
                             </gitFlowConfig>
@@ -505,7 +549,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.2.1</version>
+                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -518,7 +562,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.4.1</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>attach-empty-javadocs</id>

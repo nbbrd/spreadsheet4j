@@ -49,7 +49,7 @@ public class ExcelClassicBookFactory extends Book.Factory {
     private static final String XLS_TYPE = "application/vnd.ms-excel";
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Excel Classic";
     }
 
@@ -75,13 +75,13 @@ public class ExcelClassicBookFactory extends Book.Factory {
     }
 
     @Override
-    public Book load(File file) throws IOException {
+    public @NonNull Book load(@NonNull File file) throws IOException {
         checkFile(file);
         return PoiBook.createClassic(file);
     }
 
     @Override
-    public Book load(InputStream stream) throws IOException {
+    public @NonNull Book load(@NonNull InputStream stream) throws IOException {
         if (stream.available() == 0) {
             throw new EOFException();
         }
@@ -89,7 +89,7 @@ public class ExcelClassicBookFactory extends Book.Factory {
     }
 
     @Override
-    public void store(OutputStream stream, Book book) throws IOException {
+    public void store(@NonNull OutputStream stream, @NonNull Book book) throws IOException {
         HSSFWorkbook target = new HSSFWorkbook();
         PoiBookWriter.copy(book, target);
         target.write(stream);

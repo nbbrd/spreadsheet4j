@@ -29,6 +29,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import javax.xml.stream.XMLOutputFactory;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -110,18 +112,18 @@ public class XmlssBookReaderTest {
         ArrayBook book = ArraySheet.builder().name("sheet1").value(0, 0, 3.14).build().toBook();
         String original;
         try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
-            new XmlssBookWriter(XMLOutputFactory.newInstance(), StandardCharsets.UTF_8).write(stream, book);
-            original = new String(stream.toByteArray());
+            new XmlssBookWriter(XMLOutputFactory.newInstance(), UTF_8).write(stream, book);
+            original = new String(stream.toByteArray(), UTF_8);
         }
 
-        try (InputStream stream = new ByteArrayInputStream(original.getBytes())) {
+        try (InputStream stream = new ByteArrayInputStream(original.getBytes(UTF_8))) {
             try (ArrayBook xxx = XmlssBookReader.parseStream(stream)) {
                 assertThat(xxx).isEqualTo(book);
             }
         }
 
         String xmlWithTrailingSection = original + "\0";
-        try (InputStream stream = new ByteArrayInputStream(xmlWithTrailingSection.getBytes())) {
+        try (InputStream stream = new ByteArrayInputStream(xmlWithTrailingSection.getBytes(UTF_8))) {
             try (ArrayBook xxx = XmlssBookReader.parseStream(stream)) {
                 assertThat(xxx).isEqualTo(book);
             }

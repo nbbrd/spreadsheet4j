@@ -92,7 +92,7 @@ public final class XlsxBook extends Book {
     }
 
     @Override
-    public Sheet getSheet(int index) throws IOException {
+    public @NonNull Sheet getSheet(int index) throws IOException {
         if (mainSheetBuilder == null) {
             mainSheetBuilder = mainSheetBuilderFactory.create(dateSystem.get(), sharedStrings.getWithIO(), dateFormats.getWithIO());
         }
@@ -100,12 +100,12 @@ public final class XlsxBook extends Book {
     }
 
     @Override
-    public String getSheetName(@NonNegative int index) {
+    public @NonNull String getSheetName(@NonNegative int index) {
         return sheets.get(index).getName();
     }
 
     @Override
-    public void parallelForEach(ObjIntConsumer<? super Sheet> action) throws IOException {
+    public void parallelForEach(@NonNull ObjIntConsumer<? super Sheet> action) throws IOException {
         XlsxDateSystem x = dateSystem.get();
         List<String> y = sharedStrings.getWithIO();
         boolean[] z = dateFormats.getWithIO();
