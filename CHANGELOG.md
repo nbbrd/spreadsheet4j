@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix missing sources in `spreadsheet-standalone`
+
 ## [2.5.5] - 2023-09-05
 
 ### Fixed
