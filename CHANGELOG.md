@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.5] - 2023-09-05
+
+### Fixed
+
+- Fix missing javadoc in `spreadsheet-standalone`
+
 ## [2.5.4] - 2023-09-05
 
 ### Changed
@@ -144,7 +150,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.4...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.5...HEAD
+[2.5.5]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.4...v2.5.5
 [2.5.4]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.3...v2.5.4
 [2.5.3]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.1...v2.5.2
