@@ -7,6 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.4] - 2023-09-05
+
+### Changed
+
+- Replace `spreadsheet-tck` with a test-jar
+- Replace `spreadsheet-util` with `spreadsheet-standalone`
+
 ## [2.5.3] - 2023-09-04
 
 ### Fixed
@@ -18,7 +25,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Bump SODS from [1.5.1 to 1.6.2](https://github.com/miachm/SODS/releases)
 - Bump fastexcel from [0.14.0 to 0.15.7](https://github.com/dhatim/fastexcel/releases)
 - Bump jsoup from [1.15.3 to 1.16.1](https://github.com/jhy/jsoup/blob/master/CHANGES)
-- Remove spreadsheet-xl dependency from spreadsheet-poi
+- Remove `spreadsheet-xl` dependency from `spreadsheet-poi`
 
 ## [2.5.2] - 2022-10-28
 
@@ -137,7 +144,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.3...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.4...HEAD
+[2.5.4]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.3...v2.5.4
 [2.5.3]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.1...v2.5.2
 [2.5.1]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.0...v2.5.1

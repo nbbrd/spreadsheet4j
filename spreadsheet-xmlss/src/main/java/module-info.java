@@ -22,7 +22,7 @@ module nbbrd.spreadsheet.xmlss {
     requires static lombok;
 
     requires nbbrd.spreadsheet.api;
-    requires nbbrd.spreadsheet.util;
+    requires nbbrd.io.xml;
     
     provides ec.util.spreadsheet.Book.Factory with
             ec.util.spreadsheet.xmlss.XmlssBookFactory;

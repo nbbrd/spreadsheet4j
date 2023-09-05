@@ -1,37 +1,37 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.xmlss;
 
 import ec.util.spreadsheet.helpers.ArrayBook;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.File;
+import nbbrd.io.WrappedIOException;
+import nbbrd.io.function.IOFunction;
+import nbbrd.io.xml.Sax;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
-import shaded.spreadsheet.nbbrd.io.function.IOFunction;
-import shaded.spreadsheet.nbbrd.io.WrappedIOException;
-import shaded.spreadsheet.nbbrd.io.xml.Sax;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
- *
  * @author Philippe Charles
  */
 final class XmlssBookReader {
@@ -91,7 +91,7 @@ final class XmlssBookReader {
         }
     }
 
-//    @VisibleForTesting
+    //    @VisibleForTesting
     static final class BookSax2EventHandler extends DefaultHandler /*implements IBuilder<ImmutableList<Sheet>>*/ {
 
         private static final String SS_URI = "urn:schemas-microsoft-com:office:spreadsheet";

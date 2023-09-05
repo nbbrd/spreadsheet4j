@@ -1,23 +1,28 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.tck.SheetAssert;
-import shaded.spreadsheet.nbbrd.io.xml.Sax;
+import nbbrd.io.xml.Sax;
+import org.junit.jupiter.api.Test;
+import spreadsheet.xlsx.XlsxEntryParser;
+import spreadsheet.xlsx.XlsxPackage;
+import spreadsheet.xlsx.XlsxSheetBuilder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -25,15 +30,11 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import static org.assertj.core.api.Assertions.atIndex;
-import org.junit.jupiter.api.Test;
-import spreadsheet.xlsx.XlsxPackage;
-import spreadsheet.xlsx.XlsxSheetBuilder;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import spreadsheet.xlsx.XlsxEntryParser;
+import static org.assertj.core.api.Assertions.atIndex;
 
 /**
- *
  * @author Philippe Charles
  */
 public class ZipPackageTest {

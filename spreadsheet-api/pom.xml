@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.5.3</version>
+        <version>2.5.4</version>
     </parent>
 
     <artifactId>spreadsheet-api</artifactId>
@@ -49,4 +49,25 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>ec/util/spreadsheet/tck/**</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

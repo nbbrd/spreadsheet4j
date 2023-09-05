@@ -18,10 +18,10 @@ package spreadsheet.xlsx.internal;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
+import nbbrd.io.function.IOSupplier;
+import nbbrd.io.xml.Sax;
 import org.checkerframework.checker.index.qual.NonNegative;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import shaded.spreadsheet.nbbrd.io.function.IOSupplier;
-import shaded.spreadsheet.nbbrd.io.xml.Sax;
 import spreadsheet.xlsx.*;
 
 import java.io.Closeable;
