@@ -17,6 +17,19 @@
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <dependencies>
+        <!-- compile only -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- compile and runtime -->
         <dependency>
             <groupId>com.github.nbbrd.spreadsheet4j</groupId>
             <artifactId>spreadsheet-api</artifactId>
@@ -47,10 +60,42 @@
             <artifactId>spreadsheet-xmlss</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- test only -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- List runtime dependencies for tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>list-runtime-dependencies</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>runtime</includeScope>
+                            <outputFile>${project.build.testOutputDirectory}/runtime-dependencies.txt</outputFile>
+                            <outputScope>false</outputScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Generates a all-in-one executable jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,20 +139,24 @@
                     </transformers>
                     <relocations>
                         <relocation>
-                            <pattern>internal</pattern>
-                            <shadedPattern>standalone_spreadsheet.internal</shadedPattern>
+                            <pattern>internal.io</pattern>
+                            <shadedPattern>standalone_spreadsheet.internal.io</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>nbbrd</pattern>
                             <shadedPattern>standalone_spreadsheet.nbbrd</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>com</pattern>
-                            <shadedPattern>standalone_spreadsheet.com</shadedPattern>
+                            <pattern>com.github</pattern>
+                            <shadedPattern>standalone_spreadsheet.com.github</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org</pattern>
-                            <shadedPattern>standalone_spreadsheet.org</shadedPattern>
+                            <pattern>org.dhatim</pattern>
+                            <shadedPattern>standalone_spreadsheet.org.dhatim</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.jsoup</pattern>
+                            <shadedPattern>standalone_spreadsheet.org.jsoup</shadedPattern>
                         </relocation>
                     </relocations>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
