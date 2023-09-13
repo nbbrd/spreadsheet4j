@@ -227,12 +227,6 @@
                             <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                             <!--fix lombok issue 'java.lang.module.ResolutionException: Module lombok does not read a module that exports org.mapstruct.ap.spi'-->
                             <useModulePath>false</useModulePath>
-                            <!--fix shaded jar issue-->
-                            <additionalClasspathElements>
-                                <additionalClasspathElement>
-                                    spreadsheet-util/target/spreadsheet-util-${project.version}.jar
-                                </additionalClasspathElement>
-                            </additionalClasspathElements>
                         </configuration>
                     </plugin>
                 </plugins>
