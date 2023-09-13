@@ -158,6 +158,7 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
+                        <inherited>false</inherited>
                         <configuration>
                             <semver>true</semver>
                         </configuration>
