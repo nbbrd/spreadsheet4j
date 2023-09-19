@@ -16,7 +16,7 @@
  */
 package ec.util.spreadsheet.xmlss;
 
-import _test.Top5;
+import _test.XmlssSamples;
 import ec.util.spreadsheet.helpers.ArrayBook;
 import ec.util.spreadsheet.helpers.ArraySheet;
 import ec.util.spreadsheet.tck.BookAssert;
@@ -29,6 +29,7 @@ import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
+import static _test.XmlssSamples.XML_TOP5;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.*;
 
@@ -48,25 +49,25 @@ public class XmlssBookReaderTest {
     public void testParseStream() throws IOException {
         assertThatNullPointerException().isThrownBy(() -> XmlssBookReader.parseStream(null));
 
-        ArrayBook original = doParseStream(Top5.VALID::stream);
-        Top5.assertTop5Book(original);
+        ArrayBook original = doParseStream(XML_TOP5.getValid()::stream);
+        XmlssSamples.assertTop5Book(original);
 
         BookAssert
-                .assertThat(doParseStream(Top5.VALID_WITH_TAIL::stream))
+                .assertThat(doParseStream(XML_TOP5.getValidWithTail()::stream))
                 .hasSameContentAs(original, true);
 
         BookAssert
-                .assertThat(doParseStream(Top5.BAD_EXTENSION::stream))
+                .assertThat(doParseStream(XML_TOP5.getBadExtension()::stream))
                 .hasSameContentAs(original, true);
 
         assertThatExceptionOfType(XmlssContentException.class)
-                .isThrownBy(() -> doParseStream(Top5.INVALID_CONTENT::stream));
+                .isThrownBy(() -> doParseStream(XML_TOP5.getInvalidContent()::stream));
 
         assertThatExceptionOfType(XmlssFormatException.class)
-                .isThrownBy(() -> doParseStream(Top5.INVALID_FORMAT::stream));
+                .isThrownBy(() -> doParseStream(XML_TOP5.getInvalidFormat()::stream));
 
         assertThatExceptionOfType(EOFException.class)
-                .isThrownBy(() -> doParseStream(Top5.EMPTY::stream));
+                .isThrownBy(() -> doParseStream(XML_TOP5.getEmpty()::stream));
     }
 
     @Test
@@ -74,32 +75,32 @@ public class XmlssBookReaderTest {
     public void testParseFile(@TempDir Path temp) throws IOException {
         assertThatNullPointerException().isThrownBy(() -> XmlssBookReader.parseFile(null));
 
-        ArrayBook original = XmlssBookReader.parseFile(Top5.VALID.file(temp));
-        Top5.assertTop5Book(original);
+        ArrayBook original = XmlssBookReader.parseFile(XML_TOP5.getValid().file(temp));
+        XmlssSamples.assertTop5Book(original);
 
         BookAssert
-                .assertThat(XmlssBookReader.parseFile(Top5.VALID_WITH_TAIL.file(temp)))
+                .assertThat(XmlssBookReader.parseFile(XML_TOP5.getValidWithTail().file(temp)))
                 .hasSameContentAs(original, true);
 
         BookAssert
-                .assertThat(XmlssBookReader.parseFile(Top5.BAD_EXTENSION.file(temp)))
+                .assertThat(XmlssBookReader.parseFile(XML_TOP5.getBadExtension().file(temp)))
                 .hasSameContentAs(original, true);
 
         assertThatExceptionOfType(XmlssContentException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.INVALID_CONTENT.file(temp)))
+                .isThrownBy(() -> XmlssBookReader.parseFile(XML_TOP5.getInvalidContent().file(temp)))
                 .withMessageContaining("file:/");
 
         assertThatExceptionOfType(XmlssFormatException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.INVALID_FORMAT.file(temp)))
+                .isThrownBy(() -> XmlssBookReader.parseFile(XML_TOP5.getInvalidFormat().file(temp)))
                 .withMessageContaining("file:/");
 
         assertThatExceptionOfType(EOFException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.EMPTY.file(temp)))
-                .withMessageContaining(Top5.EMPTY.getFileName());
+                .isThrownBy(() -> XmlssBookReader.parseFile(XML_TOP5.getEmpty().file(temp)))
+                .withMessageContaining(XML_TOP5.getEmpty().getFileName());
 
         assertThatExceptionOfType(NoSuchFileException.class)
-                .isThrownBy(() -> XmlssBookReader.parseFile(Top5.MISSING.file(temp)))
-                .withMessageContaining(Top5.MISSING.getFileName());
+                .isThrownBy(() -> XmlssBookReader.parseFile(XML_TOP5.getMissing().file(temp)))
+                .withMessageContaining(XML_TOP5.getMissing().getFileName());
     }
 
     @Test

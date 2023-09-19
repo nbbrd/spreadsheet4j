@@ -1,41 +1,37 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.tck;
 
 import ec.util.spreadsheet.Book;
-import static ec.util.spreadsheet.tck.Assertions.msg;
 import ec.util.spreadsheet.helpers.ArrayBook;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.SoftAssertions;
+
+import java.io.*;
 import java.net.URL;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.assertj.core.api.AbstractAssert;
-import org.assertj.core.api.SoftAssertions;
+
+import static ec.util.spreadsheet.tck.Assertions.msg;
 
 /**
- *
  * @author Philippe Charles
  */
 public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Factory> {
@@ -48,16 +44,24 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
         return new BookFactoryAssert(actual);
     }
 
-    public BookFactoryAssert isCompliant(File valid) throws IOException {
-        return isCompliant(valid, null);
-    }
-
-    public BookFactoryAssert isCompliant(File valid, File invalid) throws IOException {
+    public BookFactoryAssert isCompliant(SampleSet samples, Path temp) throws IOException {
+        File valid = samples.getValid().file(temp);
         isNotNull();
         SoftAssertions s = new SoftAssertions();
-        assertCompliance(s, actual, valid, Optional.ofNullable(invalid));
+        assertCompliance(s, actual, valid, Optional.ofNullable(samples.getInvalidFormat()).map(sample -> sample.file(temp)));
         s.assertAll();
         return this;
+    }
+
+    public static void assertReadWrite(Book.Factory reader, Book.Factory writer, File inputFile, File outputFile) throws IOException {
+        try (Book original = reader.load(inputFile)) {
+            writer.store(outputFile, original);
+
+            try (Book modified = reader.load(outputFile)) {
+                BookAssert.assertThat(modified)
+                        .hasSameContentAs(modified, true);
+            }
+        }
     }
 
     //<editor-fold defaultstate="collapsed" desc="Internal implementation">
