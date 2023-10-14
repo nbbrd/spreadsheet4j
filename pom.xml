@@ -244,7 +244,7 @@
             <properties>
                 <lombok.version>1.18.30</lombok.version>
                 <java-service.version>1.7.0</java-service.version>
-                <java-design.version>1.4.0</java-design.version>
+                <java-design.version>1.5.0</java-design.version>
                 <jmh.version>1.37</jmh.version>
             </properties>
             <dependencyManagement>
