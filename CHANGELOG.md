@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.8] - 2024-02-26
+
+### Changed
+
+- Bump fastexcel from 0.15.7 to [0.16.6](https://github.com/dhatim/fastexcel/compare/0.15.7...0.16.6)
+- Bump jsoup from 0.16.1 to [1.17.2](https://github.com/jhy/jsoup/blob/master/change-archive.txt)
+- Bump SODS from 1.6.2 to [1.6.7](https://github.com/miachm/SODS/compare/v1.6.2...v1.6.7)
+- Bump POI from 5.2.3 to [5.2.5](https://poi.apache.org/changes.html)
+- Bump java-io-util from 0.0.25 to [0.0.27](https://github.com/nbbrd/spreadsheet4j/blob/develop/CHANGELOG.md)
+
 ## [2.5.7] - 2023-09-07
 
 ### Fixed
@@ -162,7 +172,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.7...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.8...HEAD
+[2.5.8]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.7...v2.5.8
 [2.5.7]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.6...v2.5.7
 [2.5.6]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.5...v2.5.6
 [2.5.5]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.4...v2.5.5
