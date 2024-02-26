@@ -16,15 +16,19 @@
  */
 package ec.util.spreadsheet.xmlss;
 
-import _test.Top5;
+import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.tck.BookFactoryAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.Date;
 
+import static _test.XmlssSamples.XML_TOP5;
+import static ec.util.spreadsheet.tck.Conditions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -34,34 +38,53 @@ public class XmlssBookFactoryTest {
 
     @Test
     public void testCompliance(@TempDir Path temp) throws IOException {
-        File valid = Top5.VALID.file(temp);
-        File invalid = Top5.INVALID_FORMAT.file(temp);
-        BookFactoryAssert.assertThat(new XmlssBookFactory()).isCompliant(valid, invalid);
+        BookFactoryAssert.assertThat(new XmlssBookFactory())
+                .isCompliant(XML_TOP5, temp);
     }
 
     @Test
-    public void testAcceptFile(@TempDir Path temp) throws IOException {
-        XmlssBookFactory x = new XmlssBookFactory();
+    public void testContent(@TempDir Path temp) throws IOException {
+        assertThat(new XmlssBookFactory())
+                .is(ableToLoadContent())
+                .is(ableToStoreContent());
 
-        assertThat(x.accept(Top5.VALID.file(temp))).isTrue();
-        assertThat(x.accept(Top5.VALID_WITH_TAIL.file(temp))).isTrue();
-        assertThat(x.accept(Top5.MISSING.file(temp))).isTrue();
-        assertThat(x.accept(Top5.INVALID_CONTENT.file(temp))).isFalse();
-        assertThat(x.accept(Top5.EMPTY.file(temp))).isFalse();
-        assertThat(x.accept(Top5.INVALID_FORMAT.file(temp))).isFalse();
-        assertThat(x.accept(Top5.BAD_EXTENSION.file(temp))).isFalse();
+        Book.Factory x = new XmlssBookFactory();
+        BookFactoryAssert.assertReadWrite(x, x,
+                XML_TOP5.getValid().file(temp),
+                Files.createTempFile(temp, "output", ".xml").toFile()
+        );
     }
 
     @Test
-    public void testAcceptPath(@TempDir Path temp) throws IOException {
-        XmlssBookFactory x = new XmlssBookFactory();
+    public void testIsSupportedDataType() {
+        assertThat(new XmlssBookFactory())
+                .is(supportingDataType(Date.class))
+                .is(supportingDataType(Number.class))
+                .is(supportingDataType(String.class))
+                .isNot(supportingDataType(LocalDateTime.class));
+    }
 
-        assertThat(x.accept(Top5.VALID.path(temp))).isTrue();
-        assertThat(x.accept(Top5.VALID_WITH_TAIL.path(temp))).isTrue();
-        assertThat(x.accept(Top5.MISSING.path(temp))).isTrue();
-        assertThat(x.accept(Top5.INVALID_CONTENT.path(temp))).isFalse();
-        assertThat(x.accept(Top5.EMPTY.path(temp))).isFalse();
-        assertThat(x.accept(Top5.INVALID_FORMAT.path(temp))).isFalse();
-        assertThat(x.accept(Top5.BAD_EXTENSION.path(temp))).isFalse();
+    @Test
+    public void testAcceptFile(@TempDir Path temp) {
+        assertThat(new XmlssBookFactory())
+                .is(acceptingFile(XML_TOP5.getValid().file(temp)))
+                .is(acceptingFile(XML_TOP5.getMissing().file(temp)))
+                .is(acceptingFile(XML_TOP5.getValidWithTail().file(temp)))
+                .isNot(acceptingFile(XML_TOP5.getBadExtension().file(temp)))
+                .isNot(acceptingFile(XML_TOP5.getInvalidFormat().file(temp)))
+                .isNot(acceptingFile(XML_TOP5.getEmpty().file(temp)))
+                .isNot(acceptingFile(XML_TOP5.getInvalidContent().file(temp)));
+    }
+
+    @Test
+    public void testAcceptPath(@TempDir Path temp) {
+        assertThat(new XmlssBookFactory())
+                .is(acceptingPath(XML_TOP5.getValid().path(temp)))
+                .is(acceptingPath(XML_TOP5.getMissing().path(temp)))
+                .is(acceptingPath(XML_TOP5.getValidWithTail().path(temp)))
+                .isNot(acceptingPath(XML_TOP5.getBadExtension().path(temp)))
+                .isNot(acceptingPath(XML_TOP5.getInvalidFormat().path(temp)))
+                .isNot(acceptingPath(XML_TOP5.getEmpty().path(temp)))
+                .isNot(acceptingPath(XML_TOP5.getInvalidContent().path(temp)));
     }
 }

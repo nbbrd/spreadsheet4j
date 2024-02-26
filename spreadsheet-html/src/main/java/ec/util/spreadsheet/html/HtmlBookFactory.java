@@ -1,40 +1,40 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.html;
 
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
+import nbbrd.service.ServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import javax.xml.stream.XMLOutputFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import javax.xml.stream.XMLOutputFactory;
-import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 
 /**
- *
  * @author Philippe Charles
  */
 @ServiceProvider(Book.Factory.class)
@@ -80,7 +80,13 @@ public class HtmlBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File pathname) {
-        return FileHelper.hasExtension(pathname, ".html", ".htm");
+        return FileHelper.accept(pathname, this);
+    }
+
+    @Override
+    public boolean accept(Path file) throws IOException {
+        return FileHelper.hasExtension(file, ".html", ".htm")
+                && (!Files.exists(file) || Files.size(file) > 0);
     }
 
     @Override

@@ -4,11 +4,11 @@ on: [ push, pull_request ]
 
 jobs:
   build-and-test-job:
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/tags/v')
     strategy:
       fail-fast: false
       matrix:
-        java: [ 8, 17 ]
+        java: [ 8, 21 ]
         os: [ ubuntu-latest, macOS-latest, windows-latest ]
 
     name: JDK${{ matrix.java }} on ${{ matrix.os }}
@@ -16,29 +16,49 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
+
+      - name: Pre-download dependencies with Maven
+        run: mvn -U -B -ntp dependency:go-offline
 
       - name: Build and (headless) test with Maven
         uses: smithki/xvfb-action@v1.1.2
         with:
           run: mvn -U -B -ntp package
 
+  auto-merge-job:
+    needs: build-and-test-job
+    if: startsWith(github.repository, 'nbbrd/') && github.event_name == 'pull_request' && github.actor == 'dependabot[bot]'
+    permissions:
+      contents: write
+      pull-requests: write
+
+    name: Auto-merge on dependabot PR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Merge PR
+        run: gh pr merge --auto --rebase "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
   snapshot-job:
     needs: build-and-test-job
     if: startsWith(github.repository, 'nbbrd/') && startsWith(github.ref, 'refs/heads/develop')
     strategy:
       matrix:
-        java: [ 17 ]
+        java: [ 21 ]
         os: [ ubuntu-latest ]
 
     name: Snapshot on develop
@@ -46,13 +66,13 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -76,7 +96,7 @@ jobs:
 
       - name: Upload JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets-snapshot-log
           path: |
@@ -88,7 +108,7 @@ jobs:
     if: startsWith(github.repository, 'nbbrd/') && startsWith(github.ref, 'refs/tags/v')
     strategy:
       matrix:
-        java: [ 17 ]
+        java: [ 21 ]
         os: [ ubuntu-latest ]
 
     name: Release on tag
@@ -96,13 +116,13 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           fetch-depth: 0
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
@@ -128,7 +148,7 @@ jobs:
 
       - name: Upload JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: assets-release-log
           path: |
