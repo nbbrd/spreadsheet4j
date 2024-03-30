@@ -303,7 +303,7 @@
             <properties>
                 <lombok.version>1.18.32</lombok.version>
                 <java-service.version>1.9.0</java-service.version>
-                <java-design.version>1.5.0</java-design.version>
+                <java-design.version>1.5.1</java-design.version>
                 <jmh.version>1.37</jmh.version>
             </properties>
             <dependencyManagement>
