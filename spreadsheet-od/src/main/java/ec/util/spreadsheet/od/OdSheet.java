@@ -20,8 +20,10 @@ import com.github.miachm.sods.Range;
 import com.github.miachm.sods.Sheet;
 import ec.util.spreadsheet.Cell;
 import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -35,15 +37,16 @@ final class OdSheet extends ec.util.spreadsheet.Sheet {
     private final String name;
     private final Range sheet;
     private final int columnCount;
+    private final ZoneId zoneId;
     @Deprecated
     private final OdCell flyweightCell;
-    private final ZoneId zoneId = ZoneId.systemDefault();
 
     public OdSheet(Sheet sheet) {
         this.name = sheet.getName();
         this.sheet = sheet.getDataRange();
         this.columnCount = computeColumnCount(this.sheet);
-        this.flyweightCell = new OdCell();
+        this.zoneId = ZoneId.systemDefault();
+        this.flyweightCell = new OdCell(zoneId);
     }
 
     static int computeColumnCount(Range sheet) {
@@ -72,6 +75,14 @@ final class OdSheet extends ec.util.spreadsheet.Sheet {
         return sheet.getCell(rowIdx, columnIdx).getValue() == null;
     }
 
+    static Date toDate(LocalDateTime value, ZoneId zoneId) {
+        return Date.from(value.atZone(zoneId).toInstant());
+    }
+
+    static Date toDate(LocalDate value, ZoneId zoneId) {
+        return Date.from(value.atStartOfDay(zoneId).toInstant());
+    }
+
     @Override
     public int getRowCount() {
         return sheet.getNumRows();
@@ -91,17 +102,20 @@ final class OdSheet extends ec.util.spreadsheet.Sheet {
     @Override
     public @Nullable Object getCellValue(@NonNegative int rowIdx, @NonNegative int columnIdx) throws IndexOutOfBoundsException {
         Object value = sheet.getCell(rowIdx, columnIdx).getValue();
-        if (OdCell.isValid(value)) {
-            if (value instanceof LocalDateTime) {
-                return Date.from(((LocalDateTime) value).atZone(zoneId).toInstant());
-            }
+        if (value instanceof LocalDateTime) {
+            return toDate((LocalDateTime) value, zoneId);
+        } else if (value instanceof LocalDate) {
+            return toDate((LocalDate) value, zoneId);
+        } else if (value instanceof Number) {
+            return value;
+        } else if (value instanceof String) {
             return value;
         }
         return null;
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return name.replace("_", " ");
     }
 }

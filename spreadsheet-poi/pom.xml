@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.5.8</version>
+        <version>2.5.9</version>
     </parent>
 
     <artifactId>spreadsheet-poi</artifactId>
@@ -100,7 +100,7 @@
             <!-- force latest version of log4j -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.23.0</version>
+            <version>2.23.1</version>
         </dependency>
 
         <!-- test only -->

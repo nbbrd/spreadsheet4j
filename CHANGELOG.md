@@ -7,6 +7,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.9] - 2024-05-28
+
+### Fixed
+
+- Fix date parsing in SODS [#470](https://github.com/nbbrd/spreadsheet4j/issues/470)
+
+### Changed
+
+- Bump java-io-util from 0.0.27 to [0.0.28](https://github.com/nbbrd/spreadsheet4j/blob/develop/CHANGELOG.md)
+- Bump fastexcel from 0.16.6 to [0.18.0](https://github.com/dhatim/fastexcel/compare/0.15.7...0.16.6)
+
 ## [2.5.8] - 2024-02-26
 
 ### Changed
@@ -52,7 +63,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Bump SODS from [1.5.1 to 1.6.2](https://github.com/miachm/SODS/releases)
 - Bump fastexcel from [0.14.0 to 0.15.7](https://github.com/dhatim/fastexcel/releases)
-- Bump jsoup from [1.15.3 to 1.16.1](https://github.com/jhy/jsoup/blob/master/CHANGES)
+- Bump jsoup from [1.15.3 to 1.16.1](https://github.com/jhy/jsoup/blob/master/CHANGES.md)
 - Remove `spreadsheet-xl` dependency from `spreadsheet-poi`
 
 ## [2.5.2] - 2022-10-28
@@ -172,7 +183,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.8...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.9...HEAD
+[2.5.9]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.8...v2.5.9
 [2.5.8]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.7...v2.5.8
 [2.5.7]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.6...v2.5.7
 [2.5.6]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.5...v2.5.6
