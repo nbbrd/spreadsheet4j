@@ -19,10 +19,11 @@ module nbbrd.spreadsheet.od {
     
     requires static org.checkerframework.checker.qual;
     requires static nbbrd.service;
+    requires static lombok;
 
     requires nbbrd.spreadsheet.api;
     requires com.github.miachm.sods;
-    
+
     provides ec.util.spreadsheet.Book.Factory with 
             ec.util.spreadsheet.od.OpenDocumentBookFactory;
 }

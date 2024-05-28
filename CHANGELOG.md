@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix date parsing in SODS [#470](https://github.com/nbbrd/spreadsheet4j/issues/470)
+
 ## [2.5.8] - 2024-02-26
 
 ### Changed
