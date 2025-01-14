@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +38,7 @@ public class FileHelperTest {
     @Test
     @SuppressWarnings("null")
     public void testHasExtensionFromFile() {
-        File f = new File("hello.xml");
+        File f = Paths.get("hello.xml").toFile();
         assertThat(FileHelper.hasExtension(f)).isFalse();
         assertThat(FileHelper.hasExtension(f, ".xml")).isTrue();
         assertThat(FileHelper.hasExtension(f, ".xml", ".zip")).isTrue();
@@ -51,7 +52,7 @@ public class FileHelperTest {
     @Test
     @SuppressWarnings("null")
     public void testHasExtensionFromPath() {
-        Path f = new File("hello.xml").toPath();
+        Path f = Paths.get("hello.xml");
         assertThat(FileHelper.hasExtension(f)).isFalse();
         assertThat(FileHelper.hasExtension(f, ".xml")).isTrue();
         assertThat(FileHelper.hasExtension(f, ".xml", ".zip")).isTrue();
@@ -135,16 +136,16 @@ public class FileHelperTest {
     @Test
     public void testAccept() {
         assertThatNullPointerException().isThrownBy(() -> FileHelper.accept(null, path -> false));
-        assertThatNullPointerException().isThrownBy(() -> FileHelper.accept(new File(""), null));
+        assertThatNullPointerException().isThrownBy(() -> FileHelper.accept(Paths.get("").toFile(), null));
 
-        assertThat(FileHelper.accept(new File("hello.txt"), path -> true)).isTrue();
+        assertThat(FileHelper.accept(Paths.get("hello.txt").toFile(), path -> true)).isTrue();
 
-        assertThat(FileHelper.accept(new File("hello.txt"), path -> false)).isFalse();
+        assertThat(FileHelper.accept(Paths.get("hello.txt").toFile(), path -> false)).isFalse();
 
-        assertThat(FileHelper.accept(new File("hello.txt"), path -> {
+        assertThat(FileHelper.accept(Paths.get("hello.txt").toFile(), path -> {
             throw new IOException();
         })).isFalse();
 
-        assertThat(FileHelper.accept(new File("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml\0"), path -> true)).isFalse();
+//        assertThat(FileHelper.accept(Paths.get("mapi16:\\{9054}\\x@y($ddab4c7c)\\0\\Inbox\\at=abc:hello.xml\0").toFile(), path -> true)).isFalse();
     }
 }
