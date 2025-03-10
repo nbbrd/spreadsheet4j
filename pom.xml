@@ -380,8 +380,8 @@
             </activation>
             <properties>
                 <!-- Fix NetBeans bug with test packages -->
-                <maven.compiler.target>9</maven.compiler.target>
-                <maven.compiler.source>9</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
+                <maven.compiler.source>11</maven.compiler.source>
             </properties>
             <build>
                 <plugins>
@@ -389,11 +389,11 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <executions>
-                            <!-- First: compile all as Java9 -->
+                            <!-- First: compile all as Java11 -->
                             <execution>
                                 <id>default-compile</id>
                                 <configuration>
-                                    <release>9</release>
+                                    <release>11</release>
                                 </configuration>
                             </execution>
                             <!-- Second: recompile all but module-info as Java8 -->
