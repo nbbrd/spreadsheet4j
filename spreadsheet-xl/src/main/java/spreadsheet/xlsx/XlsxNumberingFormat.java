@@ -16,8 +16,8 @@
  */
 package spreadsheet.xlsx;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 
 /**

@@ -27,8 +27,8 @@ import java.util.Objects;
 import java.util.function.ObjIntConsumer;
 
 import nbbrd.design.NotThreadSafe;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 
 /**
  *

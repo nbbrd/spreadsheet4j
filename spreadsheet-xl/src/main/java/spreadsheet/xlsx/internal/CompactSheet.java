@@ -26,8 +26,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import lombok.AccessLevel;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 
 /**
  *

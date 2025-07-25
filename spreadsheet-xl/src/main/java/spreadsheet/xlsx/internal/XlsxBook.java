@@ -20,8 +20,8 @@ import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.xml.Sax;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 import spreadsheet.xlsx.*;
 
 import java.io.Closeable;

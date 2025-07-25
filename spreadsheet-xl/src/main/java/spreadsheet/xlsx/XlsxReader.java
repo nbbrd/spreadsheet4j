@@ -19,7 +19,7 @@ package spreadsheet.xlsx;
 import ec.util.spreadsheet.Book;
 import lombok.AccessLevel;
 import nbbrd.io.Resource;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import spreadsheet.xlsx.internal.*;
 
 import java.io.IOException;

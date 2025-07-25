@@ -17,13 +17,18 @@
     <dependencies>
         <!-- compile only -->
         <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>checker-qual</artifactId>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.github.nbbrd.java-service-util</groupId>
             <artifactId>java-service-annotation</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.java-design-util</groupId>
+            <artifactId>java-design-annotation</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

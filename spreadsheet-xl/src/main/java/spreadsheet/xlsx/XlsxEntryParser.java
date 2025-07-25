@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import nbbrd.design.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Parser for Office Open XML files.

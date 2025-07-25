@@ -16,9 +16,9 @@
  */
 package ec.util.spreadsheet.helpers;
 
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 
 /**

@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 import nbbrd.service.ServiceProvider;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;

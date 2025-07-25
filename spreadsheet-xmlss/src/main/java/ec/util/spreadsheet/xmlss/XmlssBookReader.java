@@ -20,7 +20,7 @@ import ec.util.spreadsheet.helpers.ArrayBook;
 import nbbrd.io.WrappedIOException;
 import nbbrd.io.function.IOFunction;
 import nbbrd.io.xml.Sax;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;

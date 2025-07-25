@@ -19,9 +19,9 @@ package ec.util.spreadsheet.od;
 import com.github.miachm.sods.Range;
 import com.github.miachm.sods.Sheet;
 import ec.util.spreadsheet.Cell;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

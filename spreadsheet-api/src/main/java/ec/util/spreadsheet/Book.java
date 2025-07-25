@@ -17,8 +17,8 @@
 package ec.util.spreadsheet;
 
 import nbbrd.service.*;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 
 import java.io.*;
 import java.net.URL;

@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.xml.Sax;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

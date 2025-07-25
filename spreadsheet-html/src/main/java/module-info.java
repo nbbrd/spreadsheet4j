@@ -17,8 +17,9 @@
 
 module nbbrd.spreadsheet.html {
     
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
     requires static nbbrd.service;
+    requires static lombok;
 
     requires nbbrd.spreadsheet.api;
     requires nbbrd.io.xml;
