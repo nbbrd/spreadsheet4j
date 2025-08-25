@@ -112,8 +112,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Move Excel native reader to its own module (`spreadsheet-xl`)
 
-### Fixed
-
 ## [2.3.0] - 2022-06-08
 
 ### Added
