@@ -17,15 +17,12 @@
 package ec.util.spreadsheet;
 
 import nbbrd.service.*;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.ObjIntConsumer;
 
@@ -200,10 +197,8 @@ public abstract class Book implements Closeable {
          */
         @NonNull
         public Book load(@NonNull File file) throws IOException {
-            try (InputStream stream = new FileInputStream(file)) {
+            try (InputStream stream = Files.newInputStream(file.toPath())) {
                 return load(stream);
-            } catch (FileNotFoundException ex) {
-                throw translate(ex);
             }
         }
 
@@ -273,7 +268,7 @@ public abstract class Book implements Closeable {
          * @throws IOException if something goes wrong during the storing.
          */
         public void store(@NonNull File file, @NonNull Book book) throws IOException {
-            try (OutputStream stream = new FileOutputStream(file, false)) {
+            try (OutputStream stream = Files.newOutputStream(file.toPath(), StandardOpenOption.CREATE)) {
                 store(stream, book);
             }
         }

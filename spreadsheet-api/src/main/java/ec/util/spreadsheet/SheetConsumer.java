@@ -17,7 +17,7 @@
 package ec.util.spreadsheet;
 
 import java.util.Objects;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  * Represents an operation that accepts a row index, a column index and an input

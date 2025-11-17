@@ -31,10 +31,11 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.checkerframework.checker.index.qual.NonNegative;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import nbbrd.design.NonNegative;
+import lombok.NonNull;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Locale;
 
 /**
@@ -48,7 +49,7 @@ final class PoiBook extends Book {
         try {
             // Fix strange bug on Windows+Java8 that keeps a handle on invalid file
             if (isWindows()) {
-                try (InputStream stream = new FileInputStream(file)) {
+                try (InputStream stream = Files.newInputStream(file.toPath())) {
                     try (PoiBook book = new PoiBook(new XSSFWorkbook(OPCPackage.open(stream)))) {
                         return ArrayBook.copyOf(book);
                     }

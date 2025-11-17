@@ -17,7 +17,7 @@
 package ec.util.spreadsheet;
 
 import java.util.Date;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  * Facade that represents <b>a cell in a spreadsheet</b>.

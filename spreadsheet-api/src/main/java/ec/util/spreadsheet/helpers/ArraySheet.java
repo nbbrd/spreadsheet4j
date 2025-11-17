@@ -20,8 +20,8 @@ import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
 import ec.util.spreadsheet.SheetConsumer;
 import nbbrd.design.NotThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import lombok.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.*;

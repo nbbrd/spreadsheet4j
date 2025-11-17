@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.5.9</version>
+        <version>2.5.10</version>
     </parent>
 
     <artifactId>spreadsheet-xl</artifactId>
@@ -18,8 +18,8 @@
     <dependencies>
         <!-- compile only -->
         <dependency>
-            <groupId>org.checkerframework</groupId>
-            <artifactId>checker-qual</artifactId>
+            <groupId>org.jspecify</groupId>
+            <artifactId>jspecify</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

@@ -17,7 +17,7 @@
 
 module nbbrd.spreadsheet.poi {
 
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
     requires static nbbrd.service;
     requires static lombok;
 

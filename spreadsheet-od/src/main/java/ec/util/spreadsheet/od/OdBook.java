@@ -19,7 +19,7 @@ package ec.util.spreadsheet.od;
 import com.github.miachm.sods.SpreadSheet;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.Sheet;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  * @author Philippe Charles

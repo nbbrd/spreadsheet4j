@@ -18,7 +18,7 @@ package spreadsheet.xlsx;
 
 import java.util.Calendar;
 import java.util.Date;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  * Class that deals with the internal representation of dates in Excel.

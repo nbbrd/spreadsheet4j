@@ -17,7 +17,8 @@
 
 module nbbrd.spreadsheet.od {
     
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static lombok;
 

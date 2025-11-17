@@ -18,7 +18,7 @@ package spreadsheet.xlsx.internal;
 
 import java.util.PrimitiveIterator;
 import java.util.function.IntPredicate;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jspecify.annotations.Nullable;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 
 /**

@@ -24,7 +24,7 @@ import java.nio.file.Path;
 
 import nbbrd.design.NotThreadSafe;
 import nbbrd.design.ThreadSafe;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  * Container for Office Open XML files.
