@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.10] - 2025-11-17
+
 ### Changed
 
 - Modernize use of NIO API
@@ -191,7 +193,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.9...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.10...HEAD
+[2.5.10]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.9...v2.5.10
 [2.5.9]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.8...v2.5.9
 [2.5.8]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.7...v2.5.8
 [2.5.7]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.6...v2.5.7
