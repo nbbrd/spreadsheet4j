@@ -11,6 +11,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Modernize use of NIO API
 - Migrate OSSRH to Central Portal
+- Bump java-io-util from 0.0.28 to [0.0.35](https://github.com/nbbrd/java-io-util/blob/develop/CHANGELOG.md)
+- Bump fastexcel from 0.18.0 to [0.19.0](https://github.com/dhatim/fastexcel/releases/tag/0.19.0)
+- Bump jsoup from 0.17.2 to [1.21.2](https://github.com/jhy/jsoup/blob/master/change-archive.txt)
+- Bump SODS from 1.6.7 to [1.7.0](https://github.com/miachm/SODS/releases/tag/v1.7.0)
+- Bump POI from 5.2.5 to [5.5.0](https://poi.apache.org/changes.html)
 
 ## [2.5.9] - 2024-05-28
 
