@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add support of Markdown [#679](https://github.com/nbbrd/spreadsheet4j/issues/679)
+
 ## [2.5.10] - 2025-11-17
 
 ### Changed

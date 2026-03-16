@@ -50,6 +50,7 @@
 
     <modules>
         <module>spreadsheet-api</module>
+        <module>spreadsheet-markdown</module>
         <module>spreadsheet-html</module>
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
