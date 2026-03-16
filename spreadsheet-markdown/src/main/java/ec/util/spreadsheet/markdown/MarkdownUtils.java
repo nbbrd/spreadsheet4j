@@ -72,7 +72,7 @@ final class MarkdownUtils {
             for (int j = 0; j < colCount; j++) {
                 Object value = sheet.getCellValue(i, j);
                 writer.write(' ');
-                writer.write(value == null ? "" : value.toString());
+                writer.write(value == null ? "" : escapeCellContent(value.toString()));
                 writer.write(" |");
             }
             writer.write('\n');
@@ -84,5 +84,11 @@ final class MarkdownUtils {
                 writer.write('\n');
             }
         }
+    }
+
+    private static String escapeCellContent(String value) {
+        return value.replace("\r\n", "<br>")
+                .replace("\r", "<br>")
+                .replace("\n", "<br>");
     }
 }
