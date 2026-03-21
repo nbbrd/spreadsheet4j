@@ -17,7 +17,7 @@
 
     <properties>
         <!-- last version for Java8 -->
-        <flexmark.version>0.62.2</flexmark.version>
+        <flexmark.version>0.64.8</flexmark.version>
     </properties>
 
     <dependencies>
