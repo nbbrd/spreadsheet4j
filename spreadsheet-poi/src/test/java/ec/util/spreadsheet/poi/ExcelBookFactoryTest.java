@@ -128,7 +128,7 @@ public class ExcelBookFactoryTest {
 
     @Test
     public void testRank() {
-        assertThat(BookFactoryLoader.get())
+        assertThat(BookFactoryLoader.load())
                 .hasSize(2)
                 .isSortedAccordingTo(Comparator.comparingInt(Book.Factory::getRank).reversed())
                 .extracting(factory -> factory.getClass().getSimpleName())
