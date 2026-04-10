@@ -226,10 +226,13 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <properties>
-                        <!-- Enable parallel execution of junit5 tests -->
+                        <!-- Enable parallel execution of junit tests -->
                         <configurationParameters>
                             junit.jupiter.execution.parallel.enabled=true
                             junit.jupiter.execution.parallel.mode.default=concurrent
+                            junit.jupiter.execution.parallel.mode.classes.default=concurrent
+                            junit.jupiter.execution.parallel.config.strategy=dynamic
+                            junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor=4
                         </configurationParameters>
                     </properties>
                 </configuration>
@@ -273,7 +276,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
+                        <configuration combine.self="append">
                             <!--fix file encoding warning-->
                             <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                             <!--fix lombok issue 'java.lang.module.ResolutionException: Module lombok does not read a module that exports org.mapstruct.ap.spi'-->
