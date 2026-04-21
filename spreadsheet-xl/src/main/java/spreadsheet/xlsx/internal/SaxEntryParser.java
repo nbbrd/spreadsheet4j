@@ -1,40 +1,36 @@
 /*
  * Copyright 2016 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.1 or - as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.1 or - as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * http://ec.europa.eu/idabc/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package spreadsheet.xlsx.internal;
+
+import lombok.NonNull;
+import nbbrd.design.VisibleForTesting;
+import nbbrd.io.function.IOSupplier;
+import nbbrd.io.xml.Sax;
+import org.jspecify.annotations.Nullable;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+import spreadsheet.xlsx.XlsxDataType;
+import spreadsheet.xlsx.XlsxEntryParser;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import nbbrd.io.function.IOSupplier;
-import nbbrd.io.xml.Sax;
-import lombok.NonNull;
-import org.jspecify.annotations.Nullable;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-import spreadsheet.xlsx.XlsxEntryParser;
-import spreadsheet.xlsx.XlsxDataType;
 
 /**
  *
@@ -308,29 +304,19 @@ public final class SaxEntryParser implements XlsxEntryParser {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             switch (qName) {
                 case CELL_FORMATS_TAG:
+                case NUMBER_FORMATS_TAG:
                     insideGroupTag = true;
                     break;
                 case CELL_FORMAT_TAG:
                     if (insideGroupTag) {
-                        try {
-                            visitor.onCellFormat(Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)));
-                        } catch (NumberFormatException ex) {
-                            throw new SAXException(ex);
-                        }
+                        visitor.onCellFormat(parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE), DEFAULT_NUMBER_FORMAT_ID));
                     }
-                    break;
-                case NUMBER_FORMATS_TAG:
-                    insideGroupTag = true;
                     break;
                 case NUMBER_FORMAT_TAG:
                     if (insideGroupTag) {
-                        try {
-                            visitor.onNumberFormat(
-                                    Integer.parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE)),
-                                    attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
-                        } catch (NumberFormatException ex) {
-                            throw new SAXException(ex);
-                        }
+                        visitor.onNumberFormat(
+                                parseInt(attributes.getValue(NUMBER_FORMAT_ID_ATTRIBUTE), DEFAULT_NUMBER_FORMAT_ID),
+                                attributes.getValue(NUMBER_FORMAT_CODE_ATTRIBUTE));
                     }
                     break;
             }
@@ -349,6 +335,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
         private static final String NUMBER_FORMATS_TAG = "numFmts";
         private static final String NUMBER_FORMAT_ID_ATTRIBUTE = "numFmtId";
         private static final String NUMBER_FORMAT_CODE_ATTRIBUTE = "formatCode";
+        private static final int DEFAULT_NUMBER_FORMAT_ID = 0;
     }
 
     private static final class SaxStringBuilder {
@@ -411,4 +398,16 @@ public final class SaxEntryParser implements XlsxEntryParser {
     }
 
     public static final XlsxEntryParser.Factory FACTORY = () -> new SaxEntryParser(Sax.createReader());
+
+    @VisibleForTesting
+    static int parseInt(@Nullable String optionalValue, int defaultValue) throws SAXException {
+        if (optionalValue == null) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(optionalValue);
+        } catch (NumberFormatException ex) {
+            throw new SAXException(ex);
+        }
+    }
 }
