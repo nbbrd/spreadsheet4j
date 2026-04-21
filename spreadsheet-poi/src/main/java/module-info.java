@@ -18,6 +18,7 @@
 module nbbrd.spreadsheet.poi {
 
     requires static org.jspecify;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static lombok;
 
