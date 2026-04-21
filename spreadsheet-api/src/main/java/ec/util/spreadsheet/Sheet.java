@@ -175,17 +175,17 @@ public abstract class Sheet {
         }
 
         @Override
-        public void forEach(SheetConsumer<? super Cell> action) {
+        public void forEach(@org.jspecify.annotations.NonNull SheetConsumer<? super Cell> action) {
             sheet.forEach((i, j, c) -> action.accept(j, i, c));
         }
 
         @Override
-        public void forEachValue(SheetConsumer<? super Object> action) {
+        public void forEachValue(@org.jspecify.annotations.NonNull SheetConsumer<? super Object> action) {
             sheet.forEachValue((i, j, v) -> action.accept(j, i, v));
         }
 
         @Override
-        public String getName() {
+        public @org.jspecify.annotations.NonNull String getName() {
             return sheet.getName();
         }
     }

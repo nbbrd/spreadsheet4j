@@ -20,6 +20,7 @@ import nbbrd.io.Resource;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.xml.Sax;
 import nbbrd.io.zip.Zip;
+import org.jspecify.annotations.NonNull;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -48,22 +49,22 @@ public final class ZipPackage implements XlsxPackage {
     private Map<String, String> relationships = null;
 
     @Override
-    public InputStream getWorkbook() throws IOException {
+    public @NonNull InputStream getWorkbook() throws IOException {
         return resource.load(WORKBOOK_ENTRY_NAME);
     }
 
     @Override
-    public InputStream getSharedStrings() throws IOException {
+    public @NonNull InputStream getSharedStrings() throws IOException {
         return resource.load(SHARED_STRINGS_ENTRY_NAME);
     }
 
     @Override
-    public InputStream getStyles() throws IOException {
+    public @NonNull InputStream getStyles() throws IOException {
         return resource.load(STYLES_ENTRY_NAME);
     }
 
     @Override
-    public InputStream getSheet(String relationId) throws IOException {
+    public @NonNull InputStream getSheet(@NonNull String relationId) throws IOException {
         return resource.load("xl/" + getRelationShipPath(relationId));
     }
 
@@ -136,12 +137,12 @@ public final class ZipPackage implements XlsxPackage {
         INSTANCE;
 
         @Override
-        public XlsxPackage open(InputStream stream) throws IOException {
+        public @NonNull XlsxPackage open(@NonNull InputStream stream) throws IOException {
             return open(() -> Zip.loaderCopyOf(stream, ZipPackageFactory::isUsefulEntry));
         }
 
         @Override
-        public XlsxPackage open(Path path) throws IOException {
+        public @NonNull XlsxPackage open(@NonNull Path path) throws IOException {
             Optional<File> file = Resource.getFile(path);
             return file.isPresent()
                     ? open(file.get())
@@ -149,7 +150,7 @@ public final class ZipPackage implements XlsxPackage {
         }
 
         @Override
-        public XlsxPackage open(File file) throws IOException {
+        public @NonNull XlsxPackage open(@NonNull File file) throws IOException {
             try {
                 return open(() -> Zip.loaderOf(file));
             } catch (ZipException ex) {

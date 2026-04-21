@@ -19,6 +19,7 @@ package ec.util.spreadsheet.helpers;
 import ec.util.spreadsheet.Cell;
 import ec.util.spreadsheet.Sheet;
 import nbbrd.design.NonNegative;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -221,7 +222,7 @@ public class ArraySheetTest {
         }
 
         @Override
-        public String getName() {
+        public @NonNull String getName() {
             return "fake";
         }
     }

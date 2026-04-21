@@ -77,7 +77,7 @@ public final class SaxEntryParser implements XlsxEntryParser {
         Sax.Parser.builder().factory(() -> reader).contentHandler(handler).after(VOID).build().parseStream(stream);
     }
 
-    private static final IOSupplier VOID = IOSupplier.of(null);
+    private static final IOSupplier<?> VOID = IOSupplier.of(null);
 
     @lombok.RequiredArgsConstructor
     private static final class SheetSaxEventHandler extends DefaultHandler {

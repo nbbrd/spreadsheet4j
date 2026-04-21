@@ -180,7 +180,7 @@ public final class XlsxBook extends Book {
         private boolean date1904 = false;
 
         @Override
-        public void onSheet(String relationId, String name) {
+        public void onSheet(@org.jspecify.annotations.NonNull String relationId, @org.jspecify.annotations.NonNull String name) {
             sheets.add(new SheetMeta(relationId, name));
         }
 
@@ -271,7 +271,7 @@ public final class XlsxBook extends Book {
         }
 
         @Override
-        public void onCell(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
+        public void onCell(@org.jspecify.annotations.NonNull String ref, @org.jspecify.annotations.NonNull CharSequence value, @org.jspecify.annotations.NonNull XlsxDataType dataType, int styleIndex) {
             if (!inData) {
                 throw new IllegalStateException();
             }

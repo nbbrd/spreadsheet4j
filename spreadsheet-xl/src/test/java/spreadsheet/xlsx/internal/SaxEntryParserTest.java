@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class SaxEntryParserTest {
 
-    private final IOFunction<String, InputStream> files = o -> Resource.getResourceAsStream(SaxEntryParserTest.class, o).orElseThrow(IOException::new);
+    private final IOFunction<String, InputStream> files = name -> Resource.newInputStream(SaxEntryParserTest.class, name);
     private final IOSupplier<InputStream> empty = EmptyInputStream::new;
     private final IOSupplier<InputStream> throwing = () -> {
         throw new CustomIOException();

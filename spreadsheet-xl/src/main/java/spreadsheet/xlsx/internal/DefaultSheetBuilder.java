@@ -50,7 +50,7 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder reset(String sheetName, String sheetBounds) {
+    public @org.jspecify.annotations.NonNull XlsxSheetBuilder reset(@org.jspecify.annotations.NonNull String sheetName, String sheetBounds) {
         callback = newCallback(sheetName, sheetBounds);
         return this;
     }
@@ -67,13 +67,13 @@ public final class DefaultSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
+    public @org.jspecify.annotations.NonNull XlsxSheetBuilder put(@org.jspecify.annotations.NonNull String ref, @org.jspecify.annotations.NonNull CharSequence value, @org.jspecify.annotations.NonNull XlsxDataType dataType, int styleIndex) {
         valueFactory.parse(callback.moveTo(ref), value, dataType, styleIndex);
         return this;
     }
 
     @Override
-    public Sheet build() {
+    public @org.jspecify.annotations.NonNull Sheet build() {
         return callback.build();
     }
 

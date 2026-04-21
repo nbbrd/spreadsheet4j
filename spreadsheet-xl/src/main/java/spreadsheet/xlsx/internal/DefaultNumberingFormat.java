@@ -85,6 +85,7 @@ public enum DefaultNumberingFormat implements XlsxNumberingFormat {
         return false;
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     private static void skipUntil(PrimitiveIterator.OfInt iterator, IntPredicate predicate) {
         while (iterator.hasNext() && !predicate.test(iterator.nextInt())) {
         }
