@@ -60,6 +60,11 @@
             <artifactId>spreadsheet-xmlss</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-markdown</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- test only -->
         <dependency>

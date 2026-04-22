@@ -14,7 +14,7 @@
 - **Lightweight core** &mdash; `spreadsheet-api` is a pure-Java, zero-dependency module targeting Java 8.
 - **Pick your trade-off** &mdash; e.g. `spreadsheet-xl` for fast native `.xlsx`, `spreadsheet-poi` for full `.xls`/`.xlsx`/`.xlsb` compatibility, or `spreadsheet-fastexcel` for write-optimized output.
 - **Modular &amp; JPMS-ready** &mdash; each module ships a `module-info.java` for the Java Platform Module System.
-- **Standalone uber-jar** &mdash; `spreadsheet-standalone` shades a curated set of providers for environments without a dependency manager.
+- **Standalone uber-jar** &mdash; `spreadsheet-standalone` shades a curated set of providers to prevent dependency hell.
 
 ### Supported formats
 
@@ -27,7 +27,7 @@
 | `spreadsheet-od`        | OpenDocument `.ods`                  | ✓    | ✓     | SODS              |
 | `spreadsheet-xmlss`     | XML Spreadsheet 2003 `.xml`          | ✓    | ✓     | _(pure Java)_     |
 | `spreadsheet-html`      | HTML tables                          | ✓    | ✓     | jsoup             |
-| `spreadsheet-markdown`  | Markdown tables                      | ✓    | ✓     | flexmark          |
+| `spreadsheet-markdown`  | Markdown tables                      | ✓    | ✓     | _(pure Java)_     |
 
 ### Getting started
 

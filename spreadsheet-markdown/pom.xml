@@ -16,8 +16,6 @@
     <url>https://github.com/nbbrd/spreadsheet4j</url>
 
     <properties>
-        <!-- last version for Java8 -->
-        <flexmark.version>0.62.2</flexmark.version>
     </properties>
 
     <dependencies>
@@ -43,28 +41,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>spreadsheet-api</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark</artifactId>
-            <version>${flexmark.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains</groupId>
-                    <artifactId>annotations</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.vladsch.flexmark</groupId>
-            <artifactId>flexmark-ext-tables</artifactId>
-            <version>${flexmark.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jetbrains</groupId>
-                    <artifactId>annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- test only -->
