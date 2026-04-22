@@ -63,6 +63,19 @@ public final class PoiSamples {
             .badExtension(Sample.of("badExtension.xml", XLSX_BYTES))
             .build();
 
+    private static final byte[] XLSB_BYTES = Sample.bytesOf(PoiSamples.class, "/Top5Browsers.xlsb");
+
+    public static final SampleSet XLSB_TOP5 = SampleSet
+            .builder()
+            .valid(Sample.of("valid.xlsb", XLSB_BYTES))
+            .validWithTail(Sample.of("validWithTail.xlsb", Sample.concat(XLSB_BYTES, (byte) '\0')))
+            .invalidContent(null)
+            .invalidFormat(Sample.of("invalidFormat.xlsb", "..."))
+            .empty(Sample.of("empty.xlsb", new byte[0]))
+            .missing(Sample.of("missing.xlsb"))
+            .badExtension(Sample.of("badExtension.xml", XLSB_BYTES))
+            .build();
+
     public static void assertTop5Book(Book book) throws IOException {
         BookAssert
                 .assertThat(book)

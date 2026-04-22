@@ -122,9 +122,9 @@ public class XlsxBookFactoryTest {
     @Test
     public void testRank() {
         assertThat(BookFactoryLoader.load())
-                .hasSize(3)
+                .hasSize(4)
                 .isSortedAccordingTo(Comparator.comparingInt(Book.Factory::getRank).reversed())
                 .extracting(factory -> factory.getClass().getSimpleName())
-                .containsExactly("XlsxBookFactory", "ExcelBookFactory", "ExcelClassicBookFactory");
+                .containsExactly("XlsxBookFactory", "ExcelBinaryBookFactory", "ExcelBookFactory", "ExcelClassicBookFactory");
     }
 }

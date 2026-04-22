@@ -29,5 +29,6 @@ module nbbrd.spreadsheet.poi {
 
     provides ec.util.spreadsheet.Book.Factory with
             ec.util.spreadsheet.poi.ExcelBookFactory,
-            ec.util.spreadsheet.poi.ExcelClassicBookFactory;
+            ec.util.spreadsheet.poi.ExcelClassicBookFactory,
+            ec.util.spreadsheet.poi.ExcelBinaryBookFactory;
 }
