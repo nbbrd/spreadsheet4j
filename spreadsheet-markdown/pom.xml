@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+        <artifactId>spreadsheet-parent</artifactId>
+        <version>2.6.0</version>
+    </parent>
+
+    <artifactId>spreadsheet-markdown</artifactId>
+
+    <name>spreadsheet4j-markdown</name>
+    <description>Markdown table integration for spreadsheet4j</description>
+    <url>https://github.com/nbbrd/spreadsheet4j</url>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+    <!-- compile only -->
+    <dependency>
+        <groupId>org.jspecify</groupId>
+        <artifactId>jspecify</artifactId>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>com.github.nbbrd.java-service-util</groupId>
+        <artifactId>java-service-annotation</artifactId>
+        <scope>provided</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- compile and runtime -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>spreadsheet-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- test only -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>spreadsheet-api</artifactId>
+            <version>${project.version}</version>
+            <classifier>tests</classifier>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
+

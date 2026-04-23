@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.spreadsheet4j</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.5.10</version>
+    <version>2.6.0</version>
     <packaging>pom</packaging>
 
     <name>spreadsheet4j</name>
@@ -32,15 +32,16 @@
     <scm>
         <connection>scm:git:git://github.com/${x.github.user}/${x.github.repo}.git</connection>
         <developerConnection>scm:git:ssh://github.com:${x.github.user}/${x.github.repo}.git</developerConnection>
-        <url>http://github.com/${x.github.user}/${x.github.repo}/tree/master</url>
+        <url>https://github.com/${x.github.user}/${x.github.repo}/tree/master</url>
     </scm>
 
     <properties>
         <!-- Java 8+ config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2025-11-17T07:29:14Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-04-23T08:23:37Z</project.build.outputTimestamp>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
+        <requiredMavenVersion>3.9.11</requiredMavenVersion>
 
         <!-- GitHub hosting -->
         <x.github.user>nbbrd</x.github.user>
@@ -49,6 +50,7 @@
 
     <modules>
         <module>spreadsheet-api</module>
+        <module>spreadsheet-markdown</module>
         <module>spreadsheet-html</module>
         <module>spreadsheet-poi</module>
         <module>spreadsheet-od</module>
@@ -72,21 +74,21 @@
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>6.0.1</version>
+                <version>6.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.27.6</version>
+                <version>3.27.7</version>
             </dependency>
 
             <!-- dependencies  -->
             <dependency>
                 <groupId>com.github.nbbrd.java-io-util</groupId>
                 <artifactId>java-io-bom</artifactId>
-                <version>0.0.35</version>
+                <version>0.0.36</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -105,7 +107,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -125,7 +127,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -135,18 +137,18 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.4</version>
+                    <version>3.5.5</version>
                 </plugin>
                 <!-- Other plugins -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.6.1</version>
+                    <version>3.6.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -156,7 +158,7 @@
                 <plugin>
                     <groupId>org.gaul</groupId>
                     <artifactId>modernizer-maven-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>de.thetaphi</groupId>
@@ -166,7 +168,7 @@
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
-                    <version>0.14.1</version>
+                    <version>0.17.1</version>
                 </plugin>
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
@@ -176,7 +178,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -191,7 +193,7 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.9.0</version>
+                    <version>0.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -201,7 +203,7 @@
                 <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
-                    <version>1.21.0</version>
+                    <version>1.23.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -218,20 +220,19 @@
                         <inherited>false</inherited>
                     </execution>
                 </executions>
-                <configuration>
-                    <versioning>semver</versioning>
-                    <tagging>prefix:v</tagging>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <properties>
-                        <!-- Enable parallel execution of junit5 tests -->
+                        <!-- Enable parallel execution of junit tests -->
                         <configurationParameters>
                             junit.jupiter.execution.parallel.enabled=true
                             junit.jupiter.execution.parallel.mode.default=concurrent
+                            junit.jupiter.execution.parallel.mode.classes.default=concurrent
+                            junit.jupiter.execution.parallel.config.strategy=dynamic
+                            junit.jupiter.execution.parallel.config.dynamic.max-pool-size-factor=4
                         </configurationParameters>
                     </properties>
                 </configuration>
@@ -275,7 +276,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
+                        <configuration combine.self="append">
                             <!--fix file encoding warning-->
                             <argLine>-Dfile.encoding=${project.build.sourceEncoding}</argLine>
                             <!--fix lombok issue 'java.lang.module.ResolutionException: Module lombok does not read a module that exports org.mapstruct.ap.spi'-->
@@ -295,9 +296,9 @@
                 </property>
             </activation>
             <properties>
-                <lombok.version>1.18.42</lombok.version>
-                <java-service.version>1.9.0</java-service.version>
-                <java-design.version>1.8.0</java-design.version>
+                <lombok.version>1.18.44</lombok.version>
+                <java-service.version>2.1.0</java-service.version>
+                <java-design.version>1.10.1</java-design.version>
                 <jmh.version>1.37</jmh.version>
             </properties>
             <dependencyManagement>
@@ -460,12 +461,12 @@
                             <dependency>
                                 <groupId>org.kordamp.maven</groupId>
                                 <artifactId>pomchecker-enforcer-rules</artifactId>
-                                <version>1.14.0</version>
+                                <version>1.15.0</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.codehaus.mojo</groupId>
                                 <artifactId>extra-enforcer-rules</artifactId>
-                                <version>1.11.0</version>
+                                <version>1.12.0</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -481,7 +482,7 @@
                                         <dependencyConvergence/>
                                         <reactorModuleConvergence/>
                                         <requireMavenVersion>
-                                            <version>3.6.3</version>
+                                            <version>${requiredMavenVersion}</version>
                                         </requireMavenVersion>
                                         <requireNoRepositories>
                                             <allowSnapshotRepositories>true</allowSnapshotRepositories>
@@ -685,6 +686,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Skip all checks for local builds -->
+        <profile>
+            <id>yolo</id>
+            <properties>
+                <enforcer.skip>true</enforcer.skip>
+                <modernizer.skip>true</modernizer.skip>
+                <forbiddenapis.skip>true</forbiddenapis.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <heylogs.skip>true</heylogs.skip>
+            </properties>
         </profile>
     </profiles>
 </project>

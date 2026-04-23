@@ -69,7 +69,7 @@ public class BookTest {
                             }
 
                             @Override
-                            public String getName() {
+                            public @org.jspecify.annotations.NonNull String getName() {
                                 return "hello";
                             }
                         };

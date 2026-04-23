@@ -16,9 +16,12 @@
  */
 package ec.util.spreadsheet;
 
-import nbbrd.service.*;
-import nbbrd.design.NonNegative;
 import lombok.NonNull;
+import nbbrd.design.NonNegative;
+import nbbrd.service.Quantifier;
+import nbbrd.service.ServiceDefinition;
+import nbbrd.service.ServiceId;
+import nbbrd.service.ServiceSorter;
 
 import java.io.*;
 import java.net.URL;
@@ -137,9 +140,7 @@ public abstract class Book implements Closeable {
      * Factory used to store/load books in/from spreadsheets.
      */
     @ServiceDefinition(
-            singleton = true,
             quantifier = Quantifier.MULTIPLE,
-            mutability = Mutability.CONCURRENT,
             loaderName = "ec.util.spreadsheet.BookFactoryLoader"
     )
     public abstract static class Factory implements FileFilter, DirectoryStream.Filter<Path> {

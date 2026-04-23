@@ -18,6 +18,7 @@
 module nbbrd.spreadsheet.poi {
 
     requires static org.jspecify;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static lombok;
 
@@ -28,5 +29,6 @@ module nbbrd.spreadsheet.poi {
 
     provides ec.util.spreadsheet.Book.Factory with
             ec.util.spreadsheet.poi.ExcelBookFactory,
-            ec.util.spreadsheet.poi.ExcelClassicBookFactory;
+            ec.util.spreadsheet.poi.ExcelClassicBookFactory,
+            ec.util.spreadsheet.poi.ExcelBinaryBookFactory;
 }

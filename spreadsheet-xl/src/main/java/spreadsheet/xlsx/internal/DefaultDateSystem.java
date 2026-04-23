@@ -19,6 +19,7 @@ package spreadsheet.xlsx.internal;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.jspecify.annotations.NonNull;
 import spreadsheet.xlsx.XlsxDateSystem;
 
 /**
@@ -34,7 +35,7 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public long getJavaDateInMillis(Calendar calendar, double date) {
+        public long getJavaDateInMillis(@NonNull Calendar calendar, double date) {
             int datePart = (int) Math.floor(date);
             int timePart = (int) Math.round((date - datePart) * NUMBER_OF_SECONDS_IN_DAY);
             calendar.clear();
@@ -45,7 +46,7 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public Date getJavaDate(Calendar calendar, double date) {
+        public @NonNull Date getJavaDate(@NonNull Calendar calendar, double date) {
             return new Date(getJavaDateInMillis(calendar, date));
         }
 
@@ -62,7 +63,7 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public long getJavaDateInMillis(Calendar calendar, double date) {
+        public long getJavaDateInMillis(@NonNull Calendar calendar, double date) {
             int datePart = (int) Math.floor(date);
             int timePart = (int) Math.round((date - datePart) * NUMBER_OF_SECONDS_IN_DAY);
             calendar.clear();
@@ -73,7 +74,7 @@ public enum DefaultDateSystem implements XlsxDateSystem {
         }
 
         @Override
-        public Date getJavaDate(Calendar calendar, double date) {
+        public @NonNull Date getJavaDate(@NonNull Calendar calendar, double date) {
             return new Date(getJavaDateInMillis(calendar, date));
         }
 

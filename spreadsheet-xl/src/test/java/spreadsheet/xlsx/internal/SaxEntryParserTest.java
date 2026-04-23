@@ -23,6 +23,7 @@ import nbbrd.io.function.IOFunction;
 import nbbrd.io.function.IOSupplier;
 import nbbrd.io.xml.Sax;
 import org.junit.jupiter.api.Test;
+import org.xml.sax.SAXException;
 import spreadsheet.xlsx.XlsxEntryParser;
 import spreadsheet.xlsx.XlsxNumberingFormat;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  */
 public class SaxEntryParserTest {
 
-    private final IOFunction<String, InputStream> files = o -> Resource.getResourceAsStream(SaxEntryParserTest.class, o).orElseThrow(IOException::new);
+    private final IOFunction<String, InputStream> files = name -> Resource.newInputStream(SaxEntryParserTest.class, name);
     private final IOSupplier<InputStream> empty = EmptyInputStream::new;
     private final IOSupplier<InputStream> throwing = () -> {
         throw new CustomIOException();
@@ -131,6 +132,27 @@ public class SaxEntryParserTest {
 
         assertThatThrownBy(() -> XlsxBook.parseStyles(df, throwing, parser))
                 .isInstanceOf(CustomIOException.class);
+
+        assertThat(XlsxBook.parseStyles(df, () -> files.applyWithIO("/missing_numFmtId.xml"), parser))
+                .containsExactly(false, true);
+    }
+
+    @Test
+    public void testParseInt() throws SAXException {
+        assertThat(SaxEntryParser.parseInt(null, 42)).isEqualTo(42);
+        assertThat(SaxEntryParser.parseInt(null, 0)).isEqualTo(0);
+        assertThat(SaxEntryParser.parseInt("123", 0)).isEqualTo(123);
+        assertThat(SaxEntryParser.parseInt("0", 99)).isEqualTo(0);
+        assertThat(SaxEntryParser.parseInt("-1", 0)).isEqualTo(-1);
+        assertThatThrownBy(() -> SaxEntryParser.parseInt("abc", 0))
+                .isInstanceOf(SAXException.class)
+                .hasCauseInstanceOf(NumberFormatException.class);
+        assertThatThrownBy(() -> SaxEntryParser.parseInt("", 0))
+                .isInstanceOf(SAXException.class)
+                .hasCauseInstanceOf(NumberFormatException.class);
+        assertThatThrownBy(() -> SaxEntryParser.parseInt("1.5", 0))
+                .isInstanceOf(SAXException.class)
+                .hasCauseInstanceOf(NumberFormatException.class);
     }
 
     private static final class CustomIOException extends IOException {

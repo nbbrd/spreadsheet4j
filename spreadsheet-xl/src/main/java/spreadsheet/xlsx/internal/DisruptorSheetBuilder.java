@@ -25,6 +25,7 @@ import ec.util.spreadsheet.Sheet;
 import java.io.IOException;
 import java.util.List;
 
+import org.jspecify.annotations.NonNull;
 import spreadsheet.xlsx.XlsxDataType;
 import spreadsheet.xlsx.XlsxDateSystem;
 import spreadsheet.xlsx.XlsxSheetBuilder;
@@ -56,14 +57,14 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public XlsxSheetBuilder reset(String sheetName, String sheetBounds) {
+    public @NonNull XlsxSheetBuilder reset(@NonNull String sheetName, String sheetBounds) {
         waitForCompletion();
         delegate.reset(sheetName, sheetBounds);
         return this;
     }
 
     @Override
-    public XlsxSheetBuilder put(String ref, CharSequence value, XlsxDataType dataType, int styleIndex) {
+    public @NonNull XlsxSheetBuilder put(@NonNull String ref, @NonNull CharSequence value, @NonNull XlsxDataType dataType, int styleIndex) {
         long sequence = ringBuffer.next();
         try {
             CustomEvent event = ringBuffer.get(sequence);
@@ -78,7 +79,7 @@ public final class DisruptorSheetBuilder implements XlsxSheetBuilder {
     }
 
     @Override
-    public Sheet build() {
+    public @NonNull Sheet build() {
         waitForCompletion();
         return delegate.build();
     }

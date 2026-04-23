@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
-        <version>2.5.10</version>
+        <version>2.6.0</version>
     </parent>
 
     <artifactId>spreadsheet-standalone</artifactId>
@@ -58,6 +58,11 @@
         <dependency>
             <groupId>com.github.nbbrd.spreadsheet4j</groupId>
             <artifactId>spreadsheet-xmlss</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.nbbrd.spreadsheet4j</groupId>
+            <artifactId>spreadsheet-markdown</artifactId>
             <version>${project.version}</version>
         </dependency>
 

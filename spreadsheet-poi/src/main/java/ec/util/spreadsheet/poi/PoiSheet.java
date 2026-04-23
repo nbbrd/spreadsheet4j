@@ -115,7 +115,7 @@ final class PoiSheet extends ec.util.spreadsheet.Sheet {
     }
 
     @Override
-    public void forEach(SheetConsumer<? super ec.util.spreadsheet.Cell> action) {
+    public void forEach(@org.jspecify.annotations.NonNull SheetConsumer<? super ec.util.spreadsheet.Cell> action) {
         Objects.requireNonNull(action);
         for (int i = 0; i < rowCount; i++) {
             Row row = sheet.getRow(i);
@@ -131,7 +131,7 @@ final class PoiSheet extends ec.util.spreadsheet.Sheet {
     }
 
     @Override
-    public void forEachValue(SheetConsumer<? super Object> action) {
+    public void forEachValue(@org.jspecify.annotations.NonNull SheetConsumer<? super Object> action) {
         Objects.requireNonNull(action);
         for (int i = 0; i < rowCount; i++) {
             Row row = sheet.getRow(i);
@@ -147,7 +147,7 @@ final class PoiSheet extends ec.util.spreadsheet.Sheet {
     }
 
     @Override
-    public String getName() {
+    public @org.jspecify.annotations.NonNull String getName() {
         return sheet.getSheetName();
     }
 

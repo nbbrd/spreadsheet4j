@@ -25,7 +25,7 @@ public class RuntimeDependenciesTest {
                 .satisfies(RuntimeDependenciesTest::checkFastExcel)
                 .satisfies(RuntimeDependenciesTest::checkSods)
                 .satisfies(RuntimeDependenciesTest::checkJsoup)
-                .hasSize(12);
+                .hasSize(13);
     }
 
     private static void checkSpreadsheet4j(List<? extends DependencyResolver.GAV> coordinates) {
@@ -38,7 +38,9 @@ public class RuntimeDependenciesTest {
                         "spreadsheet-html",
                         "spreadsheet-od",
                         "spreadsheet-xl",
-                        "spreadsheet-xmlss");
+                        "spreadsheet-xmlss",
+                        "spreadsheet-markdown"
+                );
     }
 
     private static void checkJavaIoUtil(List<? extends DependencyResolver.GAV> coordinates) {

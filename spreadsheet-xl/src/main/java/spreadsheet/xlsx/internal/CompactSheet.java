@@ -72,7 +72,7 @@ public final class CompactSheet extends Sheet {
     }
 
     @Override
-    public String getName() {
+    public @org.jspecify.annotations.NonNull String getName() {
         return name;
     }
 

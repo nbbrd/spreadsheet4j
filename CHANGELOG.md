@@ -7,6 +7,25 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-04-23
+
+### Added
+
+- Add support of Markdown [#679](https://github.com/nbbrd/spreadsheet4j/issues/679)
+- Add support of Excel Binary Workbook (*.xlsb) [#9](https://github.com/nbbrd/spreadsheet4j/issues/9)
+
+### Fixed
+
+- Fix parsing of number format ID in spreadsheet-xl [#693](https://github.com/nbbrd/spreadsheet4j/issues/693)
+
+### Changed
+
+- Bump java-io-util from 0.0.35 to [0.0.36](https://github.com/nbbrd/java-io-util/blob/develop/CHANGELOG.md)
+- Bump fastexcel from 0.19.0 to [0.20.0](https://github.com/dhatim/fastexcel/releases/tag/0.20.0)
+- Bump jsoup from 1.21.2 to [1.22.1](https://github.com/jhy/jsoup/blob/master/change-archive.txt)
+- Bump SODS from 1.7.0 to [1.8.2](https://github.com/miachm/SODS/releases/tag/v1.8.2)
+- Bump POI from 5.5.0 to [5.5.1](https://poi.apache.org/changes.html)
+
 ## [2.5.10] - 2025-11-17
 
 ### Changed
@@ -193,7 +212,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - JDK11 cleanup
 
-[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.10...HEAD
+[Unreleased]: https://github.com/nbbrd/spreadsheet4j/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.10...v2.6.0
 [2.5.10]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.9...v2.5.10
 [2.5.9]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.8...v2.5.9
 [2.5.8]: https://github.com/nbbrd/spreadsheet4j/compare/v2.5.7...v2.5.8

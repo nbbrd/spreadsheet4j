@@ -18,6 +18,7 @@
 module nbbrd.spreadsheet.xl {
 
     requires static org.jspecify;
+    requires static nbbrd.design;
     requires static nbbrd.service;
     requires static lombok;
 
@@ -25,7 +26,7 @@ module nbbrd.spreadsheet.xl {
     requires nbbrd.io.xml;
     requires static com.lmax.disruptor;
     requires java.logging;
-    
+
     provides ec.util.spreadsheet.Book.Factory with
             spreadsheet.xlsx.XlsxBookFactory;
 }

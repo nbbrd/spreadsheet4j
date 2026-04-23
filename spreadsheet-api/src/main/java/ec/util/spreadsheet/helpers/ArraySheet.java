@@ -74,7 +74,7 @@ public final class ArraySheet extends Sheet implements Serializable {
     }
 
     @Override
-    public void forEach(SheetConsumer<? super Cell> action) {
+    public void forEach(@org.jspecify.annotations.NonNull SheetConsumer<? super Cell> action) {
         Objects.requireNonNull(action);
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
@@ -87,7 +87,7 @@ public final class ArraySheet extends Sheet implements Serializable {
     }
 
     @Override
-    public void forEachValue(SheetConsumer<? super Object> action) {
+    public void forEachValue(@org.jspecify.annotations.NonNull SheetConsumer<? super Object> action) {
         Objects.requireNonNull(action);
         for (int i = 0; i < rowCount; i++) {
             for (int j = 0; j < columnCount; j++) {
@@ -100,12 +100,12 @@ public final class ArraySheet extends Sheet implements Serializable {
     }
 
     @Override
-    public String getName() {
+    public @org.jspecify.annotations.NonNull String getName() {
         return name;
     }
 
     @Override
-    public ArraySheet inv() {
+    public @org.jspecify.annotations.NonNull ArraySheet inv() {
         return new ArraySheet(name, columnCount, rowCount, values, !inv);
     }
 

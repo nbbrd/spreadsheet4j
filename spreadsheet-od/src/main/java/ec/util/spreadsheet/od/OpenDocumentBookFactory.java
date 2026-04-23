@@ -1,17 +1,17 @@
 /*
  * Copyright 2013 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.1 or â€“ as soon they will be approved 
+ * Licensed under the EUPL, Version 1.1 or â€“ as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * http://ec.europa.eu/idabc/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package ec.util.spreadsheet.od;
@@ -22,23 +22,19 @@ import com.github.miachm.sods.Sheet;
 import com.github.miachm.sods.SpreadSheet;
 import ec.util.spreadsheet.Book;
 import ec.util.spreadsheet.helpers.FileHelper;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import lombok.NonNull;
+import nbbrd.service.ServiceProvider;
+
+import java.io.*;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import nbbrd.service.ServiceProvider;
-import lombok.NonNull;
+import java.util.zip.ZipException;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
@@ -69,13 +65,13 @@ public class OpenDocumentBookFactory extends Book.Factory {
 
     @Override
     public boolean accept(File file) {
-        return FileHelper.accept(file, this::accept);
+        return FileHelper.accept(file, this);
     }
 
     @Override
     public boolean accept(Path file) throws IOException {
         return FileHelper.hasExtension(file, ".ods")
-                && (Files.exists(file) ? FileHelper.hasMagicNumber(file, ZIP_HEADER) : true);
+                && (!Files.exists(file) || FileHelper.hasMagicNumber(file, ZIP_HEADER));
     }
 
     @Override
@@ -83,7 +79,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
         checkFile(file);
         try {
             return new OdBook(new SpreadSheet(file));
-        } catch (NotAnOdsException ex) {
+        } catch (NotAnOdsException | ZipException ex) {
             throw new IOException(file.getPath(), ex);
         }
     }
@@ -95,14 +91,9 @@ public class OpenDocumentBookFactory extends Book.Factory {
         }
         try {
             return new OdBook(new SpreadSheet(stream));
-        } catch (NotAnOdsException ex) {
+        } catch (NotAnOdsException | ZipException ex) {
             throw new IOException(ex);
         }
-    }
-
-    @Override
-    public boolean canStore() {
-        return true;
     }
 
     @Override
@@ -144,8 +135,7 @@ public class OpenDocumentBookFactory extends Book.Factory {
         return obj;
     }
 
-    @NonNull
-    private static File checkFile(@NonNull File file) throws IOException {
+    private static void checkFile(@NonNull File file) throws IOException {
         if (!file.exists()) {
             throw new NoSuchFileException(file.getPath());
         }
@@ -155,7 +145,6 @@ public class OpenDocumentBookFactory extends Book.Factory {
         if (file.length() == 0) {
             throw new EOFException(file.getPath());
         }
-        return file;
     }
 
     // https://en.wikipedia.org/wiki/List_of_file_signatures
