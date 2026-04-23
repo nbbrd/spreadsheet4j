@@ -5,7 +5,7 @@
 
     <groupId>com.github.nbbrd.spreadsheet4j</groupId>
     <artifactId>spreadsheet-parent</artifactId>
-    <version>2.6.0</version>
+    <version>2.6.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>spreadsheet4j</name>
@@ -38,7 +38,7 @@
     <properties>
         <!-- Java 8+ config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-04-23T08:23:37Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-04-23T08:24:19Z</project.build.outputTimestamp>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
         <requiredMavenVersion>3.9.11</requiredMavenVersion>
