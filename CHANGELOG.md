@@ -16,6 +16,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Fix parsing of number format ID in spreadsheet-xl [#693](https://github.com/nbbrd/spreadsheet4j/issues/693)
 
+### Changed
+
+- Bump java-io-util from 0.0.35 to [0.0.36](https://github.com/nbbrd/java-io-util/blob/develop/CHANGELOG.md)
+- Bump fastexcel from 0.19.0 to [0.20.0](https://github.com/dhatim/fastexcel/releases/tag/0.20.0)
+- Bump jsoup from 1.21.2 to [1.22.1](https://github.com/jhy/jsoup/blob/master/change-archive.txt)
+- Bump SODS from 1.7.0 to [1.8.2](https://github.com/miachm/SODS/releases/tag/v1.8.2)
+- Bump POI from 5.5.0 to [5.5.1](https://poi.apache.org/changes.html)
+
 ## [2.5.10] - 2025-11-17
 
 ### Changed
