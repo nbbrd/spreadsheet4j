@@ -14,10 +14,6 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add support of Markdown [#679](https://github.com/nbbrd/spreadsheet4j/issues/679)
 - Add support of Excel Binary Workbook (*.xlsb) [#9](https://github.com/nbbrd/spreadsheet4j/issues/9)
 
-### Fixed
-
-- Fix parsing of number format ID in spreadsheet-xl [#693](https://github.com/nbbrd/spreadsheet4j/issues/693)
-
 ### Changed
 
 - Bump java-io-util from 0.0.35 to [0.0.36](https://github.com/nbbrd/java-io-util/blob/develop/CHANGELOG.md)
@@ -25,6 +21,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Bump jsoup from 1.21.2 to [1.22.1](https://github.com/jhy/jsoup/blob/master/change-archive.txt)
 - Bump SODS from 1.7.0 to [1.8.2](https://github.com/miachm/SODS/releases/tag/v1.8.2)
 - Bump POI from 5.5.0 to [5.5.1](https://poi.apache.org/changes.html)
+
+### Fixed
+
+- Fix parsing of number format ID in spreadsheet-xl [#693](https://github.com/nbbrd/spreadsheet4j/issues/693)
 
 ## [2.5.10] - 2025-11-17
 
@@ -40,14 +40,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.5.9] - 2024-05-28
 
-### Fixed
-
-- Fix date parsing in SODS [#470](https://github.com/nbbrd/spreadsheet4j/issues/470)
-
 ### Changed
 
 - Bump java-io-util from 0.0.27 to [0.0.28](https://github.com/nbbrd/spreadsheet4j/blob/develop/CHANGELOG.md)
 - Bump fastexcel from 0.16.6 to [0.18.0](https://github.com/dhatim/fastexcel/compare/0.15.7...0.16.6)
+
+### Fixed
+
+- Fix date parsing in SODS [#470](https://github.com/nbbrd/spreadsheet4j/issues/470)
 
 ## [2.5.8] - 2024-02-26
 
@@ -86,16 +86,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [2.5.3] - 2023-09-04
 
-### Fixed
-
-- Fix potential bugs related to system settings
-
 ### Changed
 
 - Bump SODS from [1.5.1 to 1.6.2](https://github.com/miachm/SODS/releases)
 - Bump fastexcel from [0.14.0 to 0.15.7](https://github.com/dhatim/fastexcel/releases)
 - Bump jsoup from [1.15.3 to 1.16.1](https://github.com/jhy/jsoup/blob/master/CHANGES.md)
 - Remove `spreadsheet-xl` dependency from `spreadsheet-poi`
+
+### Fixed
+
+- Fix potential bugs related to system settings
 
 ## [2.5.2] - 2022-10-28
 
