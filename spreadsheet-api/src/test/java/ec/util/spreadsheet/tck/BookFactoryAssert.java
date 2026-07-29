@@ -23,7 +23,10 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.*;
+import java.nio.file.AccessDeniedException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import static ec.util.spreadsheet.tck.Assertions.msg;
@@ -186,46 +189,46 @@ public class BookFactoryAssert extends AbstractAssert<BookFactoryAssert, Book.Fa
     }
 
     private static void assertLoadEmpty(SoftAssertions s, Book.Factory f) throws IOException {
-        File empty = File.createTempFile("empty", "file");
+        Path empty = Files.createTempFile("empty", "file");
 
-        s.assertThatThrownBy(() -> f.load(empty))
+        s.assertThatThrownBy(() -> f.load(empty.toFile()))
                 .as(msg(f, "load(emptyFile)", EOFException.class))
                 .isInstanceOf(EOFException.class)
-                .hasMessage(empty.getPath());
+                .hasMessage(empty.toString());
 
-        try (InputStream stream = Files.newInputStream(empty.toPath())) {
+        try (InputStream stream = Files.newInputStream(empty)) {
             s.assertThatThrownBy(() -> f.load(stream))
                     .as(msg(f, "load(emptyStream)", EOFException.class))
                     .isInstanceOf(EOFException.class);
         }
 
-        s.assertThatThrownBy(() -> f.load(empty.toPath()))
+        s.assertThatThrownBy(() -> f.load(empty))
                 .as(msg(f, "load(emptyPath)", EOFException.class))
                 .isInstanceOf(EOFException.class)
-                .hasMessage(empty.getPath());
+                .hasMessage(empty.toString());
 
-        s.assertThatThrownBy(() -> f.load(empty.toURI().toURL()))
+        s.assertThatThrownBy(() -> f.load(empty.toUri().toURL()))
                 .as(msg(f, "load(emptyURL)", EOFException.class))
                 .isInstanceOf(EOFException.class);
 
-        empty.delete();
+        Files.deleteIfExists(empty);
     }
 
     private static void assertLoadMissing(SoftAssertions s, Book.Factory f) throws IOException {
-        File missing = File.createTempFile("missing", "file");
-        missing.delete();
+        Path missing = Files.createTempFile("missing", "file");
+        Files.deleteIfExists(missing);
 
-        s.assertThatThrownBy(() -> f.load(missing))
+        s.assertThatThrownBy(() -> f.load(missing.toFile()))
                 .as(msg(f, "load(missingFile)", NoSuchFileException.class))
                 .isInstanceOf(NoSuchFileException.class)
-                .hasMessage(missing.getPath());
+                .hasMessage(missing.toString());
 
-        s.assertThatThrownBy(() -> f.load(missing.toPath()))
+        s.assertThatThrownBy(() -> f.load(missing))
                 .as(msg(f, "load(missingPath)", NoSuchFileException.class))
                 .isInstanceOf(NoSuchFileException.class)
-                .hasMessage(missing.getPath());
+                .hasMessage(missing.toString());
 
-        s.assertThatThrownBy(() -> f.load(missing.toURI().toURL()))
+        s.assertThatThrownBy(() -> f.load(missing.toUri().toURL()))
                 .as(msg(f, "load(missingURL)", NoSuchFileException.class))
                 .isInstanceOf(NoSuchFileException.class);
     }
