@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.github.nbbrd.spreadsheet4j</groupId>
         <artifactId>spreadsheet-parent</artifactId>
@@ -34,7 +34,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <!-- compile only -->
         <dependency>
@@ -108,14 +107,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <!-- fix dependency convergence -->
+        <dependency><!-- fix dependency convergence -->
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.0.b2</version>
         </dependency>
-        <dependency>
-            <!-- force latest version of log4j -->
+        <dependency><!-- force latest version of log4j -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.26.1</version>
@@ -126,8 +123,8 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>spreadsheet-api</artifactId>
             <version>${project.version}</version>
-            <classifier>tests</classifier>
             <type>test-jar</type>
+            <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
         <dependency>
