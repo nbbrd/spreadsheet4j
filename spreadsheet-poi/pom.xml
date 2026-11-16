@@ -98,21 +98,23 @@
                     <artifactId>log4j-core</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>commons-io</artifactId>
                     <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>commons-codec</artifactId>
                     <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency><!-- fix dependency convergence -->
+        <dependency>
+            <!-- fix dependency convergence -->
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.0.b2</version>
         </dependency>
-        <dependency><!-- force latest version of log4j -->
+        <dependency>
+            <!-- force latest version of log4j -->
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
             <version>2.26.1</version>
